@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>PetHavenHub</title>
-    <%= csrf_meta_tags %>
+<nav>
+  <%= link_to "Home", root_path %> |
+  <% if user_signed_in? %>
+    <%= link_to "Sign Out", destroy_user_session_path, method: :delete, data: { turbo : false, confirm: "Are you sure you want to log out?" } %>
 
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-  </head>
+  <% else %>
+    <%= link_to "Login", new_user_session_path %> |
+    <%= link_to "Sign Up", new_user_registration_path %>
+  <% end %>
+</nav>
 
-  <body>
-    <%= yield %>
-  </body>
-</html>
+<%= yield %>
