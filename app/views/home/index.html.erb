@@ -1,3 +1,34 @@
-<!‑‑ a basic layout for now ‑‑>
-<h1>Welcome to Pet Rescue Hub</h1>
-<p>This is the main page. Sign In or Sign Up to continue.</p>
+<div class="container">
+	<section class="intro card" style="margin-bottom:1rem;">
+		<div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+			<div style="flex:1; min-width:260px;">
+				<h2 class="card-title">Welcome to Pet Haven Hub</h2>
+				<p>Find loving homes for pets, read care guides, and connect with fellow animal lovers.</p>
+				<div style="margin-top:0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+					<%= link_to "Browse Pets", (dogs_path rescue "#"), class: "btn btn-primary" %>
+					<%= link_to 'How to Adopt', '#', class: 'btn btn-outline' %>
+				</div>
+			</div>
+			<div style="width:260px; flex:0 0 260px;">
+				<%= image_tag 'https://placehold.co/520x300?text=Adopt+Love', alt: 'Adopt Love', style: 'width:100%; border-radius:8px;' %>
+			</div>
+		</div>
+	</section>
+
+	<section class="card" style="margin-bottom:1rem;">
+		<h3 class="card-title">Featured Pets</h3>
+		<div class="pet-grid" style="margin-top:0.75rem;">
+			<% pets = [
+				{ id: 'PHH-001', name: 'Bella', age: '2 yrs', image_url: 'https://placehold.co/600x400?text=Bella', meta: 'Golden Retriever • Friendly', location: 'City Shelter', path: '#' },
+				{ id: 'PHH-002', name: 'Milo', age: '1 yr', image_url: 'https://placehold.co/600x400?text=Milo', meta: 'Tabby • Playful', location: 'North Shelter', path: '#' },
+				{ id: 'PHH-003', name: 'Luna', age: '3 yrs', image_url: 'https://placehold.co/600x400?text=Luna', meta: 'Beagle • Gentle', location: 'East Shelter', path: '#' },
+				{ id: 'PHH-004', name: 'Coco', age: '6 mo', image_url: 'https://placehold.co/600x400?text=Coco', meta: 'Mixed • Energetic', location: 'Downtown Shelter', path: '#' }
+			] %>
+
+			<% pets.each do |pet| %>
+				<%= render 'shared/pet_card', pet: pet %>
+			<% end %>
+		</div>
+	</section>
+
+</div>

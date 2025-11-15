@@ -1,12 +1,40 @@
-<nav>
-  <%= link_to "Home", root_path %> |
-  <% if user_signed_in? %>
-    <%= link_to "Sign Out", destroy_user_session_path, method: :delete, data: { turbo : false, confirm: "Are you sure you want to log out?" } %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pet Haven Hub</title>
+  <%= csrf_meta_tags %>
+  <%= csrf_meta_tags %>
 
-  <% else %>
-    <%= link_to "Login", new_user_session_path %> |
-    <%= link_to "Sign Up", new_user_registration_path %>
-  <% end %>
-</nav>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-<%= yield %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+</head>
+<body>
+  <%= render 'shared/navbar' %>
+
+  <main class="site-main" role="main">
+    <section class="hero">
+      <div class="hero-inner">
+        <h1>Find your new best friend</h1>
+        <p>Browse adoptable pets, read care guides, and get community support.</p>
+        <div class="hero-ctas">
+          <%= link_to "Browse Pets", (dogs_path rescue "#"), class: "btn btn-primary" %>
+          <%= link_to "How to Adopt", "#", class: "btn btn-outline" %>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <%= yield %>
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <%= render 'shared/footer' %>
+  </footer>
+</body>
+</html>

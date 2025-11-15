@@ -1,0 +1,19 @@
+<div class="pet-card card">
+  <%# expects local: pet (hash or object) with image_url, name, age, meta, id, path %>
+  <%= image_tag(pet[:image_url] || 'https://placehold.co/600x400?text=Pet', alt: pet[:name] || 'Pet') %>
+  <div class="pet-body">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <div style="font-weight:700"><%= pet[:name] || 'Unknown' %> <small style="color:#6b7280;font-weight:600">• <%= pet[:age] || '—' %></small></div>
+        <div style="color:#6b7280"><%= pet[:meta] || 'Breed info • temperament' %></div>
+      </div>
+      <div>
+        <%= link_to 'View', pet[:path] || '#', class: 'btn btn-primary', style: 'padding:6px 10px;' %>
+      </div>
+    </div>
+    <div class="pet-meta">
+      <div style="color:#9aa3ad">Location: <%= pet[:location] || 'City Shelter' %></div>
+      <div style="color:#9aa3ad">ID: <%= pet[:id] || '—' %></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+<header class="site-header" role="banner">
+  <div class="topbar container">
+    <div class="top-left">
+      <%= link_to "DONATE", "#", class: "btn btn-donate" %>
+      <%= link_to "ADOPT", "#", class: "btn btn-adopt" %>
+    </div>
+
+    <div class="brand">
+      <%= link_to root_path, class: "brand-link" do %>
+        <%= image_tag "logo.png", alt: "Pet Haven Hub Logo", class: "logo-img" %>
+        <span class="brand-text">Pet Haven Hub</span>
+      <% end %>
+    </div>
+
+    <div class="top-right">
+      <% if user_signed_in? %>
+        <%= link_to "Logout", destroy_user_session_path, method: :delete, data: { turbo: false }, class: "auth-btn" %>
+      <% else %>
+        <%= link_to "Login", new_user_session_path, class: "auth-btn" %>
+        <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-signup" %>
+      <% end %>
+    </div>
+  </div>
+
+  <nav class="main-nav container" role="navigation" aria-label="Primary">
+    <button class="nav-toggle" aria-expanded="false" aria-controls="primary-menu">
+      <span class="sr-only">Toggle navigation</span>
+      ☰
+    </button>
+
+    <div class="nav-center">
+      <form class="search-form" action="<%= search_path if defined?(search_path) %>" method="get" role="search">
+        <input type="search" name="q" placeholder="Search pets, articles..." aria-label="Search" />
+        <button type="submit" class="search-btn">Search</button>
+      </form>
+    </div>
+
+    <ul id="primary-menu" class="menu" data-visible="false">
+      <li class="menu-item dropdown" tabindex="0" aria-haspopup="true" aria-expanded="false">
+        <span class="menu-title">DOGS ▾</span>
+        <ul class="submenu">
+          <li><%= link_to "Browse Dogs", dogs_path rescue "#" %></li>
+          <li><%= link_to "Puppies", "#" %></li>
+          <li><%= link_to "Adoption Tips", "#" %></li>
+        </ul>
+      </li>
+
+      <li class="menu-item dropdown" tabindex="0" aria-haspopup="true" aria-expanded="false">
+        <span class="menu-title">CATS ▾</span>
+        <ul class="submenu">
+          <li><%= link_to "Browse Cats", cats_path rescue "#" %></li>
+          <li><%= link_to "Kittens", "#" %></li>
+          <li><%= link_to "Care Guides", "#" %></li>
+        </ul>
+      </li>
+
+      <li class="menu-item dropdown" tabindex="0" aria-haspopup="true" aria-expanded="false">
+        <span class="menu-title">OTHER PETS ▾</span>
+        <ul class="submenu">
+          <li><%= link_to "Small Animals", "#" %></li>
+          <li><%= link_to "Birds", "#" %></li>
+          <li><%= link_to "Reptiles", "#" %></li>
+        </ul>
+      </li>
+
+      <li class="menu-item dropdown" tabindex="0" aria-haspopup="true" aria-expanded="false">
+        <span class="menu-title">GET PET SUPPORT ▾</span>
+        <ul class="submenu">
+          <li><%= link_to "Help Center", support_path rescue "#" %></li>
+          <li><%= link_to "Vet Hotline", "#" %></li>
+        </ul>
+      </li>
+
+      <li class="menu-item"><div class="menu-title">About</div></li>
+      <li class="menu-item"><div class="menu-title">Good Reads</div></li>
+    </ul>
+  </nav>
+</header>

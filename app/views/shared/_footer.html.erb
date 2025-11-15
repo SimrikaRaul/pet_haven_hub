@@ -1,0 +1,8 @@
+<div class="container footer-inner">
+  <div>© <%= Time.current.year %> Pet Haven Hub</div>
+  <nav class="footer-nav" aria-label="Footer">
+    <%= link_to "Privacy", privacy_path rescue "#" %> ·
+    <%= link_to "Terms", terms_path rescue "#" %> ·
+    <%= link_to "Contact", contact_path rescue "#" %>
+  </nav>
+</div>
