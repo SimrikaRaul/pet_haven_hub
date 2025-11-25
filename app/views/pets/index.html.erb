@@ -1,0 +1,62 @@
+<div class="container py-8">
+  <h1 class="text-3xl font-bold mb-6 text-gray-900">Browse Available Pets</h1>
+
+  <!-- Filter Section -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <h2 class="text-xl font-semibold mb-4">Filters</h2>
+    <%= form_with url: pets_path, method: :get, local: true, class: 'flex flex-wrap gap-4' do |f| %>
+      <div>
+        <%= f.label :species, 'Species:' %>
+        <%= f.select :species, ['', 'Dog', 'Cat', 'Bird', 'Small Animal'], { include_blank: 'All' }, class: 'px-3 py-2 border rounded-lg' %>
+      </div>
+      <div>
+        <%= f.label :breed, 'Breed:' %>
+        <%= f.text_field :breed, placeholder: 'e.g., Golden Retriever', class: 'px-3 py-2 border rounded-lg' %>
+      </div>
+      <div>
+        <%= f.label :max_age, 'Max Age:' %>
+        <%= f.number_field :max_age, placeholder: 'Years', class: 'px-3 py-2 border rounded-lg' %>
+      </div>
+      <div>
+        <%= f.label :available, 'Available Only:' %>
+        <%= f.check_box :available, {}, '1', '0' %>
+      </div>
+      <%= f.submit 'Search', class: 'btn btn-primary' %>
+      <%= link_to 'Clear', pets_path, class: 'btn btn-outline' %>
+    <% end %>
+  </div>
+
+  <!-- Pets Grid -->
+  <% if @pets.any? %>
+    <div class="pet-grid">
+      <% @pets.each do |pet| %>
+        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+          <div class="h-48 bg-gray-200 flex items-center justify-center">
+            <%= image_tag 'https://placehold.co/400x300?text=' + pet.name, alt: pet.name, class: 'w-full h-full object-cover' %>
+          </div>
+          <div class="p-4">
+            <h3 class="text-lg font-bold text-gray-900 mb-1"><%= pet.name %></h3>
+            <p class="text-sm text-gray-600 mb-2">
+              <strong><%= pet.pet_type %></strong> • <%= pet.breed %> • <%= pet.age %> years
+            </p>
+            <p class="text-sm text-gray-500 mb-3">
+              📍 <%= pet.location %>
+            </p>
+            <div class="flex gap-2">
+              <%= link_to 'View Details', pet_path(pet), class: 'btn btn-primary text-sm flex-1' %>
+              <% if user_signed_in? %>
+                <%= button_to 'Quick Adopt', pet_requests_path(pet), method: :post, params: { request: { request_type: 'adopt' } }, class: 'btn btn-outline text-sm flex-1' %>
+              <% else %>
+                <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-outline text-sm flex-1' %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-12">
+      <p class="text-xl text-gray-600">No pets found. Try adjusting your filters.</p>
+    </div>
+  <% end %>
+</div>

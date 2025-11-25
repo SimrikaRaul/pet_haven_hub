@@ -1,0 +1,62 @@
+<div class="container py-8">
+  <h1 class="text-3xl font-bold mb-6 text-gray-900">Admin Dashboard</h1>
+
+  <!-- Quick Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
+      <p class="text-sm font-semibold opacity-90">Total Pets</p>
+      <p class="text-4xl font-bold"><%= @pets_count %></p>
+    </div>
+    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
+      <p class="text-sm font-semibold opacity-90">Open Requests</p>
+      <p class="text-4xl font-bold"><%= @open_requests %></p>
+    </div>
+    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
+      <p class="text-sm font-semibold opacity-90">Total Users</p>
+      <p class="text-4xl font-bold"><%= User.count %></p>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-xl font-bold mb-4 text-gray-900">Manage Pets</h3>
+      <p class="text-gray-600 mb-4">Create, edit, and delete pet listings.</p>
+      <%= link_to 'View All Pets', admin_pets_path, class: 'btn btn-primary' %>
+    </div>
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-xl font-bold mb-4 text-gray-900">Review Requests</h3>
+      <p class="text-gray-600 mb-4">Approve or reject adoption/donation requests.</p>
+      <%= link_to 'View All Requests', admin_requests_path, class: 'btn btn-primary' %>
+    </div>
+  </div>
+
+  <!-- Recent Activity (placeholder) -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h3 class="text-xl font-bold mb-4 text-gray-900">Recent Requests</h3>
+    <% recent_reqs = Request.order(created_at: :desc).limit(5) %>
+    <% if recent_reqs.any? %>
+      <div class="space-y-3">
+        <% recent_reqs.each do |req| %>
+          <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+            <div>
+              <p class="font-semibold text-gray-900"><%= req.user.name %> • <%= req.pet.name %></p>
+              <p class="text-sm text-gray-600"><%= req.request_type.capitalize %> • <%= time_ago_in_words(req.created_at) %> ago</p>
+            </div>
+            <span class="px-3 py-1 rounded-full text-sm font-semibold text-white
+              <%= case req.status
+                  when 'open' then 'bg-yellow-500'
+                  when 'approved' then 'bg-green-500'
+                  when 'rejected' then 'bg-red-500'
+                  else 'bg-gray-400'
+                  end %>">
+              <%= req.status.upcase %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-gray-600">No requests yet.</p>
+    <% end %>
+  </div>
+</div>

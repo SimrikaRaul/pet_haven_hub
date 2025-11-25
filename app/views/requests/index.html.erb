@@ -1,0 +1,66 @@
+<div class="container py-8">
+  <h1 class="text-3xl font-bold mb-6 text-gray-900">My Adoption & Donation Requests</h1>
+
+  <% if @requests.any? %>
+    <div class="grid gap-6">
+      <% @requests.each do |req| %>
+        <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
+          <div class="flex flex-col md:flex-row gap-6">
+            <!-- Pet Info -->
+            <div class="flex-1">
+              <h3 class="text-2xl font-bold text-gray-900 mb-2">
+                <%= req.pet.name %>
+              </h3>
+              <p class="text-gray-600 mb-4">
+                <strong><%= req.request_type.upcase %></strong> Request • Created <%= time_ago_in_words(req.created_at) %> ago
+              </p>
+              <div class="space-y-2 text-sm text-gray-700">
+                <p><strong>Species:</strong> <%= req.pet.pet_type %></p>
+                <p><strong>Breed:</strong> <%= req.pet.breed %></p>
+                <p><strong>Location:</strong> <%= req.pet.location %></p>
+              </div>
+            </div>
+
+            <!-- Status & Actions -->
+            <div class="flex flex-col items-end justify-center">
+              <div class="mb-4">
+                <span class="inline-block px-4 py-2 rounded-full font-semibold text-white
+                  <%= case req.status
+                      when 'open' then 'bg-yellow-500'
+                      when 'approved' then 'bg-green-500'
+                      when 'rejected' then 'bg-red-500'
+                      when 'scheduled' then 'bg-blue-500'
+                      when 'completed' then 'bg-gray-500'
+                      else 'bg-gray-400'
+                      end %>">
+                  <%= req.status.upcase %>
+                </span>
+              </div>
+
+              <% if req.approved? && req.route_distance.present? %>
+                <div class="text-right text-sm text-gray-600">
+                  <p><strong>Route Distance:</strong> <%= req.route_distance.round(2) %> units</p>
+                </div>
+              <% end %>
+
+              <%= link_to 'View Details', pet_path(req.pet), class: 'btn btn-primary mt-4' %>
+            </div>
+          </div>
+
+          <!-- Notes if present -->
+          <% if req.notes.present? %>
+            <div class="mt-4 pt-4 border-t">
+              <p class="text-sm text-gray-600"><strong>Your Notes:</strong></p>
+              <p class="text-gray-700"><%= req.notes %></p>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-lg shadow-md p-12 text-center">
+      <p class="text-xl text-gray-600 mb-6">You haven't submitted any requests yet.</p>
+      <%= link_to 'Browse Pets', pets_path, class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+</div>

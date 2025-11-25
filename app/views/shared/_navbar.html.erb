@@ -1,78 +1,199 @@
-<header class="site-header" role="banner">
-  <div class="topbar container">
-    <div class="top-left">
-      <%= link_to "DONATE", "#", class: "btn btn-donate" %>
-      <%= link_to "ADOPT", "#", class: "btn btn-adopt" %>
-    </div>
+<nav class="navbar">
+  <style>
+    .navbar {
+      background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+      color: white;
+      padding: 16px 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
 
-    <div class="brand">
-      <%= link_to root_path, class: "brand-link" do %>
-        <%= image_tag "logo.png", alt: "Pet Haven Hub Logo", class: "logo-img" %>
-        <span class="brand-text">Pet Haven Hub</span>
+    .navbar-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      font-size: 24px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      text-decoration: none;
+    }
+
+    .navbar-brand:hover {
+      color: #BFDBFE;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .navbar-menu a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: color 0.2s ease;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+
+    .navbar-menu a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #BFDBFE;
+    }
+
+    .navbar-auth {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .navbar-auth .btn {
+      padding: 8px 16px;
+      font-size: 13px;
+      border-radius: 6px;
+    }
+
+    .navbar-auth .btn-outline {
+      background: white;
+      color: #3B82F6;
+      border: none;
+    }
+
+    .navbar-auth .btn-outline:hover {
+      background: #F3F4F6;
+    }
+
+    .navbar-auth .btn-primary {
+      background: white;
+      color: #3B82F6;
+    }
+
+    .navbar-auth .btn-primary:hover {
+      background: #BFDBFE;
+      color: #1E40AF;
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-menu-item {
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .user-menu-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .navbar-menu {
+        display: none;
+        flex-direction: column;
+        gap: 0;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #1E40AF;
+        width: 100%;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .navbar-menu.active {
+        display: flex;
+      }
+
+      .navbar-menu a {
+        padding: 12px 20px;
+        border-radius: 0;
+      }
+
+      .mobile-toggle {
+        display: block;
+      }
+
+      .navbar-container {
+        flex-wrap: wrap;
+      }
+
+      .navbar-auth {
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 8px;
+      }
+
+      .navbar-auth .btn {
+        flex: 1;
+        padding: 10px 12px;
+        text-align: center;
+      }
+    }
+  </style>
+
+  <div class="navbar-container">
+    <%= link_to root_path, class: 'navbar-brand' do %>
+      🐾 Pet Haven Hub
+    <% end %>
+
+    <button class="mobile-toggle" onclick="toggleMobileMenu()">☰</button>
+
+    <ul class="navbar-menu" id="navbar-menu">
+      <li><%= link_to 'Home', root_path %></li>
+      <li><%= link_to 'Browse Pets', pets_path %></li>
+      <li><%= link_to 'My Requests', requests_path, class: user_signed_in? ? '' : 'hidden' %></li>
+      <% if user_signed_in? && current_user.admin? %>
+        <li><%= link_to 'Admin Dashboard', admin_path %></li>
       <% end %>
-    </div>
+      <li><%= link_to 'About', '#' %></li>
+    </ul>
 
-    <div class="top-right">
+    <div class="navbar-auth">
       <% if user_signed_in? %>
-        <%= link_to "Logout", destroy_user_session_path, method: :delete, data: { turbo: false }, class: "auth-btn" %>
+        <div class="user-menu">
+          <span class="user-menu-item"><%= current_user.full_name %></span>
+          <%= link_to 'Profile', edit_user_registration_path, class: 'user-menu-item' %>
+          <%= link_to 'Logout', destroy_user_session_path, method: :delete, data: { turbo: false }, class: 'user-menu-item' %>
+        </div>
       <% else %>
-        <%= link_to "Login", new_user_session_path, class: "auth-btn" %>
-        <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-signup" %>
+        <%= link_to 'Login', new_user_session_path, class: 'btn btn-outline' %>
+        <%= link_to 'Sign Up', new_user_registration_path, class: 'btn btn-primary' %>
       <% end %>
     </div>
   </div>
+</nav>
 
-  <nav class="main-nav container" role="navigation" aria-label="Primary">
-    <button class="nav-toggle" aria-expanded="false" aria-controls="primary-menu">
-      <span class="sr-only">Toggle navigation</span>
-      ☰
-    </button>
-
-    <div class="nav-center">
-      <form class="search-form" action="<%= search_path if defined?(search_path) %>" method="get" role="search">
-        <input type="search" name="q" placeholder="Search pets, articles..." aria-label="Search" />
-        <button type="submit" class="search-btn">Search</button>
-      </form>
-    </div>
-
-    <ul id="primary-menu" class="menu" data-visible="false">
-      <li class="menu-item dropdown" tabindex="0" aria-haspopup="true" aria-expanded="false">
-        <span class="menu-title">DOGS ▾</span>
-        <ul class="submenu">
-          <li><%= link_to "Browse Dogs", dogs_path rescue "#" %></li>
-          <li><%= link_to "Puppies", "#" %></li>
-          <li><%= link_to "Adoption Tips", "#" %></li>
-        </ul>
-      </li>
-
-      <li class="menu-item dropdown" tabindex="0" aria-haspopup="true" aria-expanded="false">
-        <span class="menu-title">CATS ▾</span>
-        <ul class="submenu">
-          <li><%= link_to "Browse Cats", cats_path rescue "#" %></li>
-          <li><%= link_to "Kittens", "#" %></li>
-          <li><%= link_to "Care Guides", "#" %></li>
-        </ul>
-      </li>
-
-      <li class="menu-item dropdown" tabindex="0" aria-haspopup="true" aria-expanded="false">
-        <span class="menu-title">OTHER PETS ▾</span>
-        <ul class="submenu">
-          <li><%= link_to "Small Animals", "#" %></li>
-          <li><%= link_to "Birds", "#" %></li>
-          <li><%= link_to "Reptiles", "#" %></li>
-        </ul>
-      </li>
-
-      <li class="menu-item dropdown" tabindex="0" aria-haspopup="true" aria-expanded="false">
-        <span class="menu-title">GET PET SUPPORT ▾</span>
-        <ul class="submenu">
-          <li><%= link_to "Help Center", support_path rescue "#" %></li>
-          <li><%= link_to "Vet Hotline", "#" %></li>
-        </ul>
-      </li>
-
-      <li class="menu-item"><div class="menu-title">About</div></li>
-      <li class="menu-item"><div class="menu-title">Good Reads</div></li>
-    </ul>
-  </nav>
-</header>
+<script>
+  function toggleMobileMenu() {
+    const menu = document.getElementById('navbar-menu');
+    menu.classList.toggle('active');
+  }
+</script>

@@ -1,8 +1,148 @@
-<div class="container footer-inner">
-  <div>© <%= Time.current.year %> Pet Haven Hub</div>
-  <nav class="footer-nav" aria-label="Footer">
-    <%= link_to "Privacy", privacy_path rescue "#" %> ·
-    <%= link_to "Terms", terms_path rescue "#" %> ·
-    <%= link_to "Contact", contact_path rescue "#" %>
-  </nav>
-</div>
+<footer class="footer">
+  <style>
+    .footer {
+      background-color: #1F2937;
+      color: #E5E7EB;
+      padding: 60px 20px 20px;
+      margin-top: 80px;
+      border-top: 1px solid #374151;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-section h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 12px;
+    }
+
+    .footer-section a {
+      color: #D1D5DB;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-section a:hover {
+      color: #3B82F6;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px solid #374151;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-copyright {
+      color: #9CA3AF;
+      font-size: 14px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 16px;
+    }
+
+    .footer-social a {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      background-color: #374151;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s ease;
+    }
+
+    .footer-social a:hover {
+      background-color: #3B82F6;
+    }
+
+    @media (max-width: 768px) {
+      .footer-content {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-bottom {
+        justify-content: center;
+        text-align: center;
+      }
+    }
+  </style>
+
+  <div class="footer-container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>🐾 Pet Haven Hub</h3>
+        <p>Connecting loving families with pets in need of homes. Our mission is to simplify and modernize the pet adoption process.</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><%= link_to 'Home', root_path %></li>
+          <li><%= link_to 'Browse Pets', pets_path %></li>
+          <li><%= link_to 'My Requests', requests_path, class: user_signed_in? ? '' : 'hidden' %></li>
+          <li><%= link_to 'About Us', '#' %></li>
+          <li><%= link_to 'Contact', '#' %></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h3>For Adopters</h3>
+        <ul>
+          <li><%= link_to 'Adoption Process', '#' %></li>
+          <li><%= link_to 'Pet Care Guides', '#' %></li>
+          <li><%= link_to 'FAQs', '#' %></li>
+          <li><%= link_to 'Success Stories', '#' %></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><%= link_to 'Privacy Policy', '#' %></li>
+          <li><%= link_to 'Terms of Service', '#' %></li>
+          <li><%= link_to 'Report Issue', '#' %></li>
+          <li>Email: support@pethavenHub.com</li>
+          <li>Phone: +1 (555) 123-4567</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copyright">
+        © <%= Time.current.year %> Pet Haven Hub. All rights reserved.
+      </div>
+      <div class="footer-social">
+        <a href="https://facebook.com/pethavenHub" target="_blank" title="Facebook">f</a>
+        <a href="https://twitter.com/pethavenHub" target="_blank" title="Twitter">𝕏</a>
+        <a href="https://instagram.com/pethavenHub" target="_blank" title="Instagram">📷</a>
+        <a href="https://youtube.com/pethavenHub" target="_blank" title="YouTube">▶</a>
+      </div>
+    </div>
+  </div>
+</footer>

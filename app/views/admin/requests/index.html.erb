@@ -1,0 +1,72 @@
+<div class="container py-8">
+  <h1 class="text-3xl font-bold mb-6 text-gray-900">Review Requests</h1>
+
+  <div class="grid grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-lg shadow p-4 text-center">
+      <p class="text-gray-600 text-sm">Open</p>
+      <p class="text-3xl font-bold text-yellow-500"><%= Request.where(status: 'open').count %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4 text-center">
+      <p class="text-gray-600 text-sm">Approved</p>
+      <p class="text-3xl font-bold text-green-500"><%= Request.where(status: 'approved').count %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4 text-center">
+      <p class="text-gray-600 text-sm">Rejected</p>
+      <p class="text-3xl font-bold text-red-500"><%= Request.where(status: 'rejected').count %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4 text-center">
+      <p class="text-gray-600 text-sm">Completed</p>
+      <p class="text-3xl font-bold text-blue-500"><%= Request.where(status: 'completed').count %></p>
+    </div>
+  </div>
+
+  <% if @requests.any? %>
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <table class="w-full">
+        <thead class="bg-gray-100 border-b">
+          <tr>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">User</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Pet</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Type</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Submitted</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          <% @requests.each do |request| %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 font-medium text-gray-900"><%= request.user.name %></td>
+              <td class="px-6 py-4 text-gray-600"><%= request.pet.name %></td>
+              <td class="px-6 py-4 text-gray-600"><%= request.request_type.upcase %></td>
+              <td class="px-6 py-4">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold text-white
+                  <%= case request.status
+                      when 'open' then 'bg-yellow-500'
+                      when 'approved' then 'bg-green-500'
+                      when 'rejected' then 'bg-red-500'
+                      when 'completed' then 'bg-blue-500'
+                      else 'bg-gray-400'
+                      end %>">
+                  <%= request.status.upcase %>
+                </span>
+              </td>
+              <td class="px-6 py-4 text-gray-600"><%= time_ago_in_words(request.created_at) %> ago</td>
+              <td class="px-6 py-4 text-sm space-x-2 flex">
+                <%= link_to 'View', admin_request_path(request), class: 'link link-primary' %>
+                <% if request.open? %>
+                  <%= link_to 'Approve', admin_request_path(request, status: 'approved'), method: :patch, data: { confirm: 'Approve this request?' }, class: 'link link-success' %>
+                  <%= link_to 'Reject', admin_request_path(request, status: 'rejected'), method: :patch, data: { confirm: 'Reject this request?' }, class: 'link link-danger' %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-lg shadow-md p-8 text-center">
+      <p class="text-gray-600">No requests to review.</p>
+    </div>
+  <% end %>
+</div>
