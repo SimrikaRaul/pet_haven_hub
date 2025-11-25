@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20251015174644) do
+ActiveRecord::Schema.define(version: 20251121120000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,20 @@ ActiveRecord::Schema.define(version: 20251015174644) do
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "size"
+    t.string "sex"
+    t.string "health_status"
+    t.boolean "vaccinated", default: false
+    t.float "lat"
+    t.float "lon"
+    t.boolean "available", default: true
+    t.string "city"
+    t.string "country"
+    t.float "latitude"
+    t.float "longitude"
+    t.index ["available"], name: "index_pets_on_available"
+    t.index ["breed"], name: "index_pets_on_breed"
+    t.index ["pet_type"], name: "index_pets_on_pet_type"
     t.index ["user_id"], name: "index_pets_on_user_id"
   end
 
@@ -35,7 +49,17 @@ ActiveRecord::Schema.define(version: 20251015174644) do
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "request_type"
+    t.text "notes"
+    t.string "route"
+    t.float "route_distance"
+    t.datetime "scheduled_date"
+    t.datetime "completed_at"
+    t.text "rejection_reason"
     t.index ["pet_id"], name: "index_requests_on_pet_id"
+    t.index ["request_type"], name: "index_requests_on_request_type"
+    t.index ["status"], name: "index_requests_on_status"
+    t.index ["user_id", "created_at"], name: "index_requests_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_requests_on_user_id"
   end
 
@@ -50,8 +74,17 @@ ActiveRecord::Schema.define(version: 20251015174644) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
+    t.string "preferred_species"
+    t.string "phone"
+    t.string "address"
+    t.string "city"
+    t.string "country"
+    t.float "latitude"
+    t.float "longitude"
+    t.text "bio"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["role"], name: "index_users_on_role"
   end
 
   add_foreign_key "pets", "users"
