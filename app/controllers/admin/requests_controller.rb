@@ -1,0 +1,65 @@
+module Admin
+  class RequestsController < ApplicationController
+    before_action :authenticate_user!
+    before_action :authorize_admin!
+    before_action :set_request, only: [:show, :update, :approve, :reject]
+
+    def index
+      @requests = Request.recent.page(params[:page]).per(20)
+      @status_filter = params[:status]
+      @requests = @requests.where(status: @status_filter) if @status_filter.present?
+      
+      @stats = {
+        total: Request.count,
+        open: Request.where(status: 'open').count,
+        approved: Request.where(status: 'approved').count,
+        rejected: Request.where(status: 'rejected').count,
+        completed: Request.where(status: 'completed').count
+      }
+    end
+
+    def show
+    end
+
+    def update
+      if @request.update(request_params)
+        redirect_to admin_request_path(@request), notice: 'Request updated successfully.'
+      else
+        render :show, status: :unprocessable_entity
+      end
+    end
+
+    def approve
+      if @request.can_be_approved?
+        @request.approve!
+        RouteCalculationJob.perform_later(@request.id)
+        redirect_to admin_requests_path, notice: 'Request approved and route calculation scheduled.'
+      else
+        redirect_to admin_requests_path, alert: 'Cannot approve this request. Pet may not be available.'
+      end
+    end
+
+    def reject
+      if @request.can_be_rejected?
+        @request.reject!(params[:reason])
+        redirect_to admin_requests_path, notice: 'Request rejected successfully.'
+      else
+        redirect_to admin_requests_path, alert: 'Cannot reject this request.'
+      end
+    end
+
+    private
+
+    def authorize_admin!
+      redirect_to root_path, alert: 'Not authorized' unless current_user&.admin?
+    end
+
+    def set_request
+      @request = Request.find(params[:id])
+    end
+
+    def request_params
+      params.require(:request).permit(:notes, :scheduled_date, :rejection_reason)
+    end
+  end
+end
