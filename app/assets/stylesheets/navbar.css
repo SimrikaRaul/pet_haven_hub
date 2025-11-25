@@ -26,7 +26,10 @@
 }
 
 .topbar {
-  padding: 10px 28px;
+  padding: 4px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .topbar .top-left { gap: 12px; }
@@ -36,19 +39,18 @@
 
 .topbar .brand { justify-content: center; flex: 1; }
 .brand-link { display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; }
-.logo-img { height:48px; width:auto; display:block; }
-.brand-text { font-size:22px; font-weight:800; color:var(--brand-color); }
+.logo-img { height:32px; width:auto; display:block; }
+.brand-text { font-size:18px; font-weight:800; color:var(--brand-color); }
 
 .topbar .top-right { gap: 12px; }
 .topbar .auth-btn, .topbar .btn-signup { text-decoration:none; font-weight:700; color:var(--muted); }
 .topbar .btn-signup { color:var(--accent); }
 
-/* Main navigation */
 .main-nav {
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding: 8px 28px;
+  padding: 4px 22px;
   background: var(--surface);
 }
 
@@ -74,7 +76,7 @@
 .submenu li a { color:#333; text-decoration:none; display:block; padding:8px 12px; }
 .menu-item.open > .submenu, .menu-item:focus-within > .submenu { display:block; opacity:1; transform: translateY(0) scale(1); }
 
-/* Small screens */
+
 @media (max-width: 880px) {
   .nav-toggle { display:inline-flex; }
   .nav-center { order:3; width:100%; padding:8px 28px; }
@@ -93,14 +95,13 @@
   .menu-item.open > .submenu { display:block; }
 }
 
-/* focus + hover affordances */
+
 .menu-title:focus, .menu-title:hover { outline: none; color: var(--accent); }
 .nav-toggle:focus { outline: 2px solid rgba(0,0,0,0.08); border-radius:4px; }
 
-/* small utilities */
+
 .btn { padding:6px 10px; border-radius:6px; }
 .btn-primary { background:var(--accent); color:white; padding:8px 12px; border-radius:6px; text-decoration:none; }
 
-/* preserve legacy names just in case */
-/* .navbar left intentionally blank to avoid breaking references */
+
 
