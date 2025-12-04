@@ -7,7 +7,7 @@ end
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.7'
+gem 'rails', '5.1.7'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.2.3'
 # Use Puma as the app server
@@ -18,6 +18,7 @@ gem 'sass-rails', '~> 5.0.7'
 # Use Uglifier as compressor for JavaScript assets
 
 gem 'ffi', '1.15.5'
+gem 'carrierwave', '~> 2.0'
 
 gem 'uglifier', '>= 4.2.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
@@ -38,6 +39,8 @@ gem 'jbuilder', '~> 2.7'
 # gem 'capistrano-rails', group: :development
 
 gem 'devise' ,'~>4.9'
+gem 'kaminari', '~> 1.2'
+
 
 gem 'responders', '~> 3.0'
 gem 'pundit'

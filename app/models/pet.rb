@@ -2,8 +2,7 @@ class Pet < ApplicationRecord
   # Associations
   belongs_to :user, optional: true
   has_many :requests, dependent: :destroy
-  has_one_attached :photo, dependent: :destroy
-
+  mount_uploader :image, ImageUploader
   # Enums
   enum pet_type: { dog: 'dog', cat: 'cat', rabbit: 'rabbit', bird: 'bird', other: 'other' }
   enum size: { small: 'small', medium: 'medium', large: 'large' }
@@ -20,7 +19,7 @@ class Pet < ApplicationRecord
   validates :sex, presence: true, inclusion: { in: sexes.keys }
   validates :latitude, numericality: true, allow_blank: true
   validates :longitude, numericality: true, allow_blank: true
-  validate :photo_size, if: :photo.attached?
+  validate :image_size, if: -> { image.file.present? }
 
   # Callbacks
   before_save :geocode_location_if_needed
@@ -62,7 +61,7 @@ class Pet < ApplicationRecord
   end
 
   def photo_url
-    photo.attached? ? Rails.application.routes.url_helpers.url_for(photo) : '/images/placeholder-pet.jpg'
+    image.file.present? ? image.url : '/images/placeholder-pet.jpg'
   end
 
   def mark_as_adopted
@@ -92,9 +91,16 @@ class Pet < ApplicationRecord
     end
   end
 
-  def photo_size
-    return if photo.byte_size <= 5.megabytes
-    errors.add(:photo, "should be less than 5MB")
+  def image_size
+    return unless image.file.present?
+    if image.file.size > 5.megabytes
+      errors.add(:image, "should be less than 5MB")
+    end
+  end
+
+  # Returns true when an image file has been uploaded
+  def image_uploaded?
+    image.file.present?
   end
 
   def send_pet_added_notification

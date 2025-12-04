@@ -28,16 +28,20 @@
 
   <!-- Pets Grid -->
   <% if @pets.any? %>
-    <div class="pet-grid">
+    <div class="pet-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <% @pets.each do |pet| %>
         <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
           <div class="h-48 bg-gray-200 flex items-center justify-center">
-            <%= image_tag 'https://placehold.co/400x300?text=' + pet.name, alt: pet.name, class: 'w-full h-full object-cover' %>
+            <% if pet.image.present? %>
+              <%= image_tag pet.image.url, alt: pet.name, class: 'w-full h-full object-cover' %>
+            <% else %>
+              <%= image_tag '/images/placeholder-pet.jpg', alt: 'No image', class: 'w-full h-full object-cover' %>
+            <% end %>
           </div>
           <div class="p-4">
             <h3 class="text-lg font-bold text-gray-900 mb-1"><%= pet.name %></h3>
             <p class="text-sm text-gray-600 mb-2">
-              <strong><%= pet.pet_type %></strong> • <%= pet.breed %> • <%= pet.age %> years
+              <strong><%= pet.pet_type.capitalize %></strong> • <%= pet.breed %> • <%= pet.age %> years
             </p>
             <p class="text-sm text-gray-500 mb-3">
               📍 <%= pet.location %>
@@ -53,6 +57,11 @@
           </div>
         </div>
       <% end %>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-6">
+      <%= paginate @pets %>
     </div>
   <% else %>
     <div class="text-center py-12">
