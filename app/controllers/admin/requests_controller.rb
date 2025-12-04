@@ -1,7 +1,5 @@
 module Admin
-  class RequestsController < ApplicationController
-    before_action :authenticate_user!
-    before_action :authorize_admin!
+  class RequestsController < Admin::BaseController
     before_action :set_request, only: [:show, :update, :approve, :reject]
 
     def index
@@ -49,10 +47,6 @@ module Admin
     end
 
     private
-
-    def authorize_admin!
-      redirect_to root_path, alert: 'Not authorized' unless current_user&.admin?
-    end
 
     def set_request
       @request = Request.find(params[:id])

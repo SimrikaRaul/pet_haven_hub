@@ -15,6 +15,12 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  def require_admin
+    unless current_user&.admin?
+      redirect_to root_path, alert: 'You are not authorized to access this page.'
+    end
+  end
+
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :email, :phone, :address, :city, :country, :latitude, :longitude])
     devise_parameter_sanitizer.permit(:account_update, keys: [:name, :email, :phone, :address, :city, :country, :latitude, :longitude])

@@ -1,8 +1,5 @@
 module Admin
-  class DashboardController < ApplicationController
-    before_action :authenticate_user!
-    before_action :authorize_admin!
-
+  class DashboardController < Admin::BaseController
     def index
       @stats = {
         total_pets: Pet.count,
@@ -27,10 +24,5 @@ module Admin
       @adoptions_by_pet_type = Request.where(request_type: 'adopt').joins(:pet).group('pets.pet_type').count
     end
 
-    private
-
-    def authorize_admin!
-      redirect_to root_path, alert: 'Not authorized' unless current_user&.admin?
-    end
   end
 end

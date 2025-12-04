@@ -1,7 +1,5 @@
 module Admin
-  class PetsController < ApplicationController
-    skip_before_action :authenticate_user!
-    before_action :authorize_admin!
+  class PetsController < Admin::BaseController
     before_action :set_pet, only: [:show, :edit, :update, :destroy]
 
     def index
@@ -46,10 +44,6 @@ module Admin
     end
 
     private
-
-    def authorize_admin!
-      redirect_to root_path, alert: 'Not authorized' unless current_user&.admin?
-    end
 
     def set_pet
       @pet = Pet.find(params[:id])

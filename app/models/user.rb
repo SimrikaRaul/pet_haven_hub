@@ -17,6 +17,7 @@ class User < ApplicationRecord
   validates :phone, allow_blank: true, format: { with: /\A[+]?[0-9]{10,15}\z/, message: 'must be a valid phone number' }
   validates :address, length: { maximum: 500 }, allow_blank: true
   validates :city, length: { maximum: 100 }, allow_blank: true
+  validates :admin, inclusion: { in: [true, false] }, allow_nil: true
 
   # Scopes
   scope :active_users, -> { where("confirmed_at IS NOT NULL OR sign_in_count > 0") }
