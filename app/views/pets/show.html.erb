@@ -1,97 +1,88 @@
-<div class="container py-8">
-  <div class="flex flex-col md:flex-row gap-8">
-    <!-- Pet Image & Info -->
-    <div class="md:w-1/2">
-      <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-        <div class="h-96 bg-gray-200 flex items-center justify-center">
-          <%= image_tag 'https://placehold.co/600x400?text=' + @pet.name, alt: @pet.name, class: 'w-full h-full object-cover' %>
+<div class="container mx-auto px-4 py-8">
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="flex flex-col lg:flex-row">
+      <!-- Left: Image gallery / main image -->
+      <div class="lg:w-1/2 bg-gray-50">
+        <div class="h-96 w-full overflow-hidden bg-gray-200 flex items-center justify-center">
+          <% if @pet.image.present? && @pet.image.url %>
+            <%= image_tag @pet.image.url, alt: @pet.name, class: 'w-full h-full object-cover' %>
+          <% else %>
+            <%= image_tag '/images/placeholder-pet.jpg', alt: @pet.name, class: 'w-full h-full object-cover' %>
+          <% end %>
+        </div>
+
+        <%# Optional thumbnails row - suggest extracting into partial if needed %>
+        <div class="p-4 border-t border-gray-100">
+          <div class="flex items-center gap-3 overflow-x-auto">
+            <%# If you have multiple photos implement thumbnails here. For now show a single thumbnail copy %>
+            <div class="w-20 h-20 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
+              <% if @pet.image.present? && @pet.image.url %>
+                <%= image_tag @pet.image.url, alt: @pet.name, class: 'w-full h-full object-cover' %>
+              <% else %>
+                <%= image_tag '/images/placeholder-pet.jpg', alt: 'placeholder', class: 'w-full h-full object-cover' %>
+              <% end %>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Quick Stats -->
-      <div class="grid grid-cols-2 gap-4 mb-6">
-        <div class="bg-blue-50 rounded-lg p-4">
-          <p class="text-sm text-gray-600">Species</p>
-          <p class="text-xl font-bold text-gray-900"><%= @pet.pet_type %></p>
-        </div>
-        <div class="bg-green-50 rounded-lg p-4">
-          <p class="text-sm text-gray-600">Breed</p>
-          <p class="text-xl font-bold text-gray-900"><%= @pet.breed %></p>
-        </div>
-        <div class="bg-yellow-50 rounded-lg p-4">
-          <p class="text-sm text-gray-600">Age</p>
-          <p class="text-xl font-bold text-gray-900"><%= @pet.age %> yrs</p>
-        </div>
-        <div class="bg-purple-50 rounded-lg p-4">
-          <p class="text-sm text-gray-600">Status</p>
-          <p class="text-xl font-bold text-gray-900"><%= @pet.status %></p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Details & Request Form -->
-    <div class="md:w-1/2">
-      <div class="bg-white rounded-xl shadow-lg p-8">
+      <!-- Right: Details + actions -->
+      <div class="lg:w-1/2 p-6">
         <h1 class="text-3xl font-bold text-gray-900 mb-2"><%= @pet.name %></h1>
-        <p class="text-lg text-gray-600 mb-6">📍 <%= @pet.location %></p>
+        <p class="text-sm text-gray-600 mb-4">📍 <%= @pet.location %></p>
 
-        <!-- Details -->
-        <div class="space-y-4 mb-8">
-          <div class="border-b pb-4">
-            <p class="text-sm text-gray-600">Health Status</p>
-            <p class="font-semibold text-gray-900"><%= @pet.health_status || 'Not specified' %></p>
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-gray-50 border rounded-lg p-4">
+            <p class="text-xs text-gray-500">Species</p>
+            <p class="font-semibold text-gray-900"><%= @pet.pet_type.try(:capitalize) || '—' %></p>
           </div>
-          <div class="border-b pb-4">
-            <p class="text-sm text-gray-600">Size</p>
-            <p class="font-semibold text-gray-900"><%= @pet.size || 'Not specified' %></p>
+          <div class="bg-gray-50 border rounded-lg p-4">
+            <p class="text-xs text-gray-500">Breed</p>
+            <p class="font-semibold text-gray-900"><%= @pet.breed || '—' %></p>
           </div>
-          <div class="border-b pb-4">
-            <p class="text-sm text-gray-600">Sex</p>
-            <p class="font-semibold text-gray-900"><%= @pet.sex || 'Not specified' %></p>
+          <div class="bg-gray-50 border rounded-lg p-4">
+            <p class="text-xs text-gray-500">Age</p>
+            <p class="font-semibold text-gray-900"><%= @pet.age %> yrs</p>
           </div>
-          <div class="pb-4">
-            <p class="text-sm text-gray-600">Vaccinated</p>
-            <p class="font-semibold text-gray-900"><%= @pet.vaccinated ? '✓ Yes' : '✗ No' %></p>
+          <div class="bg-gray-50 border rounded-lg p-4">
+            <p class="text-xs text-gray-500">Size</p>
+            <p class="font-semibold text-gray-900"><%= @pet.size || '—' %></p>
           </div>
         </div>
 
-        <!-- Description -->
-        <div class="mb-8">
-          <h3 class="text-lg font-bold text-gray-900 mb-2">About <%= @pet.name %></h3>
-          <p class="text-gray-700 leading-relaxed">
-            <%= @pet.description || 'A wonderful pet waiting for a loving home!' %>
-          </p>
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-2">Health & Details</h3>
+          <ul class="space-y-2 text-sm text-gray-700">
+            <li><strong>Health:</strong> <%= @pet.health_status.presence || 'Not specified' %></li>
+            <li><strong>Sex:</strong> <%= @pet.sex || 'Not specified' %></li>
+            <li><strong>Vaccinated:</strong> <%= @pet.vaccinated ? 'Yes' : 'No' %></li>
+          </ul>
         </div>
 
-        <!-- Request Form -->
-        <% if user_signed_in? %>
-          <div class="bg-gray-50 rounded-lg p-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">Interested in <%= @pet.name %>?</h3>
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-2">About</h3>
+          <p class="text-gray-700 leading-relaxed"><%= @pet.description.presence || 'A wonderful pet waiting for a loving home.' %></p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <%= link_to 'Back to listings', pets_path, class: 'inline-flex justify-center items-center px-4 py-2 border rounded-md text-sm bg-white hover:bg-gray-50' %>
+
+          <% if user_signed_in? %>
             <%= form_with url: pet_requests_path(@pet), method: :post, local: true do |f| %>
-              <div class="mb-4">
-                <%= f.label :request_type, 'Request Type:' %>
-                <%= f.select :request_type, [['Adopt', 'adopt'], ['Donate', 'donate']], {}, class: 'w-full px-3 py-2 border rounded-lg' %>
+              <div class="flex gap-2 w-full">
+                <%= f.hidden_field :request_type, value: 'adopt' %>
+                <%= f.submit 'Request to Adopt', class: 'flex-1 inline-flex justify-center items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700' %>
               </div>
-              <div class="mb-4">
-                <%= f.label :notes, 'Additional Info:' %>
-                <%= f.text_area :notes, placeholder: 'Tell us about yourself or your interest...', class: 'w-full px-3 py-2 border rounded-lg h-24' %>
-              </div>
-              <%= f.submit 'Submit Request', class: 'btn btn-primary w-full' %>
             <% end %>
-          </div>
-        <% else %>
-          <div class="bg-blue-50 rounded-lg p-6 text-center">
-            <p class="text-gray-700 mb-4">Sign in to submit an adoption or donation request.</p>
-            <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary' %>
-            <%= link_to 'Sign Up', new_user_registration_path, class: 'btn btn-outline' %>
-          </div>
-        <% end %>
+          <% else %>
+            <%= link_to 'Sign in to request', new_user_session_path, class: 'inline-flex justify-center items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700' %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Back Button -->
-  <div class="mt-8">
-    <%= link_to '← Back to Pets', pets_path, class: 'text-blue-600 hover:text-blue-800 font-semibold' %>
+  <div class="mt-6 text-center">
+    <p class="text-sm text-gray-500">Listed on <%= l(@pet.created_at.to_date, format: :long) %></p>
   </div>
 </div>
