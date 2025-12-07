@@ -39,19 +39,25 @@
                 <td class="px-6 py-4 text-sm text-gray-600"><%= pet.breed %></td>
                 <td class="px-6 py-4 text-sm text-gray-600"><%= pet.age %> yrs</td>
                 <td class="px-6 py-4">
-                  <% if pet.available? %>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      ✓ Available
-                    </span>
+                  <% case pet.status %>
+                  <% when 'available' %>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Available</span>
+                  <% when 'pending' %>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">● Pending</span>
+                  <% when 'adopted' %>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">★ Adopted</span>
                   <% else %>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                      ✗ Unavailable
-                    </span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"><%= pet.status.to_s.titleize %></span>
                   <% end %>
                 </td>
                 <td class="px-6 py-4 text-sm space-x-3 flex">
                   <%= link_to 'View', admin_pet_path(pet), class: 'text-indigo-600 hover:text-indigo-900 font-medium' %>
                   <%= link_to 'Edit', edit_admin_pet_path(pet), class: 'text-blue-600 hover:text-blue-900 font-medium' %>
+                  <% if pet.status == 'adopted' %>
+                    <%= link_to 'Make Available', mark_as_available_admin_pet_path(pet), method: :patch, data: { confirm: 'Make this pet available again?' }, class: 'text-green-600 hover:text-green-900 font-medium' %>
+                  <% else %>
+                    <%= link_to 'Mark Adopted', mark_as_adopted_admin_pet_path(pet), method: :patch, data: { confirm: 'Mark this pet as adopted?' }, class: 'text-red-600 hover:text-red-900 font-medium' %>
+                  <% end %>
                   <%= link_to 'Delete', admin_pet_path(pet), method: :delete, data: { confirm: 'Are you sure?' }, class: 'text-red-600 hover:text-red-900 font-medium' %>
                 </td>
               </tr>

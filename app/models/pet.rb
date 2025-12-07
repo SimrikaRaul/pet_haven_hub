@@ -7,6 +7,7 @@ class Pet < ApplicationRecord
   enum pet_type: { dog: 'dog', cat: 'cat', rabbit: 'rabbit', bird: 'bird', other: 'other' }
   enum size: { small: 'small', medium: 'medium', large: 'large' }
   enum sex: { male: 'male', female: 'female' }
+  enum status: { available: 'available', pending: 'pending', adopted: 'adopted', archived: 'archived' }
 
   # Validations
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
@@ -24,6 +25,8 @@ class Pet < ApplicationRecord
   # Callbacks
   before_save :geocode_location_if_needed
   after_create :send_pet_added_notification
+  after_initialize :set_default_status
+  after_update :notify_status_change
 
   # Scopes
   scope :available, -> { where(available: true) }
@@ -62,6 +65,29 @@ class Pet < ApplicationRecord
 
   def photo_url
     image.file.present? ? image.url : '/images/placeholder-pet.jpg'
+  end
+
+  # Status helpers
+  def set_default_status
+    self.status ||= 'available'
+  end
+
+  def mark_as_adopted!
+    update(status: 'adopted', available: false)
+  end
+
+  def mark_as_available!
+    update(status: 'available', available: true)
+  end
+
+  def notify_status_change
+    return unless saved_changes.key?('status')
+    previous_status, new_status = saved_changes['status']
+    begin
+      PetMailer.status_changed(self, previous_status, new_status).deliver_later
+    rescue StandardError => e
+      Rails.logger.error("Failed to enqueue status change mail for Pet #{id}: #{e.message}")
+    end
   end
 
   def mark_as_adopted

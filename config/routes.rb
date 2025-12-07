@@ -14,7 +14,12 @@ Rails.application.routes.draw do
   namespace :admin do
     root to: 'dashboard#index'
     get 'dashboard', to: 'dashboard#index'
-    resources :pets
+    resources :pets do
+      member do
+        patch :mark_as_adopted
+        patch :mark_as_available
+      end
+    end
     resources :requests do
       member do
         post :approve

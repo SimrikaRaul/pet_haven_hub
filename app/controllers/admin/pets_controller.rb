@@ -1,6 +1,6 @@
 module Admin
   class PetsController < Admin::BaseController
-    before_action :set_pet, only: [:show, :edit, :update, :destroy]
+      before_action :set_pet, only: [:show, :edit, :update, :destroy, :mark_as_adopted, :mark_as_available]
 
     def index
       @pets = Pet.recent.page(params[:page]).per(20)
@@ -41,6 +41,22 @@ module Admin
       pet_name = @pet.name
       @pet.destroy
       redirect_to admin_pets_path, notice: "Pet '#{pet_name}' has been removed."
+    end
+
+    def mark_as_adopted
+      if @pet.mark_as_adopted!
+        redirect_to admin_pets_path, notice: 'Pet marked as adopted.'
+      else
+        redirect_to admin_pets_path, alert: 'Unable to change status.'
+      end
+    end
+
+    def mark_as_available
+      if @pet.mark_as_available!
+        redirect_to admin_pets_path, notice: 'Pet is now available.'
+      else
+        redirect_to admin_pets_path, alert: 'Unable to change status.'
+      end
     end
 
     private

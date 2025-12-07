@@ -1,0 +1,10 @@
+Hello,
+
+The status for the pet "<%= @pet.name %>" has changed from <%= @previous_status.to_s.titleize %> to <%= @new_status.to_s.titleize %>.
+
+You can view the listing here: <%= pet_url(@pet) rescue '#' %>
+
+If you have questions, please contact the site administrator.
+
+Thanks,
+Pet Haven Hub
