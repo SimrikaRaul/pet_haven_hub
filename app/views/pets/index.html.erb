@@ -2,7 +2,7 @@
   <header class="mb-6 flex items-center justify-between">
     <h1 class="text-3xl font-extrabold text-gray-900">Browse Available Pets</h1>
     <div class="hidden sm:flex items-center gap-3">
-      <%= link_to 'Add Pet', new_pet_path, class: 'inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition' if user_signed_in? %>
+      <%= link_to 'Add Pet', new_admin_pet_path, class: 'inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition' if user_signed_in? %>
     </div>
   </header>
 
@@ -32,7 +32,7 @@
         </div>
 
         <div class="mb-4 flex items-center gap-2">
-          <%= f.check_box :available, {}, '1', '0', class: 'h-4 w-4 text-blue-600' %>
+          <%= f.check_box :available, { class: 'h-4 w-4 text-blue-600' }, '1', '0' %>
           <%= f.label :available, 'Available only', class: 'text-sm text-gray-700' %>
         </div>
 
