@@ -13,9 +13,14 @@
 //= require rails-ujs
 //= require turbolinks
 //= require_tree .
+//= require jquery3
+//= require popper
+//= require bootstrap
+
 
 
 import "@hotwired/turbo-rails"
 import "@rails/ujs"
+import "bootstrap"
 Rails.start()
 

@@ -1,0 +1,28 @@
+<!-- app/views/admin_mailer/new_pet_added_notification.html.erb -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <h1>New Pet Added</h1>
+  
+  <p>A new pet has been added to Pet Haven Hub:</p>
+  
+  <ul>
+    <li><strong>Name:</strong> <%= @pet.name %></li>
+    <li><strong>Type:</strong> <%= @pet.pet_type %></li>
+    <li><strong>Breed:</strong> <%= @pet.breed %></li>
+    <li><strong>Age:</strong> <%= @pet.age %></li>
+    <li><strong>Location:</strong> <%= @pet.city %>, <%= @pet.country %></li>
+  </ul>
+  
+  <% if @pet.image.present? %>
+    <%= image_tag @pet.image.url, alt: @pet.name, style: "max-width: 300px;" %>
+  <% end %>
+  
+  <p>
+    <%= link_to 'View Pet Details', admin_pet_url(@pet) %>
+  </p>
+</body>
+</html>

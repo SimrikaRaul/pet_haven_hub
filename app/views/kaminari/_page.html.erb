@@ -1,0 +1,9 @@
+<% if page.current? %>
+  <li>
+    <%= content_tag :a, page, data: { remote: remote }, rel: page.rel, class: 'px-4 py-2 border text-sm font-medium border-indigo-500 bg-indigo-50 text-indigo-600' %>
+  </li>
+<% else %>
+  <li>
+    <%= link_to page, url, remote: remote, rel: page.rel, class: 'px-4 py-2 border text-sm font-medium border-gray-300 bg-white text-gray-500 hover:bg-gray-50' %>
+  </li>
+<% end %>

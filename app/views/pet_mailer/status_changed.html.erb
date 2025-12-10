@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body style="font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color: #111827;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 24px;">
+      <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden;">
+        <div style="padding: 20px;">
+          <h1 style="font-size: 20px; margin: 0 0 8px; color: #111827;">Status updated: <%= @pet.name %></h1>
+          <p style="margin: 0 0 12px; color: #6b7280;">The status for the pet "<strong><%= @pet.name %></strong>" has changed from <strong><%= @previous_status.to_s.titleize %></strong> to <strong><%= @new_status.to_s.titleize %></strong>.</p>
+
+          <p style="margin: 0 0 16px;"><a href="<%= pet_url(@pet) rescue '#' %>" style="display:inline-block; padding:10px 16px; background:#4f46e5; color:#fff; border-radius:6px; text-decoration:none;">View Listing</a></p>
+
+          <p style="margin: 0; color: #6b7280; font-size: 13px;">If you have questions, reply to this email or contact the site administrator.</p>
+        </div>
+        <div style="background:#f9fafb; padding:12px; font-size:12px; color:#9ca3af; text-align:center;">
+          Pet Haven Hub
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

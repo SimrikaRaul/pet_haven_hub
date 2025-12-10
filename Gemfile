@@ -40,6 +40,11 @@ gem 'jbuilder', '~> 2.7'
 
 gem 'devise' ,'~>4.9'
 gem 'kaminari', '~> 1.2'
+gem "kaminari-core"
+gem "kaminari-actionview"
+gem "kaminari-activerecord"
+gem 'bootstrap', '~> 5.2.0'
+gem 'jquery-rails'
 
 
 gem 'responders', '~> 3.0'

@@ -69,7 +69,7 @@ module Admin
       params.require(:pet).permit(
         :name, :pet_type, :breed, :age, :size, :sex, :description,
         :health_status, :vaccinated, :available, :city, :country,
-        :latitude, :longitude, :image
+        :latitude, :longitude,  :image, :image_cache, :remove_image
       )
     end
   end

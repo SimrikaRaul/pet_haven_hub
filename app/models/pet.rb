@@ -69,6 +69,11 @@ class Pet < ApplicationRecord
 
   # Status helpers
   def set_default_status
+    # If the `status` attribute isn't present on this instance (e.g. a select omitted it),
+    # reading it will raise ActiveModel::MissingAttributeError. Guard by checking loaded
+    # attributes first and only set a default when it's safe.
+    return unless has_attribute?(:status)
+
     self.status ||= 'available'
   end
 
