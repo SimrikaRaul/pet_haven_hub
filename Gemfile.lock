@@ -95,6 +95,8 @@ GEM
       csv (>= 3.0.0)
     globalid (1.1.0)
       activesupport (>= 5.0)
+    groupdate (5.2.4)
+      activesupport (>= 5)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     image_processing (1.14.0)
@@ -283,6 +285,7 @@ DEPENDENCIES
   devise (~> 4.9)
   ffi (= 1.15.5)
   geocoder
+  groupdate
   jbuilder (~> 2.7)
   jquery-rails
   kaminari (~> 1.2)

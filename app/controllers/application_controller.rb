@@ -13,10 +13,23 @@ class ApplicationController < ActionController::Base
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
+  # Helper methods available in views
+  helper_method :admin_user?, :current_admin
+
   protected
 
+  # Check if current user is an admin
+  def admin_user?
+    current_user&.admin?
+  end
+
+  # Return current admin or nil
+  def current_admin
+    current_user if admin_user?
+  end
+
   def require_admin
-    unless current_user&.admin?
+    unless admin_user?
       redirect_to root_path, alert: 'You are not authorized to access this page.'
     end
   end
@@ -27,7 +40,7 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource)
-    resource.admin? ? admin_pets_path : root_path
+    resource.admin? ? admin_dashboard_path : root_path
   end
 
   def after_sign_out_path_for(resource_or_scope)

@@ -1,0 +1,52 @@
+<h1>Edit User</h1>
+
+<div class="card" style="max-width: 600px;">
+  <%= form_with(model: [:admin, @user], local: true) do |form| %>
+    <% if @user.errors.any? %>
+      <div class="alert alert-danger" style="margin-bottom: 20px;">
+        <h4><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h4>
+        <ul>
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div style="margin-bottom: 20px;">
+      <%= form.label :name, "Full Name" %>
+      <%= form.text_field :name, class: 'form-control', style: 'width: 100%; padding: 10px; border: 1px solid #CBD5E0; border-radius: 6px; margin-top: 6px;' %>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <%= form.label :email, "Email Address" %>
+      <%= form.email_field :email, class: 'form-control', style: 'width: 100%; padding: 10px; border: 1px solid #CBD5E0; border-radius: 6px; margin-top: 6px;' %>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <%= form.label :phone, "Phone Number" %>
+      <%= form.text_field :phone, class: 'form-control', style: 'width: 100%; padding: 10px; border: 1px solid #CBD5E0; border-radius: 6px; margin-top: 6px;' %>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <%= form.label :address, "Address" %>
+      <%= form.text_field :address, class: 'form-control', style: 'width: 100%; padding: 10px; border: 1px solid #CBD5E0; border-radius: 6px; margin-top: 6px;' %>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+      <div>
+        <%= form.label :city, "City" %>
+        <%= form.text_field :city, class: 'form-control', style: 'width: 100%; padding: 10px; border: 1px solid #CBD5E0; border-radius: 6px; margin-top: 6px;' %>
+      </div>
+      <div>
+        <%= form.label :country, "Country" %>
+        <%= form.text_field :country, class: 'form-control', style: 'width: 100%; padding: 10px; border: 1px solid #CBD5E0; border-radius: 6px; margin-top: 6px;' %>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; margin-top: 32px;">
+      <%= form.submit "Save Changes", class: 'btn btn-primary' %>
+      <%= link_to 'Cancel', admin_user_path(@user), class: 'btn btn-outline' %>
+    </div>
+  <% end %>
+</div>

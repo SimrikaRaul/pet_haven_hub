@@ -1,62 +1,159 @@
-<div class="container py-8">
-  <h1 class="text-3xl font-bold mb-6 text-gray-900">Admin Dashboard</h1>
+<h1>Admin Dashboard</h1>
 
-  <!-- Quick Stats -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
-      <p class="text-sm font-semibold opacity-90">Total Pets</p>
-      <p class="text-4xl font-bold"><%= @pets_count %></p>
-    </div>
-    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
-      <p class="text-sm font-semibold opacity-90">Open Requests</p>
-      <p class="text-4xl font-bold"><%= @open_requests %></p>
-    </div>
-    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
-      <p class="text-sm font-semibold opacity-90">Total Users</p>
-      <p class="text-4xl font-bold"><%= User.count %></p>
+<!-- Quick Stats -->
+<div class="grid grid-cols-1 grid-cols-2 grid-cols-4">
+  <div class="stat-card info">
+    <p style="font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; color: #718096;">Total Pets</p>
+    <p style="font-size: 32px; font-weight: 700; color: #667EEA;"><%= @stats[:total_pets] %></p>
+  </div>
+  
+  <div class="stat-card success">
+    <p style="font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; color: #718096;">Available Pets</p>
+    <p style="font-size: 32px; font-weight: 700; color: #48BB78;"><%= @stats[:available_pets] %></p>
+  </div>
+  
+  <div class="stat-card warning">
+    <p style="font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; color: #718096;">Total Users</p>
+    <p style="font-size: 32px; font-weight: 700; color: #ED8936;"><%= @stats[:total_users] %></p>
+  </div>
+  
+  <div class="stat-card danger">
+    <p style="font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; color: #718096;">Pending Requests</p>
+    <p style="font-size: 32px; font-weight: 700; color: #F56565;"><%= @stats[:open_requests] %></p>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="grid grid-cols-1 grid-cols-2" style="margin-top: 40px;">
+  <div class="card">
+    <h3>🐾 Manage Pets</h3>
+    <p style="margin: 12px 0; color: #718096;">Create, edit, and delete pet listings.</p>
+    <%= link_to 'View All Pets →', admin_pets_path, class: 'btn btn-primary' %>
+  </div>
+  
+  <div class="card">
+    <h3>📋 Review Requests</h3>
+    <p style="margin: 12px 0; color: #718096;">Approve or reject adoption/donation requests.</p>
+    <%= link_to 'View All Requests →', admin_requests_path, class: 'btn btn-primary' %>
+  </div>
+</div>
+
+<!-- Request Statistics -->
+<div class="grid grid-cols-1 grid-cols-3" style="margin-top: 40px;">
+  <div class="card">
+    <h3>Request Types</h3>
+    <div style="margin-top: 16px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+        <span>Adoption Requests</span>
+        <span style="font-weight: 700; color: #667EEA;"><%= @stats[:adoption_requests] %></span>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span>Donation Requests</span>
+        <span style="font-weight: 700; color: #667EEA;"><%= @stats[:donation_requests] %></span>
+      </div>
     </div>
   </div>
-
-  <!-- Quick Actions -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h3 class="text-xl font-bold mb-4 text-gray-900">Manage Pets</h3>
-      <p class="text-gray-600 mb-4">Create, edit, and delete pet listings.</p>
-      <%= link_to 'View All Pets', admin_pets_path, class: 'btn btn-primary' %>
-    </div>
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h3 class="text-xl font-bold mb-4 text-gray-900">Review Requests</h3>
-      <p class="text-gray-600 mb-4">Approve or reject adoption/donation requests.</p>
-      <%= link_to 'View All Requests', admin_requests_path, class: 'btn btn-primary' %>
+  
+  <div class="card">
+    <h3>Request Status</h3>
+    <div style="margin-top: 16px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+        <span><span class="badge badge-warning">Open</span></span>
+        <span style="font-weight: 700;"><%= @stats[:open_requests] %></span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+        <span><span class="badge badge-success">Approved</span></span>
+        <span style="font-weight: 700;"><%= @stats[:approved_requests] %></span>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span><span class="badge badge-danger">Rejected</span></span>
+        <span style="font-weight: 700;"><%= @stats[:rejected_requests] %></span>
+      </div>
     </div>
   </div>
+  
+  <div class="card">
+    <h3>Pet Status</h3>
+    <div style="margin-top: 16px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+        <span>Available</span>
+        <span style="font-weight: 700; color: #48BB78;"><%= @stats[:available_pets] %></span>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span>Unavailable</span>
+        <span style="font-weight: 700; color: #F56565;"><%= @stats[:unavailable_pets] %></span>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <!-- Recent Activity (placeholder) -->
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h3 class="text-xl font-bold mb-4 text-gray-900">Recent Requests</h3>
-    <% recent_reqs = Request.order(created_at: :desc).limit(5) %>
-    <% if recent_reqs.any? %>
-      <div class="space-y-3">
-        <% recent_reqs.each do |req| %>
-          <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-            <div>
-              <p class="font-semibold text-gray-900"><%= req.user.name %> • <%= req.pet.name %></p>
-              <p class="text-sm text-gray-600"><%= req.request_type.capitalize %> • <%= time_ago_in_words(req.created_at) %> ago</p>
+<!-- Recent Requests -->
+<div class="card" style="margin-top: 40px;">
+  <h3>Recent Requests</h3>
+  
+  <% if @recent_requests.any? %>
+    <div style="margin-top: 20px;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Pet</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @recent_requests.each do |req| %>
+            <tr>
+              <td><strong><%= req.user.name %></strong></td>
+              <td><%= req.pet.name %></td>
+              <td><%= link_to req.request_type.capitalize, admin_requests_path, class: 'badge badge-primary' %></td>
+              <td>
+                <% case req.status
+                   when 'open' %>
+                  <span class="badge badge-warning">Open</span>
+                <% when 'approved' %>
+                  <span class="badge badge-success">Approved</span>
+                <% when 'rejected' %>
+                  <span class="badge badge-danger">Rejected</span>
+                <% when 'completed' %>
+                  <span class="badge badge-success">Completed</span>
+                <% end %>
+              </td>
+              <td><%= time_ago_in_words(req.created_at) %> ago</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p style="margin-top: 20px; color: #718096;">No requests yet.</p>
+  <% end %>
+</div>
+
+<!-- Recent Pets -->
+<div class="card" style="margin-top: 40px; margin-bottom: 40px;">
+  <h3>Recent Pets</h3>
+  
+  <% if @recent_pets.any? %>
+    <div style="margin-top: 20px;">
+      <div class="grid grid-cols-1 grid-cols-2 grid-cols-3">
+        <% @recent_pets.each do |pet| %>
+          <div class="card" style="cursor: pointer;">
+            <div style="font-weight: 600; margin-bottom: 8px;"><%= pet.name %></div>
+            <div style="font-size: 13px; color: #718096; margin-bottom: 4px;">
+              <span class="badge badge-primary"><%= pet.pet_type.capitalize %></span>
             </div>
-            <span class="px-3 py-1 rounded-full text-sm font-semibold text-white
-              <%= case req.status
-                  when 'open' then 'bg-yellow-500'
-                  when 'approved' then 'bg-green-500'
-                  when 'rejected' then 'bg-red-500'
-                  else 'bg-gray-400'
-                  end %>">
-              <%= req.status.upcase %>
-            </span>
+            <div style="font-size: 13px; color: #718096; margin-bottom: 12px;">
+              Added <%= time_ago_in_words(pet.created_at) %> ago
+            </div>
+            <%= link_to 'View Details', admin_pet_path(pet), class: 'btn btn-small btn-outline' %>
           </div>
         <% end %>
       </div>
-    <% else %>
-      <p class="text-gray-600">No requests yet.</p>
-    <% end %>
-  </div>
+    </div>
+  <% else %>
+    <p style="margin-top: 20px; color: #718096;">No pets yet.</p>
+  <% end %>
 </div>

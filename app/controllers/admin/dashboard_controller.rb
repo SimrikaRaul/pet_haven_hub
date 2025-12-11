@@ -20,7 +20,7 @@ module Admin
       @pending_requests = Request.where(status: 'open').limit(10)
       
       # Activity chart data
-      @requests_by_date = Request.group_by_day(:created_at).count.last(30)
+      @requests_by_date = Request.group_by_day(:created_at).count.to_a.last(30).to_h
       @adoptions_by_pet_type = Request.where(request_type: 'adopt').joins(:pet).group('pets.pet_type').count
     end
 

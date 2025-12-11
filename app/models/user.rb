@@ -36,7 +36,8 @@ class User < ApplicationRecord
   scope :with_adoption_history, -> { joins(:requests).distinct }
 # Explicit role predicate helpers (keeps calls like `current_user.admin?` working)
   def admin?
-    role == 'admin'
+    # Check if user has admin role OR matches static admin email (if configured)
+    role == 'admin' || email == ENV['ADMIN_EMAIL']
   end
 
   def shelter_manager?

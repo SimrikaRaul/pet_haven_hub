@@ -1,0 +1,196 @@
+<style>
+  .admin-sidebar {
+    background: linear-gradient(180deg, #1A202C 0%, #2D3748 100%);
+    color: white;
+  }
+
+  .sidebar-logo {
+    font-size: 18px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    text-decoration: none;
+    padding: 20px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 24px;
+  }
+
+  .sidebar-logo:hover {
+    color: #BEE3F8;
+  }
+
+  .sidebar-nav {
+    list-style: none;
+    padding: 0 12px;
+  }
+
+  .sidebar-nav-item {
+    margin-bottom: 8px;
+  }
+
+  .sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: #CBD5E0;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .sidebar-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  .sidebar-nav-link.active {
+    background-color: #667EEA;
+    color: white;
+  }
+
+  .sidebar-nav-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+  }
+
+  .sidebar-section {
+    margin-top: 32px;
+  }
+
+  .sidebar-section-title {
+    padding: 0 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #A0AEC0;
+    margin-bottom: 12px;
+  }
+
+  .sidebar-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .sidebar-user-info {
+    padding: 12px 16px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+
+  .sidebar-user-name {
+    font-weight: 600;
+    color: white;
+  }
+
+  .sidebar-user-role {
+    color: #A0AEC0;
+    font-size: 12px;
+  }
+
+  .sidebar-logout {
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
+    background-color: #F56565;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .sidebar-logout:hover {
+    background-color: #E53E3E;
+  }
+</style>
+
+<aside class="admin-sidebar">
+  <%= link_to admin_dashboard_path, class: 'sidebar-logo' do %>
+    🐾 Admin Panel
+  <% end %>
+
+  <nav>
+    <ul class="sidebar-nav">
+      <!-- Dashboard Section -->
+      <li class="sidebar-nav-item">
+        <%= link_to admin_dashboard_path, class: "sidebar-nav-link #{active_link_helper(admin_dashboard_path)}" do %>
+          <span class="sidebar-nav-icon">📊</span>
+          <span>Dashboard</span>
+        <% end %>
+      </li>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Management</div>
+        
+        <!-- Pets Management -->
+        <li class="sidebar-nav-item">
+          <%= link_to admin_pets_path, class: "sidebar-nav-link #{active_link_helper(admin_pets_path)}" do %>
+            <span class="sidebar-nav-icon">🐾</span>
+            <span>Manage Pets</span>
+          <% end %>
+        </li>
+
+        <!-- Requests Management -->
+        <li class="sidebar-nav-item">
+          <%= link_to admin_requests_path, class: "sidebar-nav-link #{active_link_helper(admin_requests_path)}" do %>
+            <span class="sidebar-nav-icon">📋</span>
+            <span>Review Requests</span>
+          <% end %>
+        </li>
+
+        <!-- Users Management -->
+        <li class="sidebar-nav-item">
+          <%= link_to admin_users_path, class: "sidebar-nav-link #{active_link_helper(admin_users_path)}" do %>
+            <span class="sidebar-nav-icon">👥</span>
+            <span>Users</span>
+          <% end %>
+        </li>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Settings</div>
+        
+        <!-- System Settings (optional) -->
+        <li class="sidebar-nav-item">
+          <%= link_to '#', class: "sidebar-nav-link" do %>
+            <span class="sidebar-nav-icon">⚙️</span>
+            <span>Settings</span>
+          <% end %>
+        </li>
+      </div>
+    </ul>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="sidebar-user-info">
+      <div class="sidebar-user-name"><%= current_user.full_name %></div>
+      <div class="sidebar-user-role">Administrator</div>
+    </div>
+    <%= link_to 'Logout', destroy_user_session_path, method: :delete, data: { turbo: false }, class: 'sidebar-logout' %>
+  </div>
+</aside>
+
+<script>
+  // Helper function to determine active link
+  function isCurrentPath(path) {
+    return window.location.pathname === path;
+  }
+</script>

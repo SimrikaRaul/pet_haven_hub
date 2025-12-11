@@ -132,4 +132,9 @@ module ApplicationHelper
     empty = '☆'.to_s * (max - rating.to_i)
     "#{filled}#{empty}"
   end
+
+  # Determine if a link is active in admin navbar
+  def active_link_helper(path)
+    request.path == path || request.path.start_with?(path.sub(/\d+$/, '')) ? 'active' : ''
+  end
 end

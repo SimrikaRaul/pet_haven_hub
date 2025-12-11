@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Pet Haven Hub - Admin Dashboard">
+  <meta name="theme-color" content="#2D3748">
+  <title>Admin Dashboard - Pet Haven Hub</title>
+  <%= csrf_meta_tags %>
+  <%= csrf_meta_tags %>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+  
+  <style>
+    :root {
+      --primary: #2D3748;
+      --primary-dark: #1A202C;
+      --success: #48BB78;
+      --danger: #F56565;
+      --warning: #ED8936;
+      --info: #4299E1;
+      --accent: #667EEA;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: #EDF2F7;
+      color: #2D3748;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Admin Grid Layout */
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 0;
+      min-height: 100vh;
+    }
+    
+    .admin-sidebar {
+      background: var(--primary-dark);
+      padding: 24px 0;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 260px;
+      height: 100vh;
+      overflow-y: auto;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .admin-sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .admin-sidebar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .admin-sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+    }
+    
+    .admin-content {
+      margin-left: 260px;
+      padding: 32px;
+    }
+    
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+    
+    .btn-primary {
+      background-color: var(--accent);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #5A67D8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+    
+    .btn-outline:hover {
+      background-color: var(--accent);
+      color: white;
+    }
+    
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+    
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+    
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+    
+    .btn-large {
+      padding: 14px 32px;
+      font-size: 16px;
+    }
+    
+    /* Alert messages */
+    .alert {
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .alert-success {
+      background-color: #C6F6D5;
+      border-left: 4px solid var(--success);
+      color: #22543D;
+    }
+    
+    .alert-danger {
+      background-color: #FED7D7;
+      border-left: 4px solid var(--danger);
+      color: #742A2A;
+    }
+    
+    .alert-warning {
+      background-color: #FEEBC8;
+      border-left: 4px solid var(--warning);
+      color: #7C2D12;
+    }
+    
+    .alert-info {
+      background-color: #BEE3F8;
+      border-left: 4px solid var(--info);
+      color: #2C5282;
+    }
+    
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transform: translateY(-4px);
+    }
+    
+    /* Stat cards */
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      border-left: 4px solid var(--accent);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-card.success {
+      border-left-color: var(--success);
+    }
+    
+    .stat-card.danger {
+      border-left-color: var(--danger);
+    }
+    
+    .stat-card.warning {
+      border-left-color: var(--warning);
+    }
+    
+    .stat-card.info {
+      border-left-color: var(--info);
+    }
+    
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .badge-primary {
+      background-color: #EBF4FF;
+      color: #2C5282;
+    }
+    
+    .badge-success {
+      background-color: #E6FFED;
+      color: #22543D;
+    }
+    
+    .badge-danger {
+      background-color: #FFE6E6;
+      color: #742A2A;
+    }
+    
+    .badge-warning {
+      background-color: #FFF5EB;
+      color: #7C2D12;
+    }
+    
+    /* Flash messages */
+    .flash {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Typography */
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #1A202C;
+    }
+    
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #2D3748;
+    }
+    
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #2D3748;
+    }
+    
+    /* Table */
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    
+    .table thead {
+      background-color: #EDF2F7;
+      border-bottom: 1px solid #CBD5E0;
+    }
+    
+    .table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      color: #2D3748;
+    }
+    
+    .table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+    
+    .table tbody tr:hover {
+      background-color: #F7FAFC;
+    }
+    
+    /* Grid */
+    .grid {
+      display: grid;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    
+    .grid-cols-1 { grid-template-columns: 1fr; }
+    .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+    
+    @media (max-width: 768px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+      
+      .admin-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      
+      .admin-content {
+        margin-left: 0;
+      }
+      
+      .grid-cols-2 { grid-template-columns: 1fr; }
+      .grid-cols-3 { grid-template-columns: 1fr; }
+      .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <%= render 'shared/admin_navbar' %>
+    
+    <main class="admin-content">
+      <!-- Flash Messages -->
+      <% if flash.any? %>
+        <% flash.each do |key, message| %>
+          <div class="alert alert-<%= key == 'notice' ? 'success' : 'danger' %> flash">
+            <%= message %>
+          </div>
+        <% end %>
+      <% end %>
+
+      <%= yield %>
+    </main>
+  </div>
+</body>
+</html>

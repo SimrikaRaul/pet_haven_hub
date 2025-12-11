@@ -99,6 +99,7 @@
       border-radius: 6px;
       cursor: pointer;
       transition: background 0.2s ease;
+      text-decoration: none;
     }
 
     .user-menu-item:hover {
@@ -167,13 +168,7 @@
     <button class="mobile-toggle" onclick="toggleMobileMenu()">☰</button>
 
     <ul class="navbar-menu" id="navbar-menu">
-      <li>
-        <% if user_signed_in? && current_user.admin? %>
-          <%= link_to 'Home', admin_dashboard_path %>
-        <% else %>
-          <%= link_to 'Home', root_path %>
-        <% end %>
-      </li>
+      <li><%= link_to 'Home', root_path %></li>
       <li><%= link_to 'Browse Pets', pets_path %></li>
       <li><%= link_to 'My Requests', requests_path, class: user_signed_in? ? '' : 'hidden' %></li>
       <li><%= link_to 'About', '#' %></li>

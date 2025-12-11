@@ -45,6 +45,8 @@ gem "kaminari-actionview"
 gem "kaminari-activerecord"
 gem 'bootstrap', '~> 5.2.0'
 gem 'jquery-rails'
+gem 'groupdate'
+
 
 
 gem 'responders', '~> 3.0'

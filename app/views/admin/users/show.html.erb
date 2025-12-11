@@ -1,0 +1,192 @@
+<h1><%= @user.full_name %></h1>
+
+<div class="grid grid-cols-1 grid-cols-2">
+  <!-- User Info -->
+  <div class="card">
+    <h3>User Information</h3>
+    
+    <div style="margin-top: 20px;">
+      <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #E2E8F0;">
+        <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; color: #718096; margin-bottom: 4px;">Full Name</div>
+        <div style="font-weight: 600;"><%= @user.full_name %></div>
+      </div>
+
+      <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #E2E8F0;">
+        <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; color: #718096; margin-bottom: 4px;">Email</div>
+        <div style="font-weight: 600;"><code style="background: #EDF2F7; padding: 4px 8px; border-radius: 4px;"><%= @user.email %></code></div>
+      </div>
+
+      <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #E2E8F0;">
+        <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; color: #718096; margin-bottom: 4px;">Phone</div>
+        <div style="font-weight: 600;"><%= @user.phone || '—' %></div>
+      </div>
+
+      <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #E2E8F0;">
+        <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; color: #718096; margin-bottom: 4px;">Role</div>
+        <div>
+          <% if @user.admin? %>
+            <span class="badge badge-warning" style="background: #FFF5EB; color: #7C2D12;">Admin</span>
+          <% elsif @user.shelter_manager? %>
+            <span class="badge badge-info" style="background: #EBF4FF; color: #2C5282;">Shelter Manager</span>
+          <% else %>
+            <span class="badge badge-primary" style="background: #EBF4FF; color: #2C5282;">User</span>
+          <% end %>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #E2E8F0;">
+        <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; color: #718096; margin-bottom: 4px;">Location</div>
+        <div style="font-weight: 600;">
+          <% if @user.city.present? || @user.address.present? %>
+            <%= [@user.address, @user.city, @user.country].compact.join(', ') %>
+          <% else %>
+            <span style="color: #A0AEC0;">Not provided</span>
+          <% end %>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; color: #718096; margin-bottom: 4px;">Member Since</div>
+        <div style="font-weight: 600;"><%= @user.created_at.strftime('%B %d, %Y') %></div>
+      </div>
+    </div>
+
+    <div style="margin-top: 24px; display: flex; gap: 12px;">
+      <%= link_to 'Edit User', edit_admin_user_path(@user), class: 'btn btn-primary' %>
+      <% if @user.admin? %>
+        <%= link_to 'Remove Admin', admin_remove_admin_user_path(@user), method: :patch, class: 'btn btn-outline' %>
+      <% else %>
+        <%= link_to 'Make Admin', admin_make_admin_user_path(@user), method: :patch, class: 'btn btn-outline' %>
+      <% end %>
+      <%= link_to 'Delete User', admin_user_path(@user), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+    </div>
+  </div>
+
+  <!-- Activity Stats -->
+  <div class="card">
+    <h3>Activity</h3>
+    
+    <div style="margin-top: 20px;">
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="color: #718096;">Total Pets Listed</span>
+          <strong style="font-size: 20px; color: #667EEA;"><%= @user.pets.count %></strong>
+        </div>
+        <div style="background: #EBF4FF; height: 6px; border-radius: 3px;">
+          <div style="background: #667EEA; height: 100%; border-radius: 3px; width: <%= [@user.pets.count * 10, 100].min %>%;"></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="color: #718096;">Total Requests</span>
+          <strong style="font-size: 20px; color: #667EEA;"><%= @user.requests.count %></strong>
+        </div>
+        <div style="background: #EBF4FF; height: 6px; border-radius: 3px;">
+          <div style="background: #667EEA; height: 100%; border-radius: 3px; width: <%= [@user.requests.count * 10, 100].min %>%;"></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px; padding: 16px; background: #F7FAFC; border-radius: 8px;">
+        <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; color: #718096; margin-bottom: 8px;">Last Activity</div>
+        <div style="font-weight: 600;">
+          <% last_update = [@user.updated_at, @user.requests.maximum(:updated_at), @user.pets.maximum(:updated_at)].compact.max %>
+          <% if last_update %>
+            <%= time_ago_in_words(last_update) %> ago
+          <% else %>
+            Never
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Pets -->
+<% if @user_pets.any? %>
+  <div class="card" style="margin-top: 40px;">
+    <h3>Recent Pets Listed</h3>
+    
+    <div style="margin-top: 20px;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Pet Name</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @user_pets.each do |pet| %>
+            <tr>
+              <td><strong><%= pet.name %></strong></td>
+              <td><span class="badge badge-primary"><%= pet.pet_type.capitalize %></span></td>
+              <td>
+                <% if pet.available? %>
+                  <span class="badge badge-success" style="background: #E6FFED; color: #22543D;">Available</span>
+                <% else %>
+                  <span class="badge badge-danger" style="background: #FFE6E6; color: #742A2A;">Unavailable</span>
+                <% end %>
+              </td>
+              <td style="font-size: 13px; color: #718096;"><%= pet.created_at.strftime('%b %d, %Y') %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @user.pets.count > @user_pets.count %>
+      <div style="margin-top: 16px; text-align: center;">
+        <%= link_to "View All #{@user.pets.count} Pets", admin_pets_path(user_id: @user.id), class: 'btn btn-outline' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<!-- Recent Requests -->
+<% if @user_requests.any? %>
+  <div class="card" style="margin-top: 40px; margin-bottom: 40px;">
+    <h3>Recent Requests</h3>
+    
+    <div style="margin-top: 20px;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Pet</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @user_requests.each do |req| %>
+            <tr>
+              <td><strong><%= req.pet.name %></strong></td>
+              <td><span class="badge badge-primary"><%= req.request_type.capitalize %></span></td>
+              <td>
+                <% case req.status
+                   when 'open' %>
+                  <span class="badge badge-warning" style="background: #FFF5EB; color: #7C2D12;">Open</span>
+                <% when 'approved' %>
+                  <span class="badge badge-success" style="background: #E6FFED; color: #22543D;">Approved</span>
+                <% when 'rejected' %>
+                  <span class="badge badge-danger" style="background: #FFE6E6; color: #742A2A;">Rejected</span>
+                <% when 'completed' %>
+                  <span class="badge badge-success" style="background: #E6FFED; color: #22543D;">Completed</span>
+                <% end %>
+              </td>
+              <td style="font-size: 13px; color: #718096;"><%= req.created_at.strftime('%b %d, %Y') %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @user.requests.count > @user_requests.count %>
+      <div style="margin-top: 16px; text-align: center;">
+        <%= link_to "View All #{@user.requests.count} Requests", admin_requests_path(user_id: @user.id), class: 'btn btn-outline' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
