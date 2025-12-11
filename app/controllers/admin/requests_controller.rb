@@ -20,7 +20,10 @@ module Admin
     end
 
     def update
-      if @request.update(request_params)
+      update_attrs = request_params.to_h
+      update_attrs[:status] = params[:status] if params[:status].present?
+
+      if @request.update(update_attrs)
         redirect_to admin_request_path(@request), notice: 'Request updated successfully.'
       else
         render :show, status: :unprocessable_entity
@@ -53,7 +56,7 @@ module Admin
     end
 
     def request_params
-      params.require(:request).permit(:notes, :scheduled_date, :rejection_reason)
+      params.fetch(:request, ActionController::Parameters.new).permit(:status, :notes)
     end
   end
 end

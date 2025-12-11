@@ -157,3 +157,14 @@
     <p style="margin-top: 20px; color: #718096;">No pets yet.</p>
   <% end %>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const petCards = document.querySelectorAll('.pet-card');
+    petCards.forEach(card => {
+      card.addEventListener('click', function() {
+        const link = this.querySelector('a');
+        if (link) link.click();
+      });
+    });
+  });
+</script>
