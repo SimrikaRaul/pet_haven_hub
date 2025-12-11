@@ -13,7 +13,7 @@
       </div>
     <% end %>
 
-    <%= form_with model: [:admin, @pet], local: true do |f| %>
+    <%= form_with model: [:admin, @pet], local: true, html: { multipart: true } do |f| %>
       <div class="space-y-4">
         <div>
           <%= f.label :name, 'Pet Name', class: 'block text-sm font-semibold text-gray-700' %>
@@ -67,6 +67,32 @@
         <div>
           <%= f.label :description, 'Description', class: 'block text-sm font-semibold text-gray-700' %>
           <%= f.text_area :description, rows: 5, class: 'w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500', placeholder: 'Tell us about this pet...' %>
+        </div>
+
+        <div class="mt-4">
+          <%= f.label :image, 'Photo', class: 'block text-sm font-semibold text-gray-700' %>
+          <div class="mt-2 flex items-center gap-4">
+            <div class="w-32 h-32 bg-gray-100 rounded overflow-hidden flex items-center justify-center border border-gray-200">
+              <% if @pet.image.file.present? %>
+                <%= image_tag @pet.photo_url, alt: @pet.name, class: 'object-cover w-full h-full' %>
+              <% else %>
+                <svg class="w-12 h-12 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M16 3v4M8 3v4m8 4l-3 3-2-2-4 4" />
+                </svg>
+              <% end %>
+            </div>
+
+            <div class="flex-1">
+              <%= f.file_field :image, accept: 'image/*', class: 'block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100' %>
+              <p class="mt-2 text-xs text-gray-500">Accepted: JPG, PNG, GIF — Max 5MB.</p>
+              <% if @pet.image.file.present? %>
+                <div class="mt-2">
+                  <%= check_box_tag 'remove_image', '1', false, id: 'remove_image', class: 'mr-2' %>
+                  <%= label_tag 'remove_image', 'Remove current photo', class: 'text-sm text-gray-700' %>
+                </div>
+              <% end %>
+            </div>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">

@@ -4,7 +4,7 @@ class RequestsController < ApplicationController
   before_action :set_request, only: [:show, :update]
 
   def index
-    if current_user.admin?
+    if current_user&.admin?
       @requests = Request.recent.page(params[:page]).per(20)
     else
       @requests = current_user.requests.recent.page(params[:page]).per(10)
