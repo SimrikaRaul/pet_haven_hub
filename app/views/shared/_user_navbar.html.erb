@@ -1,13 +1,14 @@
 <nav class="navbar">
   <style>
     .navbar {
-      background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
-      color: white;
+      background: white;
+      color: #1F2937;
       padding: 16px 0;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 12px rgba(249, 115, 22, 0.1);
       position: sticky;
       top: 0;
       z-index: 1000;
+      border-bottom: 2px solid #FED7AA;
     }
 
     .navbar-container {
@@ -25,12 +26,12 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      color: white;
+      color: #F97316;
       text-decoration: none;
     }
 
     .navbar-brand:hover {
-      color: #BFDBFE;
+      color: #EA580C;
     }
 
     .navbar-menu {
@@ -41,18 +42,18 @@
     }
 
     .navbar-menu a {
-      color: white;
+      color: #1F2937;
       text-decoration: none;
       font-weight: 500;
       font-size: 14px;
-      transition: color 0.2s ease;
-      padding: 8px 12px;
-      border-radius: 6px;
+      transition: all 0.2s ease;
+      padding: 8px 16px;
+      border-radius: 20px;
     }
 
     .navbar-menu a:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-      color: #BFDBFE;
+      background: linear-gradient(135deg, #FFE4D6 0%, #FED7AA 100%);
+      color: #EA580C;
     }
 
     .navbar-auth {
@@ -69,22 +70,27 @@
 
     .navbar-auth .btn-outline {
       background: white;
-      color: #3B82F6;
-      border: none;
+      color: #F97316;
+      border: 2px solid #F97316;
     }
 
     .navbar-auth .btn-outline:hover {
-      background: #F3F4F6;
+      background: #FFE4D6;
+      border-color: #EA580C;
+      color: #EA580C;
     }
 
     .navbar-auth .btn-primary {
-      background: white;
-      color: #3B82F6;
+      background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
     }
 
     .navbar-auth .btn-primary:hover {
-      background: #BFDBFE;
-      color: #1E40AF;
+      background: linear-gradient(135deg, #EA580C 0%, #C2410C 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
     }
 
     .user-menu {
@@ -94,9 +100,9 @@
     }
 
     .user-menu-item {
-      color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
+      color: #1F2937;
+      padding: 8px 16px;
+      border-radius: 20px;
       cursor: pointer;
       transition: background 0.2s ease;
       text-decoration: none;

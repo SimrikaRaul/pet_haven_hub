@@ -1,64 +1,220 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+<style>
+  .pets-table-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .pets-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  
+  .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .pets-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .pets-table thead th {
+    background: white;
+    padding: 1.25rem 1.5rem;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1F2937;
+    border-bottom: 2px solid #F3F4F6;
+  }
+  
+  .pets-table tbody tr {
+    border-bottom: 1px solid #F3F4F6;
+    transition: all 0.2s;
+  }
+  
+  .pets-table tbody tr:hover {
+    background: #F9FAFB;
+  }
+  
+  .pets-table tbody td {
+    padding: 1.5rem 1.5rem;
+    font-size: 0.9375rem;
+  }
+  
+  .pet-image-cell {
+    width: 80px;
+  }
+  
+  .pet-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  
+  .status-available {
+    background: #D1FAE5;
+    color: #065F46;
+  }
+  
+  .status-adopted {
+    background: #F3F4F6;
+    color: #6B7280;
+  }
+  
+  .status-pending {
+    background: #FEF3C7;
+    color: #92400E;
+  }
+  
+  .action-btn {
+    display: inline-block;
+    padding: 0.625rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+  }
+  
+  .btn-view {
+    background: white;
+    color: #1F2937;
+    border-color: #E5E7EB;
+  }
+  
+  .btn-view:hover {
+    border-color: #0D5F5C;
+    color: #0D5F5C;
+  }
+  
+  .btn-edit {
+    background: white;
+    color: #1F2937;
+    border-color: #E5E7EB;
+  }
+  
+  .btn-edit:hover {
+    border-color: #0D5F5C;
+    color: #0D5F5C;
+  }
+  
+  .btn-delete {
+    background: white;
+    color: #1F2937;
+    border-color: #E5E7EB;
+  }
+  
+  .btn-delete:hover {
+    background: #2563EB;
+    border-color: #2563EB;
+    color: white;
+  }
+  
+  .add-pet-btn {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
+    color: white;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3);
+    transition: all 0.3s;
+  }
+  
+  .add-pet-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(13, 95, 92, 0.4);
+  }
+</style>
+
+<div class="pets-table-container">
+  <div class="table-header">
     <div>
-      <h1 class="text-3xl font-bold text-gray-900">Manage Pets</h1>
-      <p class="text-gray-600 text-sm mt-1">Total: <%= @total_pets %> | Available: <%= @available_pets %> | Unavailable: <%= @unavailable_pets %></p>
+      <h1 style="font-size: 2.5rem; font-weight: 800; color: #1F2937; margin-bottom: 0.5rem;">Manage Pets</h1>
+      <p style="color: #6B7280; font-size: 0.9375rem;">Total: <%= @total_pets %> | Available: <%= @available_pets %> | Unavailable: <%= @unavailable_pets %></p>
     </div>
-    <%= link_to '+ Add New Pet', new_admin_pet_path, class: 'px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition' %>
+    <%= link_to '+ Add New Pet', new_admin_pet_path, class: 'add-pet-btn' %>
   </div>
 
   <% if @pets.any? %>
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="bg-gray-50 border-b border-gray-200">
+    <div class="pets-card">
+      <div class="table-wrapper">
+        <table class="pets-table">
+          <thead>
             <tr>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Image</th>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Name</th>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Species</th>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Breed</th>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Age</th>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+              <th class="pet-image-cell"></th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Age</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-200">
+          <tbody>
             <% @pets.each do |pet| %>
-              <tr class="hover:bg-gray-50 transition">
-                <td class="px-6 py-4">
-                  <div class="w-12 h-12 rounded-lg overflow-hidden bg-gray-100">
-                    <% if pet.image.present? && pet.image.url %>
-                      <%= image_tag pet.image.url, alt: pet.name, class: 'w-full h-full object-cover' %>
+              <tr>
+                <td class="pet-image-cell">
+                  <% if pet.image.present? && pet.image.url %>
+                    <%= image_tag pet.image.url, alt: pet.name, class: 'pet-img' %>
+                  <% else %>
+                    <div class="pet-img" style="background: linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%); display: flex; align-items: center; justify-content: center; color: #9CA3AF; font-size: 1.5rem;">
+                      🐾
+                    </div>
+                  <% end %>
+                </td>
+                <td style="font-weight: 600; color: #1F2937; font-size: 1rem;"><%= pet.name %></td>
+                <td style="color: #6B7280;"><%= pet.pet_type&.titleize || 'Unknown' %></td>
+                <td style="color: #6B7280;"><%= pet.age %> year<%= pet.age == 1 ? '' : 's' %></td>
+                <td>
+                  <% if pet.available %>
+                    <span class="status-badge status-available">Available</span>
+                  <% elsif pet.respond_to?(:status) && pet.status == 'adopted' %>
+                    <span class="status-badge status-adopted">Adopted</span>
+                  <% else %>
+                    <span class="status-badge status-adopted">Unavailable</span>
+                  <% end %>
+                </td>
+                <td>
+                  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <%= link_to 'View', admin_pet_path(pet), class: 'action-btn btn-view' %>
+                    <%= link_to 'Edit', edit_admin_pet_path(pet), class: 'action-btn btn-edit' %>
+                    
+                    <% if pet.available %>
+                      <% if respond_to?(:mark_as_adopted_admin_pet_path) %>
+                        <%= link_to 'Mark Adopted', mark_as_adopted_admin_pet_path(pet), method: :patch, data: { confirm: 'Mark this pet as adopted?' }, class: 'action-btn btn-edit', style: 'border-color: #10B981; color: #10B981;' %>
+                      <% end %>
                     <% else %>
-                      <%= image_tag '/images/placeholder-pet.jpg', alt: 'placeholder', class: 'w-full h-full object-cover' %>
+                      <% if respond_to?(:mark_as_available_admin_pet_path) %>
+                        <%= link_to 'Make Available', mark_as_available_admin_pet_path(pet), method: :patch, data: { confirm: 'Make this pet available again?' }, class: 'action-btn btn-edit', style: 'border-color: #10B981; color: #10B981;' %>
+                      <% end %>
                     <% end %>
+                    
+                    <%= link_to 'Delete', admin_pet_path(pet), method: :delete, data: { confirm: 'Are you sure you want to delete this pet?' }, class: 'action-btn btn-delete' %>
                   </div>
-                </td>
-                <td class="px-6 py-4 font-medium text-gray-900"><%= pet.name %></td>
-                <td class="px-6 py-4 text-sm text-gray-600"><%= pet.pet_type&.titleize %></td>
-                <td class="px-6 py-4 text-sm text-gray-600"><%= pet.breed %></td>
-                <td class="px-6 py-4 text-sm text-gray-600"><%= pet.age %> yrs</td>
-                <td class="px-6 py-4">
-                  <% case pet.status %>
-                  <% when 'available' %>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Available</span>
-                  <% when 'pending' %>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">● Pending</span>
-                  <% when 'adopted' %>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">★ Adopted</span>
-                  <% else %>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"><%= pet.status.to_s.titleize %></span>
-                  <% end %>
-                </td>
-                <td class="px-6 py-4 text-sm space-x-3 flex">
-                  <%= link_to 'View', admin_pet_path(pet), class: 'text-indigo-600 hover:text-indigo-900 font-medium' %>
-                  <%= link_to 'Edit', edit_admin_pet_path(pet), class: 'text-blue-600 hover:text-blue-900 font-medium' %>
-                  <% if pet.status == 'adopted' %>
-                    <%= link_to 'Make Available', mark_as_available_admin_pet_path(pet), method: :patch, data: { confirm: 'Make this pet available again?' }, class: 'text-green-600 hover:text-green-900 font-medium' %>
-                  <% else %>
-                    <%= link_to 'Mark Adopted', mark_as_adopted_admin_pet_path(pet), method: :patch, data: { confirm: 'Mark this pet as adopted?' }, class: 'text-red-600 hover:text-red-900 font-medium' %>
-                  <% end %>
-                  <%= link_to 'Delete', admin_pet_path(pet), method: :delete, data: { confirm: 'Are you sure?' }, class: 'text-red-600 hover:text-red-900 font-medium' %>
                 </td>
               </tr>
             <% end %>
@@ -67,16 +223,18 @@
       </div>
 
       <!-- Pagination -->
-      <% if @pets.respond_to?(:total_pages) %>
-        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-center">
-          <%= paginate @pets%>
+      <% if @pets.respond_to?(:total_pages) && @pets.total_pages > 1 %>
+        <div style="padding: 1.5rem; border-top: 2px solid #F3F4F6; display: flex; justify-content: center;">
+          <%= paginate @pets %>
         </div>
       <% end %>
     </div>
   <% else %>
-    <div class="bg-white rounded-lg shadow-md p-12 text-center">
-      <p class="text-gray-600 text-lg mb-4">No pets found. Create one to get started.</p>
-      <%= link_to '+ Add New Pet', new_admin_pet_path, class: 'px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition' %>
+    <div class="pets-card" style="padding: 4rem; text-align: center;">
+      <div style="font-size: 4rem; margin-bottom: 1rem;">🐾</div>
+      <h3 style="font-size: 1.5rem; font-weight: 700; color: #1F2937; margin-bottom: 0.5rem;">No pets found</h3>
+      <p style="color: #6B7280; margin-bottom: 2rem;">Get started by adding your first pet to the system.</p>
+      <%= link_to '+ Add New Pet', new_admin_pet_path, class: 'add-pet-btn' %>
     </div>
   <% end %>
 </div>

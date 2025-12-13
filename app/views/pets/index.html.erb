@@ -1,80 +1,125 @@
 <div class="container mx-auto px-4 py-8">
-  <header class="mb-6 flex items-center justify-between">
-    <h1 class="text-3xl font-extrabold text-gray-900">Browse Available Pets</h1>
+  <header class="mb-8 flex items-center justify-between">
+    <div>
+      <h1 class="text-4xl font-bold mb-2" style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🐾 Find Your Perfect Pet</h1>
+      <p class="text-gray-700">Browse our available pets and find your new best friend</p>
+    </div>
     <div class="hidden sm:flex items-center gap-3">
-      <%= link_to 'Add Pet', new_admin_pet_path, class: 'inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition' if user_signed_in? %>
+      <%= link_to 'Add Pet', new_admin_pet_path, class: 'inline-flex items-center px-5 py-2.5 text-white font-medium rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' if user_signed_in? %>
     </div>
   </header>
 
-  <div class="row flex flex-col lg:flex-row gap-6">
+  <div class="row flex flex-col lg:flex-row gap-8">
     <!-- Filters / Sidebar -->
-    <aside class="w-full lg:w-1/4 bg-white rounded-lg shadow-md p-4">
-      <h2 class="text-lg font-semibold mb-3">Filters</h2>
-      <%= form_with url: pets_path, method: :get, local: true do |f| %>
-        <div class="mb-3">
-          <%= f.label :species, 'Species', class: 'block text-sm font-medium text-gray-700 mb-1' %>
-          <%= f.select :species, options_for_select([['All', ''], ['Dog','dog'], ['Cat','cat'], ['Rabbit','rabbit'], ['Bird','bird'], ['Other','other']], params[:species]), {}, class: 'form-control px-3 py-2 border rounded-md w-full' %>
-        </div>
+    <aside class="w-full lg:w-1/4">
+      <div class="bg-white rounded-3xl shadow-lg p-6 sticky top-4" style="border: 2px solid #FED7AA;">
+        <h2 class="text-xl font-bold mb-5 flex items-center gap-2" style="color: #F97316;">
+          <span>🔍</span> Filters
+        </h2>
+        <%= form_with url: pets_path, method: :get, local: true do |f| %>
+          <div class="mb-4">
+            <%= f.label :species, 'Species', class: 'block text-sm font-semibold text-gray-700 mb-2' %>
+            <%= f.select :species, options_for_select([['All', ''], ['Dog','dog'], ['Cat','cat'], ['Rabbit','rabbit'], ['Bird','bird'], ['Other','other']], params[:species]), {}, class: 'form-control px-4 py-3 border-2 rounded-2xl w-full transition', style: 'border-color: #FED7AA; focus:outline-none; focus:border-color: #F97316;' %>
+          </div>
 
-        <div class="mb-3">
-          <%= f.label :breed, 'Breed', class: 'block text-sm font-medium text-gray-700 mb-1' %>
-          <%= f.text_field :breed, value: params[:breed], placeholder: 'e.g., Golden Retriever', class: 'form-control px-3 py-2 border rounded-md w-full' %>
-        </div>
+          <div class="mb-4">
+            <%= f.label :breed, 'Breed', class: 'block text-sm font-semibold text-gray-700 mb-2' %>
+            <%= f.text_field :breed, value: params[:breed], placeholder: 'e.g., Golden Retriever', class: 'form-control px-4 py-3 border-2 rounded-2xl w-full transition', style: 'border-color: #FED7AA;' %>
+          </div>
 
-        <div class="mb-3">
-          <%= f.label :max_age, 'Max age (years)', class: 'block text-sm font-medium text-gray-700 mb-1' %>
-          <%= f.number_field :max_age, value: params[:max_age], class: 'form-control px-3 py-2 border rounded-md w-full' %>
-        </div>
+          <div class="mb-4">
+            <%= f.label :max_age, 'Max age (years)', class: 'block text-sm font-semibold text-gray-700 mb-2' %>
+            <%= f.number_field :max_age, value: params[:max_age], class: 'form-control px-4 py-3 border-2 rounded-2xl w-full transition', style: 'border-color: #FED7AA;' %>
+          </div>
 
-        <div class="mb-3">
-          <%= f.label :size, 'Size', class: 'block text-sm font-medium text-gray-700 mb-1' %>
-          <%= f.select :size, options_for_select([['Any',''], ['Small','small'], ['Medium','medium'], ['Large','large']], params[:size]), {}, class: 'form-control px-3 py-2 border rounded-md w-full' %>
-        </div>
+          <div class="mb-4">
+            <%= f.label :size, 'Size', class: 'block text-sm font-semibold text-gray-700 mb-2' %>
+            <%= f.select :size, options_for_select([['Any',''], ['Small','small'], ['Medium','medium'], ['Large','large']], params[:size]), {}, class: 'form-control px-4 py-3 border-2 rounded-2xl w-full transition', style: 'border-color: #FED7AA;' %>
+          </div>
 
-        <div class="mb-4 flex items-center gap-2">
-          <%= f.check_box :available, { class: 'h-4 w-4 text-blue-600' }, '1', '0' %>
-          <%= f.label :available, 'Available only', class: 'text-sm text-gray-700' %>
-        </div>
+          <div class="mb-6 flex items-center gap-3 p-4 rounded-2xl" style="background: linear-gradient(135deg, #FFE4D6 0%, #FED7AA 100%);">
+            <%= f.check_box :available, { class: 'h-5 w-5 rounded' }, '1', '0' %>
+            <%= f.label :available, 'Show available only', class: 'text-sm font-semibold text-gray-800' %>
+          </div>
 
-        <div class="flex gap-2">
-          <%= f.submit 'Apply', class: 'w-1/2 inline-block text-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition' %>
-          <%= link_to 'Clear', pets_path, class: 'w-1/2 inline-block text-center px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50' %>
-        </div>
-      <% end %>
+          <div class="flex gap-3">
+            <%= f.submit 'Apply Filters', class: 'flex-1 inline-block text-center px-4 py-3 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
+            <%= link_to 'Clear', pets_path, class: 'flex-1 inline-block text-center px-4 py-3 border-2 font-bold rounded-full bg-white hover:shadow-lg transition-all duration-200', style: 'border-color: #F97316; color: #F97316;' %>
+          </div>
+        <% end %>
+      </div>
     </aside>
 
     <!-- Main content -->
     <main class="w-full lg:w-3/4">
       <% if @pets.any? %>
+        <div class="mb-4 text-sm text-gray-600">
+          Showing <strong><%= @pets.size %></strong> pet(s)
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <% @pets.each do |pet| %>
-            <article class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col">
-              <div class="h-48 bg-gray-100 flex items-center justify-center overflow-hidden">
+            <article class="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col group transform hover:-translate-y-2" style="border: 2px solid #FED7AA;">
+              <!-- Photo Section with Availability Badge -->
+              <div class="relative h-56 overflow-hidden" style="background: linear-gradient(135deg, #FFE4D6 0%, #FED7AA 100%);">
                 <% if pet.image.present? && pet.image.url %>
-                  <%= link_to pet_path(pet) do %>
-                    <%= image_tag pet.image.url, alt: pet.name, class: 'w-full h-full object-cover' %>
+                  <%= link_to pet_path(pet), class: 'block h-full' do %>
+                    <%= image_tag pet.image.url, alt: pet.name, class: 'w-full h-full object-cover group-hover:scale-110 transition-transform duration-500' %>
                   <% end %>
                 <% else %>
-                  <%= link_to pet_path(pet) do %>
-                    <%= image_tag '/images/placeholder-pet.jpg', alt: 'Placeholder', class: 'w-full h-full object-cover' %>
+                  <%= link_to pet_path(pet), class: 'block h-full' do %>
+                    <div class="w-full h-full flex items-center justify-center">
+                      <span class="text-6xl opacity-30">🐾</span>
+                    </div>
                   <% end %>
                 <% end %>
+                
+                <!-- Availability Badge -->
+                <% if pet.respond_to?(:available) %>
+                  <% if pet.available %>
+                    <div class="absolute top-3 right-3 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg flex items-center gap-1" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+                      <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                      AVAILABLE
+                    </div>
+                  <% else %>
+                    <div class="absolute top-3 right-3 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg" style="background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%);">
+                      ADOPTED
+                    </div>
+                  <% end %>
+                <% end %>
+                
+                <!-- Hover Overlay -->
+                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 pointer-events-none"></div>
               </div>
 
-              <div class="p-4 flex-1 flex flex-col">
-                <div class="mb-2">
-                  <h3 class="text-xl font-semibold text-gray-900"><%= pet.name %></h3>
-                  <p class="text-sm text-gray-600"> <strong><%= pet.pet_type.try(:capitalize) %></strong> • <%= pet.breed %> • <%= pet.age %> yrs</p>
+              <!-- Pet Details Section -->
+              <div class="p-5 flex-1 flex flex-col">
+                <div class="mb-3">
+                  <h3 class="text-xl font-bold text-gray-900 mb-1 transition-colors" style="color: #1F2937;"><%= pet.name %></h3>
+                  <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full font-semibold" style="background: linear-gradient(135deg, #FFE4D6 0%, #FED7AA 100%); color: #EA580C;">
+                      <%= pet.pet_type.try(:capitalize) %>
+                    </span>
+                    <span class="text-gray-400">•</span>
+                    <span><%= pet.breed %></span>
+                    <span class="text-gray-400">•</span>
+                    <span><%= pet.age %> yrs</span>
+                  </div>
                 </div>
 
-                <p class="text-sm text-gray-500 mb-4 truncate">📍 <%= pet.location %></p>
+                <div class="mb-4 flex items-center text-sm text-gray-500">
+                  <svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="truncate"><%= pet.location %></span>
+                </div>
 
+                <!-- Action Buttons -->
                 <div class="mt-auto flex gap-2">
-                  <%= link_to 'View', pet_path(pet), class: 'flex-1 inline-flex justify-center items-center px-3 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition' %>
+                  <%= link_to 'View Details', pet_path(pet), class: 'flex-1 inline-flex justify-center items-center px-4 py-2.5 text-white font-bold rounded-full shadow-md hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
                   <% if user_signed_in? %>
-                    <%= button_to 'Adopt', pet_requests_path(pet), method: :post, params: { request: { request_type: 'adopt' } }, class: 'flex-1 inline-flex justify-center items-center px-3 py-2 border border-indigo-600 text-indigo-600 rounded-md hover:bg-indigo-50 transition' %>
+                    <%= button_to '❤️ Adopt', pet_requests_path(pet), method: :post, params: { request: { request_type: 'adopt' } }, class: 'flex-1 inline-flex justify-center items-center px-4 py-2.5 border-2 font-bold rounded-full hover:shadow-lg transition-all duration-200', style: 'border-color: #F97316; color: #F97316; background: white;' %>
                   <% else %>
-                    <%= link_to 'Sign in', new_user_session_path, class: 'flex-1 inline-flex justify-center items-center px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition' %>
+                    <%= link_to 'Sign in', new_user_session_path, class: 'flex-1 inline-flex justify-center items-center px-4 py-2.5 border-2 font-bold rounded-full hover:shadow-lg transition-all duration-200', style: 'border-color: #F97316; color: #F97316; background: white;' %>
                   <% end %>
                 </div>
               </div>
@@ -82,14 +127,15 @@
           <% end %>
         </div>
 
-        <div class="mt-6 flex justify-center">
+        <div class="mt-8 flex justify-center">
           <%= paginate @pets%>
         </div>
       <% else %>
-        <div class="bg-white rounded-lg shadow p-8 text-center">
-          <h3 class="text-xl font-semibold mb-2">No pets found</h3>
-          <p class="text-gray-600 mb-4">Try adjusting your filters or check back later.</p>
-          <%= link_to 'Reset filters', pets_path, class: 'inline-block px-4 py-2 bg-gray-100 border rounded-md' %>
+        <div class="bg-white rounded-3xl shadow-lg p-12 text-center" style="border: 2px solid #FED7AA;">
+          <div class="text-6xl mb-4">🔍</div>
+          <h3 class="text-2xl font-bold mb-3 text-gray-900">No pets found</h3>
+          <p class="text-gray-600 mb-6">We couldn't find any pets matching your criteria. Try adjusting your filters or check back later.</p>
+          <%= link_to 'Reset all filters', pets_path, class: 'inline-block px-6 py-3 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
         </div>
       <% end %>
     </main>

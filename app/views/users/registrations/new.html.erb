@@ -1,35 +1,75 @@
-<h2>Sign up</h2>
+<style>
+  .signup-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 2rem 1rem;
+  }
+  
+  .decorative-shape {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.6;
+    z-index: 0;
+  }
+  .shape-1 { width: 280px; height: 280px; background: #B5D6D8; top: 5%; left: 5%; }
+  .shape-2 { width: 350px; height: 350px; background: #F4B5C8; bottom: 5%; right: 5%; }
+  
+  @media (max-width: 768px) {
+    .shape-1 { width: 180px; height: 180px; top: 10px; left: -50px; }
+    .shape-2 { width: 200px; height: 200px; bottom: 10px; right: -50px; }
+  }
+</style>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "users/shared/error_messages", resource: resource %>
+<div class="signup-container">
+  <!-- Decorative Shapes -->
+  <div class="decorative-shape shape-1"></div>
+  <div class="decorative-shape shape-2"></div>
+  
+  <div style="max-width: 450px; width: 100%; position: relative; z-index: 1;">
+    <div style="background: white; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); padding: 3rem 2.5rem;">
+      <div style="text-align: center; margin-bottom: 2.5rem;">
+        <h2 style="font-size: 2.75rem; font-weight: 900; color: #0D5F5C; letter-spacing: -1px; margin-bottom: 0.5rem; line-height: 1.1;">For the love</h2>
+        <h3 style="font-size: 2.75rem; font-weight: 900; color: #F4A5B9; letter-spacing: -1px; margin-bottom: 1.5rem; line-height: 1.1;">of Pets</h3>
+        <p style="font-size: 0.95rem; color: #6B7280; margin-top: 1rem;">Create your account to get started</p>
+      </div>
 
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= render "users/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name, autofocus: true, autocomplete: "name" %>
+        <div style="margin-bottom: 1.25rem;">
+          <%= f.label :name, "Name", style: 'display: block; font-size: 0.875rem; font-weight: 700; color: #0D5F5C; margin-bottom: 0.5rem;' %>
+          <%= f.text_field :name, autofocus: true, autocomplete: "name", style: 'width: 100%; padding: 1rem 1.25rem; border: 2px solid #B5D6D8; border-radius: 25px; background: #F9FAFB; font-size: 1rem; outline: none; transition: all 0.2s;' %>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <%= f.label :email, "Email", style: 'display: block; font-size: 0.875rem; font-weight: 700; color: #0D5F5C; margin-bottom: 0.5rem;' %>
+          <%= f.email_field :email, autocomplete: "email", style: 'width: 100%; padding: 1rem 1.25rem; border: 2px solid #B5D6D8; border-radius: 25px; background: #F9FAFB; font-size: 1rem; outline: none; transition: all 0.2s;' %>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <%= f.label :password, "Password", style: 'display: block; font-size: 0.875rem; font-weight: 700; color: #0D5F5C; margin-bottom: 0.5rem;' %>
+          <% if @minimum_password_length %>
+            <span style="font-size: 0.75rem; font-weight: 400; color: #F4A5B9;">(<%= @minimum_password_length %> characters minimum)</span>
+          <% end %>
+          <%= f.password_field :password, autocomplete: "new-password", style: 'width: 100%; padding: 1rem 1.25rem; border: 2px solid #B5D6D8; border-radius: 25px; background: #F9FAFB; font-size: 1rem; outline: none; transition: all 0.2s;' %>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <%= f.label :password_confirmation, "Confirm Password", style: 'display: block; font-size: 0.875rem; font-weight: 700; color: #0D5F5C; margin-bottom: 0.5rem;' %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", style: 'width: 100%; padding: 1rem 1.25rem; border: 2px solid #B5D6D8; border-radius: 25px; background: #F9FAFB; font-size: 1rem; outline: none; transition: all 0.2s;' %>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <%= f.submit "Sign up", style: 'width: 100%; padding: 1.25rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 900; font-size: 1.125rem; letter-spacing: 0.5px; border: none; border-radius: 30px; cursor: pointer; box-shadow: 0 10px 30px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
+        </div>
+      <% end %>
+
+      <div style="text-center; padding-top: 1.5rem; border-top: 2px solid #F4E9E3;">
+        <%= render "users/shared/links" %>
+      </div>
+    </div>
   </div>
-
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password %>
-    <% if @minimum_password_length %>
-    <em>(<%= @minimum_password_length %> characters minimum)</em>
-    <% end %><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
-
-<%= render "users/shared/links" %>
+</div>

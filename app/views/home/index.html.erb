@@ -1,14 +1,19 @@
 <div class="container">
-	<section class="intro card" style="margin-bottom:1rem;">
-		<div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
-			<div style="width:260px; flex:0 0 260px;">
-				<%= image_tag 'https://placehold.co/520x300?text=Adopt+Love', alt: 'Adopt Love', style: 'width:100%; border-radius:8px;' %>
+	<section class="bg-white rounded-3xl shadow-xl p-8" style="margin-bottom:2rem; border: 3px solid #FED7AA;">
+		<div style="display:flex;gap:2rem;align-items:center;flex-wrap:wrap;">
+			<div style="width:300px; flex:0 0 300px;">
+				<%= image_tag 'https://placehold.co/600x400?text=Adopt+Love', alt: 'Adopt Love', style: 'width:100%; border-radius:24px; box-shadow: 0 8px 16px rgba(249, 115, 22, 0.2);' %>
+			</div>
+			<div style="flex:1;">
+				<h2 style="font-size:2.5rem; font-weight:800; margin-bottom:1rem; background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🐾 Find Your Perfect Companion</h2>
+				<p style="font-size:1.1rem; color:#6B7280; line-height:1.8;">Give a loving home to a pet in need. Browse our selection of adorable pets waiting for their forever family.</p>
+				<%= link_to '🔍 Browse All Pets', pets_path, class: 'inline-block mt-4 px-8 py-4 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
 			</div>
 		</div>
 	</section>
 
-	<section class="card" style="margin-bottom:1rem;">
-		<h3 class="card-title">Featured Pets</h3>
+	<section class="bg-white rounded-3xl shadow-xl p-8" style="margin-bottom:2rem; border: 3px solid #FED7AA;">
+		<h3 class="text-3xl font-bold mb-6" style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">⭐ Featured Pets</h3>
 		<div class="pet-grid" style="margin-top:0.75rem;">
 			<% pets = [
 				{ id: 'PHH-001', name: 'Bella', age: '2 yrs', image_url: 'https://placehold.co/600x400?text=Bella', meta: 'Golden Retriever • Friendly', location: 'City Shelter', path: '#' },

@@ -13,6 +13,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <%= stylesheet_link_tag "admin_theme", media: "all", "data-turbo-track": "reload" %>
+  <%= stylesheet_link_tag "admin_dashboard", media: "all", "data-turbo-track": "reload" %>
   <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   
   <style>
@@ -79,6 +81,7 @@
     }
     
     .admin-content {
+      width:80vw;
       margin-left: 260px;
       padding: 32px;
     }

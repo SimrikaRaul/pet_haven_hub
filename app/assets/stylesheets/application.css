@@ -1,9 +1,13 @@
 :root {
-  /* Primary Colors */
-  --primary: #3B82F6;
-  --primary-dark: #1E40AF;
-  --primary-light: #DBEAFE;
-  --primary-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  /* Primary Colors - Warm Peachy Theme */
+  --primary: #F97316;
+  --primary-dark: #EA580C;
+  --primary-light: #FED7AA;
+  --primary-gradient: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+  --peach: #FFE4D6;
+  --beige: #F5E6D3;
+  --cream: #FFF5EB;
+  --warm-bg: linear-gradient(135deg, #FFE4D6 0%, #F5E6D3 50%, #FFF5EB 100%);
 
   /* Status Colors */
   --success: #10B981;
@@ -12,16 +16,16 @@
   --danger-light: #FEE2E2;
   --warning: #F59E0B;
   --warning-light: #FEF3C7;
-  --info: #0EA5E9;
-  --info-light: #E0F2FE;
+  --info: #06B6D4;
+  --info-light: #CFFAFE;
 
   /* Neutral Colors */
   --text: #1F2937;
   --text-muted: #6B7280;
-  --background: #ffffff;
-  --surface: #F9FAFB;
-  --border: #E5E7EB;
-  --border-light: #F3F4F6;
+  --background: #FFFFFF;
+  --surface: #FFF5EB;
+  --border: #F3D5B5;
+  --border-light: #FFF5EB;
 
   /* Pet Category Colors */
   --cat-color: #8B5CF6;
@@ -88,7 +92,8 @@
    BASE STYLES ENHANCEMENTS
    ============================================ */
 body {
-  background: var(--background);
+  background: linear-gradient(135deg, #FFE4D6 0%, #F5E6D3 50%, #FFF5EB 100%);
+  min-height: 100vh;
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
   margin: 0;

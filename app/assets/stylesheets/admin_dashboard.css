@@ -23,6 +23,7 @@
 
 /* Dashboard Container */
 .admin-dashboard {
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   padding: var(--space-2xl);
@@ -48,9 +49,10 @@
 /* Stats Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-lg);
   margin-bottom: var(--space-4xl);
+  width: 100%;
 }
 
 /* Stat Card */
@@ -61,6 +63,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border: 1px solid var(--color-border);
   transition: all 0.3s ease;
+  min-width: 0;
 }
 
 .stat-card:hover {
@@ -127,14 +130,13 @@
 /* Quick Actions Grid */
 .quick-actions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-lg);
 }
 
 .action-card {
-  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
-  background-color: #ffffff;
-  border-radius: var(--space-lg);
+  background: #ffffff;
+  border-radius: var(--radius-lg);
   padding: var(--space-2xl);
   display: flex;
   flex-direction: column;
@@ -144,6 +146,7 @@
   border: 1px solid var(--color-border);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .action-card:hover {
@@ -173,7 +176,7 @@
 /* Statistics Cards Grid */
 .stats-details-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-lg);
 }
 

@@ -1,9 +1,9 @@
 <div class="container mx-auto px-4 py-8">
-  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+  <div class="bg-white rounded-3xl shadow-xl overflow-hidden" style="border: 3px solid #FED7AA;">
     <div class="flex flex-col lg:flex-row">
       <!-- Left: Image gallery / main image -->
-      <div class="lg:w-1/2 bg-gray-50">
-        <div class="h-96 w-full overflow-hidden bg-gray-200 flex items-center justify-center">
+      <div class="lg:w-1/2" style="background: linear-gradient(135deg, #FFE4D6 0%, #FED7AA 100%);">
+        <div class="h-96 w-full overflow-hidden flex items-center justify-center">
           <% if @pet.image.present? && @pet.image.url %>
             <%= image_tag @pet.image.url, alt: @pet.name, class: 'w-full h-full object-cover' %>
           <% else %>
@@ -12,10 +12,10 @@
         </div>
 
         <%# Optional thumbnails row - suggest extracting into partial if needed %>
-        <div class="p-4 border-t border-gray-100">
+        <div class="p-4">
           <div class="flex items-center gap-3 overflow-x-auto">
             <%# If you have multiple photos implement thumbnails here. For now show a single thumbnail copy %>
-            <div class="w-20 h-20 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 border-2" style="background: white; border-color: #F97316;">
               <% if @pet.image.present? && @pet.image.url %>
                 <%= image_tag @pet.image.url, alt: @pet.name, class: 'w-full h-full object-cover' %>
               <% else %>
@@ -27,40 +27,43 @@
       </div>
 
       <!-- Right: Details + actions -->
-      <div class="lg:w-1/2 p-6">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2"><%= @pet.name %></h1>
-        <p class="text-sm text-gray-600 mb-4">📍 <%= @pet.location %></p>
+      <div class="lg:w-1/2 p-8">
+        <h1 class="text-4xl font-bold mb-2" style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"><%= @pet.name %></h1>
+        <p class="text-sm font-semibold text-gray-600 mb-6 flex items-center gap-1">
+          <svg class="w-4 h-4" fill="#F97316" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+          <%= @pet.location %>
+        </p>
 
         <div class="grid grid-cols-2 gap-4 mb-6">
-          <div class="bg-gray-50 border rounded-lg p-4">
-            <p class="text-xs text-gray-500">Species</p>
-            <p class="font-semibold text-gray-900"><%= @pet.pet_type.try(:capitalize) || '—' %></p>
+          <div class="rounded-2xl p-4 border-2" style="background: linear-gradient(135deg, #FFE4D6 0%, #FFF5EB 100%); border-color: #FED7AA;">
+            <p class="text-xs font-semibold" style="color: #EA580C;">Species</p>
+            <p class="font-bold text-gray-900"><%= @pet.pet_type.try(:capitalize) || '—' %></p>
           </div>
-          <div class="bg-gray-50 border rounded-lg p-4">
-            <p class="text-xs text-gray-500">Breed</p>
-            <p class="font-semibold text-gray-900"><%= @pet.breed || '—' %></p>
+          <div class="rounded-2xl p-4 border-2" style="background: linear-gradient(135deg, #FFE4D6 0%, #FFF5EB 100%); border-color: #FED7AA;">
+            <p class="text-xs font-semibold" style="color: #EA580C;">Breed</p>
+            <p class="font-bold text-gray-900"><%= @pet.breed || '—' %></p>
           </div>
-          <div class="bg-gray-50 border rounded-lg p-4">
-            <p class="text-xs text-gray-500">Age</p>
-            <p class="font-semibold text-gray-900"><%= @pet.age %> yrs</p>
+          <div class="rounded-2xl p-4 border-2" style="background: linear-gradient(135deg, #FFE4D6 0%, #FFF5EB 100%); border-color: #FED7AA;">
+            <p class="text-xs font-semibold" style="color: #EA580C;">Age</p>
+            <p class="font-bold text-gray-900"><%= @pet.age %> yrs</p>
           </div>
-          <div class="bg-gray-50 border rounded-lg p-4">
-            <p class="text-xs text-gray-500">Size</p>
-            <p class="font-semibold text-gray-900"><%= @pet.size || '—' %></p>
+          <div class="rounded-2xl p-4 border-2" style="background: linear-gradient(135deg, #FFE4D6 0%, #FFF5EB 100%); border-color: #FED7AA;">
+            <p class="text-xs font-semibold" style="color: #EA580C;">Size</p>
+            <p class="font-bold text-gray-900"><%= @pet.size || '—' %></p>
           </div>
         </div>
 
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Health & Details</h3>
+        <div class="mb-6 p-5 rounded-2xl" style="background: linear-gradient(135deg, #FFF5EB 0%, #FFE4D6 100%);">
+          <h3 class="text-lg font-bold mb-3" style="color: #F97316;">🌿 Health & Details</h3>
           <ul class="space-y-2 text-sm text-gray-700">
-            <li><strong>Health:</strong> <%= @pet.health_status.presence || 'Not specified' %></li>
-            <li><strong>Sex:</strong> <%= @pet.sex || 'Not specified' %></li>
-            <li><strong>Vaccinated:</strong> <%= @pet.vaccinated ? 'Yes' : 'No' %></li>
+            <li class="flex items-start gap-2"><span class="font-bold" style="color: #EA580C;">Health:</span> <span><%= @pet.health_status.presence || 'Not specified' %></span></li>
+            <li class="flex items-start gap-2"><span class="font-bold" style="color: #EA580C;">Sex:</span> <span><%= @pet.sex || 'Not specified' %></span></li>
+            <li class="flex items-start gap-2"><span class="font-bold" style="color: #EA580C;">Vaccinated:</span> <span><%= @pet.vaccinated ? 'Yes ✅' : 'No' %></span></li>
           </ul>
         </div>
 
         <div class="mb-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">About</h3>
+          <h3 class="text-lg font-bold mb-3" style="color: #F97316;">📝 About</h3>
           <p class="text-gray-700 leading-relaxed"><%= @pet.description.presence || 'A wonderful pet waiting for a loving home.' %></p>
         </div>
         <% if user_signed_in? %>
@@ -68,13 +71,13 @@
             <div class="flex gap-2 w-full">
              <%= f.hidden_field :request_type, value: 'adopt' %>
 
-             <%= f.submit 'Request to Adopt',class: 'flex-1 inline-flex justify-center items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700' %>
+             <%= f.submit '❤️ Request to Adopt', class: 'flex-1 inline-flex justify-center items-center px-6 py-4 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 text-lg', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
             </div>
           <% end %>
         <% else %>
-          <%= link_to 'Sign in to request',
+          <%= link_to '🔑 Sign in to Request Adoption',
           new_user_session_path,
-          class: 'inline-flex justify-center items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700' %>
+          class: 'inline-flex justify-center items-center w-full px-6 py-4 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 text-lg', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
         <% end %>
       </div>
     </div>

@@ -1,170 +1,165 @@
-<h1>Admin Dashboard</h1>
+<div class="admin-dashboard">
+  <h1>Admin Dashboard</h1>
 
-<!-- Quick Stats -->
-<div class="grid grid-cols-1 grid-cols-2 grid-cols-4">
-  <div class="stat-card info">
-    <p style="font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; color: #718096;">Total Pets</p>
-    <p style="font-size: 32px; font-weight: 700; color: #667EEA;"><%= @stats[:total_pets] %></p>
-  </div>
-  
-  <div class="stat-card success">
-    <p style="font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; color: #718096;">Available Pets</p>
-    <p style="font-size: 32px; font-weight: 700; color: #48BB78;"><%= @stats[:available_pets] %></p>
-  </div>
-  
-  <div class="stat-card warning">
-    <p style="font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; color: #718096;">Total Users</p>
-    <p style="font-size: 32px; font-weight: 700; color: #ED8936;"><%= @stats[:total_users] %></p>
-  </div>
-  
-  <div class="stat-card danger">
-    <p style="font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; color: #718096;">Pending Requests</p>
-    <p style="font-size: 32px; font-weight: 700; color: #F56565;"><%= @stats[:open_requests] %></p>
-  </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="grid grid-cols-1 grid-cols-2" style="margin-top: 40px;">
-  <div class="card">
-    <h3>🐾 Manage Pets</h3>
-    <p style="margin: 12px 0; color: #718096;">Create, edit, and delete pet listings.</p>
-    <%= link_to 'View All Pets →', admin_pets_path, class: 'btn btn-primary' %>
-  </div>
-  
-  <div class="card">
-    <h3>📋 Review Requests</h3>
-    <p style="margin: 12px 0; color: #718096;">Approve or reject adoption/donation requests.</p>
-    <%= link_to 'View All Requests →', admin_requests_path, class: 'btn btn-primary' %>
-  </div>
-</div>
-
-<!-- Request Statistics -->
-<div class="grid grid-cols-1 grid-cols-3" style="margin-top: 40px;">
-  <div class="card">
-    <h3>Request Types</h3>
-    <div style="margin-top: 16px;">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-        <span>Adoption Requests</span>
-        <span style="font-weight: 700; color: #667EEA;"><%= @stats[:adoption_requests] %></span>
-      </div>
-      <div style="display: flex; justify-content: space-between;">
-        <span>Donation Requests</span>
-        <span style="font-weight: 700; color: #667EEA;"><%= @stats[:donation_requests] %></span>
-      </div>
+  <!-- Quick Stats -->
+  <div class="stats-grid">
+    <div class="stat-card info">
+      <span class="stat-card-label">Total Pets</span>
+      <div class="stat-card-value"><%= @stats[:total_pets] %></div>
+    </div>
+    
+    <div class="stat-card success">
+      <span class="stat-card-label">Available Pets</span>
+      <div class="stat-card-value"><%= @stats[:available_pets] %></div>
+    </div>
+    
+    <div class="stat-card warning">
+      <span class="stat-card-label">Total Users</span>
+      <div class="stat-card-value"><%= @stats[:total_users] %></div>
+    </div>
+    
+    <div class="stat-card danger">
+      <span class="stat-card-label">Pending Requests</span>
+      <div class="stat-card-value"><%= @stats[:open_requests] %></div>
     </div>
   </div>
-  
-  <div class="card">
-    <h3>Request Status</h3>
-    <div style="margin-top: 16px;">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-        <span><span class="badge badge-warning">Open</span></span>
-        <span style="font-weight: 700;"><%= @stats[:open_requests] %></span>
-      </div>
-      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-        <span><span class="badge badge-success">Approved</span></span>
-        <span style="font-weight: 700;"><%= @stats[:approved_requests] %></span>
-      </div>
-      <div style="display: flex; justify-content: space-between;">
-        <span><span class="badge badge-danger">Rejected</span></span>
-        <span style="font-weight: 700;"><%= @stats[:rejected_requests] %></span>
-      </div>
-    </div>
-  </div>
-  
-  <div class="card">
-    <h3>Pet Status</h3>
-    <div style="margin-top: 16px;">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-        <span>Available</span>
-        <span style="font-weight: 700; color: #48BB78;"><%= @stats[:available_pets] %></span>
-      </div>
-      <div style="display: flex; justify-content: space-between;">
-        <span>Unavailable</span>
-        <span style="font-weight: 700; color: #F56565;"><%= @stats[:unavailable_pets] %></span>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- Recent Requests -->
-<div class="card" style="margin-top: 40px;">
-  <h3>Recent Requests</h3>
-  
-  <% if @recent_requests.any? %>
-    <div style="margin-top: 20px;">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Pet</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @recent_requests.each do |req| %>
-            <tr>
-              <td><strong><%= req.user.name %></strong></td>
-              <td><%= req.pet.name %></td>
-              <td><%= link_to req.request_type.capitalize, admin_requests_path, class: 'badge badge-primary' %></td>
-              <td>
-                <% case req.status
-                   when 'open' %>
-                  <span class="badge badge-warning">Open</span>
-                <% when 'approved' %>
-                  <span class="badge badge-success">Approved</span>
-                <% when 'rejected' %>
-                  <span class="badge badge-danger">Rejected</span>
-                <% when 'completed' %>
-                  <span class="badge badge-success">Completed</span>
-                <% end %>
-              </td>
-              <td><%= time_ago_in_words(req.created_at) %> ago</td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+  <!-- Quick Actions -->
+  <section class="dashboard-section">
+    <div class="quick-actions-grid">
+      <div class="action-card">
+        <h3>🐾 Manage Pets</h3>
+        <p>Create, edit, and delete pet listings.</p>
+        <%= link_to 'View All Pets →', admin_pets_path, class: 'btn btn-primary' %>
+      </div>
+      
+      <div class="action-card">
+        <h3>📋 Review Requests</h3>
+        <p>Approve or reject adoption/donation requests.</p>
+        <%= link_to 'View All Requests →', admin_requests_path, class: 'btn btn-primary' %>
+      </div>
     </div>
-  <% else %>
-    <p style="margin-top: 20px; color: #718096;">No requests yet.</p>
-  <% end %>
-</div>
+  </section>
 
-<!-- Recent Pets -->
-<div class="card" style="margin-top: 40px; margin-bottom: 40px;">
-  <h3>Recent Pets</h3>
-  
-  <% if @recent_pets.any? %>
-    <div style="margin-top: 20px;">
-      <div class="grid grid-cols-1 grid-cols-2 grid-cols-3">
-        <% @recent_pets.each do |pet| %>
-          <div class="card" style="cursor: pointer;">
-            <div style="font-weight: 600; margin-bottom: 8px;"><%= pet.name %></div>
-            <div style="font-size: 13px; color: #718096; margin-bottom: 4px;">
-              <span class="badge badge-primary"><%= pet.pet_type.capitalize %></span>
-            </div>
-            <div style="font-size: 13px; color: #718096; margin-bottom: 12px;">
-              Added <%= time_ago_in_words(pet.created_at) %> ago
-            </div>
-            <%= link_to 'View Details', admin_pet_path(pet), class: 'btn btn-small btn-outline' %>
+  <!-- Request Statistics -->
+  <section class="dashboard-section">
+    <div class="stats-details-grid">
+      <div class="dashboard-card">
+        <h3>Request Types</h3>
+        <div>
+          <div class="stat-detail-item">
+            <span class="stat-detail-label">Adoption Requests</span>
+            <span class="stat-detail-value"><%= @stats[:adoption_requests] %></span>
           </div>
-        <% end %>
+          <div class="stat-detail-item">
+            <span class="stat-detail-label">Donation Requests</span>
+            <span class="stat-detail-value"><%= @stats[:donation_requests] %></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="dashboard-card">
+        <h3>Request Status</h3>
+        <div>
+          <div class="stat-detail-item">
+            <span class="stat-detail-label"><span class="badge badge-warning">Open</span></span>
+            <span class="stat-detail-value"><%= @stats[:open_requests] %></span>
+          </div>
+          <div class="stat-detail-item">
+            <span class="stat-detail-label"><span class="badge badge-success">Approved</span></span>
+            <span class="stat-detail-value"><%= @stats[:approved_requests] %></span>
+          </div>
+          <div class="stat-detail-item">
+            <span class="stat-detail-label"><span class="badge badge-danger">Rejected</span></span>
+            <span class="stat-detail-value"><%= @stats[:rejected_requests] %></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="dashboard-card">
+        <h3>Pet Status</h3>
+        <div>
+          <div class="stat-detail-item">
+            <span class="stat-detail-label">Available</span>
+            <span class="stat-detail-value green"><%= @stats[:available_pets] %></span>
+          </div>
+          <div class="stat-detail-item">
+            <span class="stat-detail-label">Unavailable</span>
+            <span class="stat-detail-value red"><%= @stats[:unavailable_pets] %></span>
+          </div>
+        </div>
       </div>
     </div>
-  <% else %>
-    <p style="margin-top: 20px; color: #718096;">No pets yet.</p>
-  <% end %>
+  </section>
+
+  <!-- Recent Requests -->
+  <section class="dashboard-section">
+    <div class="dashboard-card">
+      <h2>Recent Requests</h2>
+      
+      <% if @recent_requests.any? %>
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Pet</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @recent_requests.each do |req| %>
+              <tr>
+                <td><strong><%= req.user.name %></strong></td>
+                <td><%= req.pet.name %></td>
+                <td><%= link_to req.request_type.capitalize, admin_requests_path, class: 'badge badge-primary' %></td>
+                <td>
+                  <% case req.status
+                     when 'open' %>
+                    <span class="badge badge-warning">Open</span>
+                  <% when 'approved' %>
+                    <span class="badge badge-success">Approved</span>
+                  <% when 'rejected' %>
+                    <span class="badge badge-danger">Rejected</span>
+                  <% when 'completed' %>
+                    <span class="badge badge-success">Completed</span>
+                  <% end %>
+                </td>
+                <td><%= time_ago_in_words(req.created_at) %> ago</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="empty-state">No requests yet.</p>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Recent Pets -->
+  <section class="dashboard-section">
+    <div class="dashboard-card">
+      <h2>Recent Pets</h2>
+      
+      <% if @recent_pets.any? %>
+        <div class="recent-pets-grid">
+          <% @recent_pets.each do |pet| %>
+            <div class="pet-item-card">
+              <div class="pet-item-name"><%= pet.name %></div>
+              <div class="pet-item-meta">
+                <span class="badge badge-primary"><%= pet.pet_type.capitalize %></span>
+              </div>
+              <div class="pet-item-time">
+                Added <%= time_ago_in_words(pet.created_at) %> ago
+              </div>
+              <%= link_to 'View Details', admin_pet_path(pet), class: 'btn btn-sm btn-outline pet-item-link' %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="empty-state">No pets yet.</p>
+      <% end %>
+    </div>
+  </section>
 </div>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const petCards = document.querySelectorAll('.pet-card');
-    petCards.forEach(card => {
-      card.addEventListener('click', function() {
-        const link = this.querySelector('a');
-        if (link) link.click();
-      });
-    });
-  });
-</script>

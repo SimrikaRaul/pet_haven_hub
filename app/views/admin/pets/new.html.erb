@@ -1,116 +1,257 @@
-<div class="container max-w-2xl py-8">
-  <h1 class="text-3xl font-bold mb-6 text-gray-900"><%= @pet.persisted? ? 'Edit Pet' : 'Add New Pet' %></h1>
+<style>
+  .form-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .form-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #F3F4F6;
+  }
+  
+  .form-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1F2937;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .form-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    font-size: 0.9375rem;
+    outline: none;
+    transition: all 0.2s;
+    background: #F9FAFB;
+  }
+  
+  .form-input:focus {
+    border-color: #0D5F5C;
+    background: white;
+  }
+  
+  .upload-area {
+    border: 2px dashed #D1D5DB;
+    border-radius: 16px;
+    padding: 3rem;
+    text-align: center;
+    background: #F9FAFB;
+    transition: all 0.2s;
+  }
+  
+  .upload-area:hover {
+    border-color: #0D5F5C;
+    background: #F0F9FF;
+  }
+  
+  @media (max-width: 768px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <% if @pet.errors.any? %>
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-        <p class="font-bold"><%= pluralize(@pet.errors.count, 'error') %> prohibited this pet from being saved:</p>
-        <ul class="mt-2 list-disc list-inside">
-          <% @pet.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
-          <% end %>
-        </ul>
+<div class="form-container">
+  <div class="form-header">
+    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+      <circle cx="20" cy="20" r="20" fill="#EF4444"/>
+      <circle cx="20" cy="20" r="8" fill="white"/>
+    </svg>
+    <div>
+      <h1 style="font-size: 2rem; font-weight: 800; color: #1F2937; margin-bottom: 0.25rem;"><%= @pet.persisted? ? 'Edit Pet' : 'Add A Pet' %></h1>
+      <div style="display: flex; align-items: center; gap: 0.5rem; color: #6B7280; font-size: 0.875rem;">
+        <span>Home</span>
+        <span>›</span>
+        <span>Shelter Profile</span>
+        <span>›</span>
+        <span style="color: #1F2937; font-weight: 600;">Add A Pet</span>
       </div>
-    <% end %>
-
-    <%= form_with model: [:admin, @pet], local: true, html: { multipart: true } do |f| %>
-      <div class="space-y-4">
-        <div>
-          <%= f.label :name, 'Pet Name', class: 'block text-sm font-semibold text-gray-700' %>
-          <%= f.text_field :name, class: 'w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500' %>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <%= f.label :pet_type, 'Species', class: 'block text-sm font-semibold text-gray-700' %>
-            <%= f.select :pet_type, [['Dog', 'dog'], ['Cat', 'cat'], ['Rabbit', 'rabbit'], ['Bird', 'bird'], ['Other', 'other']], {}, class: 'w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500' %>
-          </div>
-          <div>
-            <%= f.label :breed, 'Breed', class: 'block text-sm font-semibold text-gray-700' %>
-            <%= f.text_field :breed, class: 'w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500' %>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <%= f.label :age, 'Age (in years)', class: 'block text-sm font-semibold text-gray-700' %>
-            <%= f.number_field :age, class: 'w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500', step: 0.1 %>
-          </div>
-          <div>
-            <%= f.label :size, 'Size', class: 'block text-sm font-semibold text-gray-700' %>
-            <%= f.select :size, [['Small', 'small'], ['Medium', 'medium'], ['Large', 'large']], {}, class: 'w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500' %>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <%= f.label :sex, 'Sex', class: 'block text-sm font-semibold text-gray-700' %>
-            <%= f.select :sex, [['Male', 'male'], ['Female', 'female']], {}, class: 'w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500' %>
-          </div>
-          <div>
-            <%= f.label :health_status, 'Health Status', class: 'block text-sm font-semibold text-gray-700' %>
-            <%= f.text_field :health_status, placeholder: 'e.g., Excellent', class: 'w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500' %>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div class="flex items-center">
-            <%= f.label :vaccinated, 'Vaccinated', class: 'text-sm font-semibold text-gray-700' %>
-            <%= f.check_box :vaccinated, class: 'ml-2 w-4 h-4' %>
-          </div>
-          <div class="flex items-center">
-            <%= f.label :available, 'Available for Adoption', class: 'text-sm font-semibold text-gray-700' %>
-            <%= f.check_box :available, class: 'ml-2 w-4 h-4' %>
-          </div>
-        </div>
-
-        <div>
-          <%= f.label :description, 'Description', class: 'block text-sm font-semibold text-gray-700' %>
-          <%= f.text_area :description, rows: 5, class: 'w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500', placeholder: 'Tell us about this pet...' %>
-        </div>
-
-        <div class="mt-4">
-          <%= f.label :image, 'Photo', class: 'block text-sm font-semibold text-gray-700' %>
-          <div class="mt-2 flex items-center gap-4">
-            <div class="w-32 h-32 bg-gray-100 rounded overflow-hidden flex items-center justify-center border border-gray-200">
-              <% if @pet.image.file.present? %>
-                <%= image_tag @pet.photo_url, alt: @pet.name, class: 'object-cover w-full h-full' %>
-              <% else %>
-                <svg class="w-12 h-12 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M16 3v4M8 3v4m8 4l-3 3-2-2-4 4" />
-                </svg>
-              <% end %>
-            </div>
-
-            <div class="flex-1">
-              <%= f.file_field :image, accept: 'image/*', class: 'block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100' %>
-              <p class="mt-2 text-xs text-gray-500">Accepted: JPG, PNG, GIF — Max 5MB.</p>
-              <% if @pet.image.file.present? %>
-                <div class="mt-2">
-                  <%= check_box_tag 'remove_image', '1', false, id: 'remove_image', class: 'mr-2' %>
-                  <%= label_tag 'remove_image', 'Remove current photo', class: 'text-sm text-gray-700' %>
-                </div>
-              <% end %>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <%= f.label :latitude, 'Latitude', class: 'block text-sm font-semibold text-gray-700' %>
-            <%= f.number_field :latitude, step: 0.0001, class: 'w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500' %>
-          </div>
-          <div>
-            <%= f.label :longitude, 'Longitude', class: 'block text-sm font-semibold text-gray-700' %>
-            <%= f.number_field :longitude, step: 0.0001, class: 'w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500' %>
-          </div>
-        </div>
-
-        <div class="flex gap-3 justify-end mt-6">
-          <%= link_to 'Cancel', admin_pets_path, class: 'btn btn-outline' %>
-          <%= f.submit @pet.persisted? ? 'Update Pet' : 'Create Pet', class: 'btn btn-primary' %>
-        </div>
-      </div>
-    <% end %>
+    </div>
   </div>
+
+  <% if @pet.errors.any? %>
+    <div style="background: #FEE2E2; border-left: 4px solid #EF4444; color: #991B1B; padding: 1rem 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+      <p style="font-weight: 700; margin-bottom: 0.5rem;">⚠️ <%= pluralize(@pet.errors.count, 'error') %> prohibited this pet from being saved:</p>
+      <ul style="margin-left: 1.5rem; list-style: disc;">
+        <% @pet.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_with model: [:admin, @pet], local: true, html: { multipart: true } do |f| %>
+    <!-- Photos Section -->
+    <div class="form-card">
+      <h2 class="section-title">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+          <path d="M21 15l-5-5L5 21" stroke-width="2"/>
+        </svg>
+        Photos
+      </h2>
+      
+      <div class="upload-area">
+        <% if @pet.image.file.present? %>
+          <div style="margin-bottom: 1.5rem;">
+            <%= image_tag @pet.photo_url, alt: @pet.name, style: 'max-width: 300px; max-height: 300px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);' %>
+          </div>
+        <% else %>
+          <div style="margin-bottom: 1rem;">
+            <svg style="width: 64px; height: 64px; margin: 0 auto; color: #9CA3AF;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        <% end %>
+        
+        <%= f.file_field :image, accept: 'image/*', style: 'display: none;', id: 'pet-image-upload' %>
+        <label for="pet-image-upload" style="display: inline-block; padding: 0.875rem 2rem; background: white; border: 2px solid #0D5F5C; border-radius: 12px; font-weight: 700; color: #0D5F5C; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(13, 95, 92, 0.1);">
+          📤 Click to upload or drag and drop file PNG, JPG
+        </label>
+        <p style="margin-top: 0.75rem; font-size: 0.875rem; color: #6B7280;">Maximum file size: 5MB</p>
+        
+        <% if @pet.image.file.present? %>
+          <div style="margin-top: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 0.75rem; background: white; border-radius: 8px; max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <%= check_box_tag 'remove_image', '1', false, id: 'remove_image', style: 'width: 1.25rem; height: 1.25rem; cursor: pointer;' %>
+            <%= label_tag 'remove_image', '🗑️ Remove current photo', style: 'font-size: 0.875rem; font-weight: 600; color: #EF4444; cursor: pointer; margin: 0;' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Basic Information Section -->
+    <div class="form-card">
+      <h2 class="section-title">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Basic Information
+      </h2>
+      
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Pet Name</label>
+            <%= f.text_field :name, placeholder: 'Enter pet name', class: 'form-input' %>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Breed</label>
+            <%= f.text_field :breed, placeholder: 'e.g., Mixed, Golden Retriever', class: 'form-input' %>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Species and Breed</label>
+            <div style="display: grid; grid-template-columns: 40% 1fr; gap: 0.75rem;">
+              <%= f.select :pet_type, [['🐱 Cat', 'cat'], ['🐶 Dog', 'dog'], ['🐰 Rabbit', 'rabbit'], ['🐦 Bird', 'bird'], ['🦎 Other', 'other']], {}, class: 'form-input' %>
+              <%= f.text_field :breed, placeholder: 'Mixed', class: 'form-input' %>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <%= f.text_area :description, rows: 5, placeholder: 'Tell us about this pet...', class: 'form-input', style: 'resize: vertical;' %>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Sex</label>
+            <%= f.select :sex, [['Male', 'male'], ['Female', 'female']], { include_blank: 'Select' }, class: 'form-input' %>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Size</label>
+            <%= f.select :size, [['Small', 'small'], ['Medium', 'medium'], ['Large', 'large']], { include_blank: 'Select' }, class: 'form-input' %>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Age (in years)</label>
+            <%= f.number_field :age, step: 0.1, placeholder: '0.0', class: 'form-input' %>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Health Status</label>
+            <%= f.text_field :health_status, placeholder: 'e.g., Excellent', class: 'form-input' %>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 3rem; padding: 1rem; background: #F9FAFB; border-radius: 12px;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <%= f.check_box :vaccinated, style: 'width: 1.25rem; height: 1.25rem; accent-color: #0D5F5C; cursor: pointer;' %>
+            <%= f.label :vaccinated, '💉 Vaccinated', style: 'font-size: 0.9375rem; font-weight: 600; color: #374151; cursor: pointer; margin: 0;' %>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <%= f.check_box :available, style: 'width: 1.25rem; height: 1.25rem; accent-color: #10B981; cursor: pointer;' %>
+            <%= f.label :available, 'Available for Adoption', style: 'font-size: 0.9375rem; font-weight: 600; color: #374151; cursor: pointer; margin: 0;' %>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">📍 Latitude</label>
+            <%= f.number_field :latitude, step: 0.0001, placeholder: '0.0000', class: 'form-input' %>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">📍 Longitude</label>
+            <%= f.number_field :longitude, step: 0.0001, placeholder: '0.0000', class: 'form-input' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1.5rem 0;">
+      <%= link_to '← Cancel', admin_pets_path, style: 'padding: 0.875rem 2rem; border: 2px solid #D1D5DB; background: white; color: #6B7280; font-weight: 700; border-radius: 12px; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;' %>
+      <%= f.submit @pet.persisted? ? '✓ Update Pet' : '✓ Submit', style: 'padding: 0.875rem 2.5rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 800; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 16px rgba(13, 95, 92, 0.3); transition: all 0.3s; font-size: 1rem; letter-spacing: 0.5px;' %>
+    </div>
+  <% end %>
 </div>

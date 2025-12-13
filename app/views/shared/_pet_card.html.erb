@@ -1,19 +1,22 @@
-<div class="pet-card card">
+<div class="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2" style="border: 2px solid #FED7AA;">
   <%# expects local: pet (hash or object) with image_url, name, age, meta, id, path %>
-  <%= image_tag(pet[:image_url] || 'https://placehold.co/600x400?text=Pet', alt: pet[:name] || 'Pet') %>
-  <div class="pet-body">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+  <div class="relative h-48 overflow-hidden" style="background: linear-gradient(135deg, #FFE4D6 0%, #FED7AA 100%);">
+    <%= image_tag(pet[:image_url] || 'https://placehold.co/600x400?text=Pet', alt: pet[:name] || 'Pet', class: 'w-full h-full object-cover hover:scale-110 transition-transform duration-500') %>
+  </div>
+  <div class="p-5">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
       <div>
-        <div style="font-weight:700"><%= pet[:name] || 'Unknown' %> <small style="color:#6b7280;font-weight:600">• <%= pet[:age] || '—' %></small></div>
-        <div style="color:#6b7280"><%= pet[:meta] || 'Breed info • temperament' %></div>
-      </div>
-      <div>
-        <%= link_to 'View', pet[:path] || '#', class: 'btn btn-primary', style: 'padding:6px 10px;' %>
+        <div style="font-weight:800; font-size:1.25rem; color:#1F2937;"><%= pet[:name] || 'Unknown' %> <small style="color:#EA580C;font-weight:600;">• <%= pet[:age] || '—' %></small></div>
+        <div style="color:#6b7280; font-size:0.875rem;"><%= pet[:meta] || 'Breed info • temperament' %></div>
       </div>
     </div>
-    <div class="pet-meta">
-      <div style="color:#9aa3ad">Location: <%= pet[:location] || 'City Shelter' %></div>
-      <div style="color:#9aa3ad">ID: <%= pet[:id] || '—' %></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; padding-top:1rem; border-top: 2px solid #FED7AA;">
+      <div style="color:#6B7280; font-size:0.875rem;">
+        <div>📍 <%= pet[:location] || 'City Shelter' %></div>
+      </div>
+      <div>
+        <%= link_to 'View', pet[:path] || '#', class: 'px-5 py-2.5 text-white font-bold rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
+      </div>
     </div>
   </div>
 </div>
