@@ -1,5 +1,5 @@
 class RequestsController < ApplicationController
-  before_action :authenticate_user!,only: [:create]
+  before_action :authenticate_user!,only: [:index, :create]
   before_action :set_pet, only: [:create]
   before_action :set_request, only: [:show, :update]
 

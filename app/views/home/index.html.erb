@@ -1,31 +1,360 @@
-<div class="container">
-	<section class="bg-white rounded-3xl shadow-xl p-8" style="margin-bottom:2rem; border: 3px solid #FED7AA;">
-		<div style="display:flex;gap:2rem;align-items:center;flex-wrap:wrap;">
-			<div style="width:300px; flex:0 0 300px;">
-				<%= image_tag 'https://placehold.co/600x400?text=Adopt+Love', alt: 'Adopt Love', style: 'width:100%; border-radius:24px; box-shadow: 0 8px 16px rgba(249, 115, 22, 0.2);' %>
-			</div>
-			<div style="flex:1;">
-				<h2 style="font-size:2.5rem; font-weight:800; margin-bottom:1rem; background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🐾 Find Your Perfect Companion</h2>
-				<p style="font-size:1.1rem; color:#6B7280; line-height:1.8;">Give a loving home to a pet in need. Browse our selection of adorable pets waiting for their forever family.</p>
-				<%= link_to '🔍 Browse All Pets', pets_path, class: 'inline-block mt-4 px-8 py-4 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
-			</div>
-		</div>
-	</section>
+<style>
+  .hero-section {
+    position: relative;
+    background: linear-gradient(135deg, #FFF5EB 0%, #FFE4D6 100%);
+    border-radius: 30px;
+    padding: 4rem 3rem;
+    margin-bottom: 4rem;
+    overflow: hidden;
+  }
+  
+  .hero-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  
+  .hero-text h1 {
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1.1;
+    color: #1F2937;
+    margin-bottom: 1.5rem;
+  }
+  
+  .hero-text .highlight {
+    background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .hero-text p {
+    font-size: 1.25rem;
+    color: #4B5563;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+  
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .hero-image-wrapper {
+    position: relative;
+  }
+  
+  .hero-image {
+    width: 100%;
+    height: 500px;
+    border-radius: 30px;
+    object-fit: cover;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  
+  .stats-overlay {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    background: white;
+    padding: 1.5rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  }
+  
+  .stat-item {
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0D5F5C;
+  }
+  
+  .stat-label {
+    font-size: 0.875rem;
+    color: #6B7280;
+    font-weight: 600;
+  }
+  
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .section-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #1F2937;
+    margin-bottom: 1rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1.125rem;
+    color: #6B7280;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  .pets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  
+  .pet-card-home {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .pet-card-home:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+  }
+  
+  .pet-card-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+  }
+  
+  .pet-card-content {
+    padding: 1.5rem;
+  }
+  
+  .pet-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1F2937;
+    margin-bottom: 0.5rem;
+  }
+  
+  .pet-meta {
+    font-size: 0.9375rem;
+    color: #6B7280;
+    margin-bottom: 1rem;
+  }
+  
+  .pet-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: #D1FAE5;
+    color: #065F46;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+  
+  .why-adopt-section {
+    background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
+    border-radius: 30px;
+    padding: 4rem 3rem;
+    margin: 4rem 0;
+    color: white;
+  }
+  
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  
+  .benefit-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .benefit-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .benefit-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .benefit-text {
+    font-size: 0.9375rem;
+    opacity: 0.9;
+  }
+  
+  @media (max-width: 768px) {
+    .hero-content {
+      grid-template-columns: 1fr;
+    }
+    
+    .hero-text h1 {
+      font-size: 2.5rem;
+    }
+    
+    .section-title {
+      font-size: 2rem;
+    }
+    
+    .pets-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 
-	<section class="bg-white rounded-3xl shadow-xl p-8" style="margin-bottom:2rem; border: 3px solid #FED7AA;">
-		<h3 class="text-3xl font-bold mb-6" style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">⭐ Featured Pets</h3>
-		<div class="pet-grid" style="margin-top:0.75rem;">
-			<% pets = [
-				{ id: 'PHH-001', name: 'Bella', age: '2 yrs', image_url: 'https://placehold.co/600x400?text=Bella', meta: 'Golden Retriever • Friendly', location: 'City Shelter', path: '#' },
-				{ id: 'PHH-002', name: 'Milo', age: '1 yr', image_url: 'https://placehold.co/600x400?text=Milo', meta: 'Tabby • Playful', location: 'North Shelter', path: '#' },
-				{ id: 'PHH-003', name: 'Luna', age: '3 yrs', image_url: 'https://placehold.co/600x400?text=Luna', meta: 'Beagle • Gentle', location: 'East Shelter', path: '#' },
-				{ id: 'PHH-004', name: 'Coco', age: '6 mo', image_url: 'https://placehold.co/600x400?text=Coco', meta: 'Mixed • Energetic', location: 'Downtown Shelter', path: '#' }
-			] %>
+<div class="container mx-auto px-4 py-8">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>
+          Love, Care, And <span class="highlight">Everything Pets</span> Need
+        </h1>
+        <p>
+          At Pet Haven Hub, we believe every pet deserves love, care, and a forever home. 
+          Discover adorable pets waiting to meet their perfect family—yours could be the one!
+        </p>
+        <div class="hero-buttons">
+          <%= link_to 'Find Your Pet', pets_path, style: 'padding: 1rem 2.5rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s; display: inline-block;' %>
+          <%= link_to 'Learn More', '#why-adopt', style: 'padding: 1rem 2.5rem; background: white; color: #0D5F5C; font-weight: 700; border: 2px solid #0D5F5C; border-radius: 12px; text-decoration: none; transition: all 0.3s; display: inline-block;' %>
+        </div>
+      </div>
+      
+      <div class="hero-image-wrapper">
+        <%= image_tag 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=800&h=600&fit=crop', alt: 'Happy pets', class: 'hero-image' %>
+        <div class="stats-overlay">
+          <div class="stat-item">
+            <div class="stat-number"><%= @total_pets %></div>
+            <div class="stat-label">Pets Available</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number"><%= @total_adopted %></div>
+            <div class="stat-label">Happy Adoptions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-			<% pets.each do |pet| %>
-				<%= render 'shared/pet_card', pet: pet %>
-			<% end %>
-		</div>
-	</section>
+  <!-- Featured Pets Section -->
+  <section>
+    <div class="section-header">
+      <h2 class="section-title">Meet Our <span style="color: #0D5F5C;">Available Pets</span></h2>
+      <p class="section-subtitle">
+        These wonderful companions are ready to bring joy and love into your home. 
+        Each one has a unique personality waiting to be discovered!
+      </p>
+    </div>
 
+    <% if @featured_pets.any? %>
+      <div class="pets-grid">
+        <% @featured_pets.each do |pet| %>
+          <%= link_to pet_path(pet), style: 'text-decoration: none;' do %>
+            <div class="pet-card-home">
+              <% if pet.image.present? && pet.image.url %>
+                <%= image_tag pet.image.url, alt: pet.name, class: 'pet-card-image' %>
+              <% else %>
+                <div class="pet-card-image" style="background: linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem;">
+                  🐾
+                </div>
+              <% end %>
+              
+              <div class="pet-card-content">
+                <h3 class="pet-name"><%= pet.name %></h3>
+                <p class="pet-meta">
+                  <%= pet.pet_type&.titleize %> • <%= pet.breed %> • <%= pet.age %> <%= pet.age == 1 ? 'year' : 'years' %>
+                </p>
+                <span class="pet-status-badge">✓ Available for Adoption</span>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+      
+      <div style="text-align: center; margin-top: 3rem;">
+        <%= link_to 'View All Pets →', pets_path, style: 'padding: 1rem 2.5rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); display: inline-block; font-size: 1.125rem;' %>
+      </div>
+    <% else %>
+      <div style="text-align: center; padding: 4rem 2rem; background: #F9FAFB; border-radius: 20px;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🐾</div>
+        <h3 style="font-size: 1.5rem; font-weight: 700; color: #1F2937; margin-bottom: 0.5rem;">No Pets Available Yet</h3>
+        <p style="color: #6B7280;">Check back soon for new furry friends looking for homes!</p>
+      </div>
+    <% end %>
+  </section>
+
+  <!-- Why Adopt Section -->
+  <section class="why-adopt-section" id="why-adopt">
+    <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+      <h2 style="font-size: 3rem; font-weight: 800; margin-bottom: 1rem;">Why Adopt a Pet?</h2>
+      <p style="font-size: 1.125rem; opacity: 0.95;">
+        Adopting a pet is one of the most rewarding decisions you'll ever make. 
+        Here's why thousands of families choose adoption every year.
+      </p>
+    </div>
+
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon">❤️</div>
+        <h3 class="benefit-title">Save a Life</h3>
+        <p class="benefit-text">
+          Give a deserving pet a second chance at happiness and a loving forever home.
+        </p>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-icon">🏠</div>
+        <h3 class="benefit-title">Unconditional Love</h3>
+        <p class="benefit-text">
+          Experience the pure joy and companionship that only a pet can bring to your life.
+        </p>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-icon">💰</div>
+        <h3 class="benefit-title">Affordable</h3>
+        <p class="benefit-text">
+          Adoption fees are much lower than buying, and many pets are already vaccinated.
+        </p>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-icon">🌟</div>
+        <h3 class="benefit-title">Make a Difference</h3>
+        <p class="benefit-text">
+          Your adoption helps shelters rescue and care for more animals in need.
+        </p>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 3rem;">
+      <%= link_to 'Start Your Journey', pets_path, style: 'padding: 1rem 2.5rem; background: white; color: #0D5F5C; font-weight: 700; border-radius: 12px; text-decoration: none; display: inline-block; font-size: 1.125rem;' %>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section style="background: linear-gradient(135deg, #FFE4D6 0%, #FFF5EB 100%); border-radius: 30px; padding: 4rem 3rem; text-align: center; margin-top: 4rem;">
+    <h2 style="font-size: 2.5rem; font-weight: 800; color: #1F2937; margin-bottom: 1rem;">
+      Ready to Meet Your New Best Friend?
+    </h2>
+    <p style="font-size: 1.125rem; color: #4B5563; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+      Browse our available pets and start the adoption process today. Your perfect companion is waiting!
+    </p>
+    <%= link_to 'Browse Available Pets', pets_path, style: 'padding: 1.25rem 3rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); display: inline-block; font-size: 1.125rem;' %>
+  </section>
 </div>

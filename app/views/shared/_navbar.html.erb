@@ -175,7 +175,9 @@
         <% end %>
       </li>
       <li><%= link_to 'Browse Pets', pets_path %></li>
-      <li><%= link_to 'My Requests', requests_path, class: user_signed_in? ? '' : 'hidden' %></li>
+      <% if user_signed_in? %>
+        <li><%= link_to 'My Requests', requests_path %></li>
+      <% end %>
       <li><%= link_to 'About', '#' %></li>
     </ul>
 
