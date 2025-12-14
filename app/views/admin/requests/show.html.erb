@@ -1,106 +1,304 @@
-<div class="container max-w-4xl py-8">
-  <div class="mb-6">
-    <%= link_to '← Back to Requests', admin_requests_path, class: 'link link-primary' %>
-  </div>
+<style>
+  .request-detail-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  
+  .back-link-detail {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0D5F5C;
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    transition: all 0.3s;
+  }
+  
+  .back-link-detail:hover {
+    gap: 0.75rem;
+  }
+  
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 2rem;
+  }
+  
+  .detail-card {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0D5F5C;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .info-row {
+    margin-bottom: 1.5rem;
+  }
+  
+  .info-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .info-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1F2937;
+  }
+  
+  .status-badge-detail {
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .status-badge-detail.open { background: #FEF3C7; color: #92400E; }
+  .status-badge-detail.approved { background: #D1FAE5; color: #065F46; }
+  .status-badge-detail.rejected { background: #FEE2E2; color: #991B1B; }
+  .status-badge-detail.completed { background: #E0F2F1; color: #0D5F5C; }
+  
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #E5E7EB;
+  }
+  
+  .btn-action {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s;
+    display: block;
+  }
+  
+  .btn-approve-action {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+  
+  .btn-approve-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  }
+  
+  .btn-reject-action {
+    background: white;
+    color: #EF4444;
+    border: 2px solid #EF4444;
+  }
+  
+  .btn-reject-action:hover {
+    background: #EF4444;
+    color: white;
+  }
+  
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .description-box {
+    background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid #0D5F5C;
+  }
+  
+  .description-text {
+    color: #4B5563;
+    line-height: 1.7;
+    font-size: 0.9375rem;
+  }
+  
+  .email-link {
+    color: #0D5F5C;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  
+  .email-link:hover {
+    text-decoration: underline;
+  }
+  
+  .sidebar-sticky {
+    position: sticky;
+    top: 2rem;
+  }
+  
+  @media (max-width: 1024px) {
+    .detail-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .sidebar-sticky {
+      position: relative;
+      top: 0;
+    }
+  }
+</style>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <!-- Request Summary -->
-    <div class="md:col-span-1">
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-xl font-bold mb-4 text-gray-900">Request Details</h3>
-        <div class="space-y-3 text-sm">
-          <div>
-            <p class="text-gray-600">Status</p>
-            <span class="px-3 py-1 rounded-full text-sm font-semibold text-white
-              <%= case @request.status
-                  when 'open' then 'bg-yellow-500'
-                  when 'approved' then 'bg-green-500'
-                  when 'rejected' then 'bg-red-500'
-                  when 'completed' then 'bg-blue-500'
-                  else 'bg-gray-400'
-                  end %>">
-              <%= @request.status.upcase %>
-            </span>
-          </div>
-          <div>
-            <p class="text-gray-600">Type</p>
-            <p class="font-semibold text-gray-900"><%= @request.request_type.capitalize %></p>
-          </div>
-          <div>
-            <p class="text-gray-600">Submitted</p>
-            <p class="font-semibold text-gray-900"><%= @request.created_at.strftime('%b %d, %Y') %></p>
-          </div>
-          <% if @request.route_distance.present? %>
-            <div>
-              <p class="text-gray-600">Route Distance</p>
-              <p class="font-semibold text-gray-900"><%= @request.route_distance.round(2) %> km</p>
-            </div>
-          <% end %>
+<div class="request-detail-container">
+  <%= link_to admin_requests_path, class: 'back-link-detail' do %>
+    <span>←</span> Back to Requests
+  <% end %>
+
+  <div class="detail-grid">
+    <!-- Sidebar - Request Summary -->
+    <div class="sidebar-sticky">
+      <div class="detail-card">
+        <h3 class="card-title">
+          <span>📄</span> Request Summary
+        </h3>
+        
+        <div class="info-row">
+          <div class="info-label">Status</div>
+          <span class="status-badge-detail <%= @request.status %>">
+            <% case @request.status
+               when 'open' then '⏳'
+               when 'approved' then '✓'
+               when 'rejected' then '✗'
+               when 'completed' then '★'
+               end %>
+            <%= @request.status.upcase %>
+          </span>
         </div>
+        
+        <div class="info-row">
+          <div class="info-label">Request Type</div>
+          <div class="info-value"><%= @request.request_type.titleize %></div>
+        </div>
+        
+        <div class="info-row">
+          <div class="info-label">Submitted On</div>
+          <div class="info-value"><%= @request.created_at.strftime('%B %-d, %Y') %></div>
+          <div style="font-size: 0.875rem; color: #6B7280; margin-top: 0.25rem;">
+            <%= time_ago_in_words(@request.created_at) %> ago
+          </div>
+        </div>
+        
+        <% if @request.route_distance.present? %>
+          <div class="info-row">
+            <div class="info-label">📍 Distance</div>
+            <div class="info-value"><%= @request.route_distance.round(2) %> km</div>
+          </div>
+        <% end %>
 
         <% if @request.open? %>
-          <div class="mt-6 space-y-2">
-            <%= link_to 'Approve Request', admin_request_path(@request, status: 'approved'), method: :patch, data: { confirm: 'Approve this request?' }, class: 'btn btn-success w-full' %>
-            <%= link_to 'Reject Request', admin_request_path(@request, status: 'rejected'), method: :patch, data: { confirm: 'Reject this request?' }, class: 'btn btn-danger w-full' %>
+          <div class="action-buttons">
+            <%= link_to admin_request_path(@request, status: 'approved'), method: :patch, data: { confirm: 'Are you sure you want to approve this request?' }, class: 'btn-action btn-approve-action' do %>
+              ✓ Approve Request
+            <% end %>
+            <%= link_to admin_request_path(@request, status: 'rejected'), method: :patch, data: { confirm: 'Are you sure you want to reject this request?' }, class: 'btn-action btn-reject-action' do %>
+              ✗ Reject Request
+            <% end %>
           </div>
         <% end %>
       </div>
     </div>
 
-    <!-- User & Pet Info -->
-    <div class="md:col-span-2 space-y-6">
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-xl font-bold mb-4 text-gray-900">Applicant Information</h3>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <p class="text-sm text-gray-600">Name</p>
-            <p class="font-semibold text-gray-900"><%= @request.user.name %></p>
+    <!-- Main Content -->
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+      <!-- Applicant Information -->
+      <div class="detail-card">
+        <h3 class="card-title">
+          <span>👤</span> Applicant Information
+        </h3>
+        <div class="info-grid">
+          <div class="info-row" style="margin-bottom: 0;">
+            <div class="info-label">Full Name</div>
+            <div class="info-value"><%= @request.user.name %></div>
           </div>
-          <div>
-            <p class="text-sm text-gray-600">Email</p>
-            <p class="font-semibold text-gray-900"><%= link_to @request.user.email, "mailto:#{@request.user.email}", class: 'link link-primary' %></p>
+          <div class="info-row" style="margin-bottom: 0;">
+            <div class="info-label">Email Address</div>
+            <div class="info-value">
+              <%= link_to @request.user.email, "mailto:#{@request.user.email}", class: 'email-link' %>
+            </div>
           </div>
-          <div>
-            <p class="text-sm text-gray-600">Joined</p>
-            <p class="font-semibold text-gray-900"><%= @request.user.created_at.strftime('%b %d, %Y') %></p>
+          <div class="info-row" style="margin-bottom: 0;">
+            <div class="info-label">Member Since</div>
+            <div class="info-value"><%= @request.user.created_at.strftime('%B %-d, %Y') %></div>
           </div>
-          <div>
-            <p class="text-sm text-gray-600">Total Requests</p>
-            <p class="font-semibold text-gray-900"><%= @request.user.requests.count %></p>
+          <div class="info-row" style="margin-bottom: 0;">
+            <div class="info-label">Total Requests</div>
+            <div class="info-value"><%= @request.user.requests.count %></div>
           </div>
         </div>
       </div>
 
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-xl font-bold mb-4 text-gray-900">Pet Information</h3>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <p class="text-sm text-gray-600">Name</p>
-            <p class="font-semibold text-gray-900"><%= @request.pet.name %></p>
+      <!-- Pet Information -->
+      <div class="detail-card">
+        <h3 class="card-title">
+          <span>🐾</span> Pet Information
+        </h3>
+        <div class="info-grid">
+          <div class="info-row" style="margin-bottom: 0;">
+            <div class="info-label">Pet Name</div>
+            <div class="info-value"><%= @request.pet.name %></div>
           </div>
-          <div>
-            <p class="text-sm text-gray-600">Species</p>
-            <p class="font-semibold text-gray-900"><%= @request.pet.pet_type&.titleize %></p>
+          <div class="info-row" style="margin-bottom: 0;">
+            <div class="info-label">Species</div>
+            <div class="info-value"><%= @request.pet.pet_type&.titleize || 'Unknown' %></div>
           </div>
-          <div>
-            <p class="text-sm text-gray-600">Breed</p>
-            <p class="font-semibold text-gray-900"><%= @request.pet.breed %></p>
+          <div class="info-row" style="margin-bottom: 0;">
+            <div class="info-label">Breed</div>
+            <div class="info-value"><%= @request.pet.breed %></div>
           </div>
-          <div>
-            <p class="text-sm text-gray-600">Age</p>
-            <p class="font-semibold text-gray-900"><%= @request.pet.age %> years</p>
+          <div class="info-row" style="margin-bottom: 0;">
+            <div class="info-label">Age</div>
+            <div class="info-value"><%= @request.pet.age %> <%= @request.pet.age == 1 ? 'year' : 'years' %></div>
           </div>
         </div>
-        <div class="mt-4 p-4 bg-gray-50 rounded-lg">
-          <p class="text-sm text-gray-600 mb-1">Description</p>
-          <p class="text-gray-900"><%= @request.pet.description %></p>
-        </div>
+        
+        <% if @request.pet.description.present? %>
+          <div style="margin-top: 1.5rem;">
+            <div class="info-label">Description</div>
+            <div class="description-box">
+              <p class="description-text"><%= @request.pet.description %></p>
+            </div>
+          </div>
+        <% end %>
       </div>
 
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-xl font-bold mb-4 text-gray-900">Applicant Notes</h3>
-        <div class="p-4 bg-gray-50 rounded-lg">
-          <p class="text-gray-900"><%= @request.notes || 'No additional notes provided.' %></p>
+      <!-- Applicant Notes -->
+      <div class="detail-card">
+        <h3 class="card-title">
+          <span>📝</span> Applicant Notes
+        </h3>
+        <div class="description-box">
+          <p class="description-text">
+            <%= @request.notes.present? ? @request.notes : 'No additional notes provided by the applicant.' %>
+          </p>
         </div>
       </div>
     </div>

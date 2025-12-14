@@ -1,89 +1,461 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="bg-white rounded-3xl shadow-xl overflow-hidden" style="border: 3px solid #FED7AA;">
-    <div class="flex flex-col lg:flex-row">
-      <!-- Left: Image gallery / main image -->
-      <div class="lg:w-1/2" style="background: linear-gradient(135deg, #FFE4D6 0%, #FED7AA 100%);">
-        <div class="h-96 w-full overflow-hidden flex items-center justify-center">
+<style>
+  .pet-show-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  
+  .back-link-pet {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0D5F5C;
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    transition: all 0.3s;
+  }
+  
+  .back-link-pet:hover {
+    gap: 0.75rem;
+  }
+  
+  .pet-detail-card {
+    background: white;
+    border-radius: 30px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .pet-layout {
+    display: grid;
+    grid-template-columns: 550px 1fr;
+    min-height: 700px;
+  }
+  
+  .pet-image-section {
+    background: linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%);
+    position: relative;
+  }
+  
+  .pet-main-image-wrapper {
+    width: 100%;
+    height: 600px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .pet-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .pet-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 6rem;
+    color: #9CA3AF;
+  }
+  
+  .availability-badge-show {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+  }
+  
+  .badge-available-show {
+    background: #10B981;
+    color: white;
+  }
+  
+  .badge-adopted-show {
+    background: #6B7280;
+    color: white;
+  }
+  
+  .pet-thumbnails {
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    background: white;
+  }
+  
+  .thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 3px solid #0D5F5C;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .thumbnail:hover {
+    transform: scale(1.05);
+    border-color: #F4A5B9;
+  }
+  
+  .thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .pet-info-section {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .pet-name-header {
+    margin-bottom: 2rem;
+  }
+  
+  .pet-name-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #0D5F5C;
+    margin-bottom: 0.75rem;
+    line-height: 1.1;
+  }
+  
+  .pet-location-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6B7280;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  .quick-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .info-box {
+    background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
+    border-radius: 16px;
+    padding: 1.25rem;
+    border: 2px solid #B5D6D8;
+  }
+  
+  .info-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #0D5F5C;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .info-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1F2937;
+  }
+  
+  .health-details-box {
+    background: linear-gradient(135deg, #FFF5EB 0%, #FFE4D6 100%);
+    border-radius: 20px;
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+    border: 2px solid #FED7AA;
+  }
+  
+  .section-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: #0D5F5C;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .health-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .health-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9375rem;
+  }
+  
+  .health-label {
+    font-weight: 700;
+    color: #0D5F5C;
+    min-width: 100px;
+  }
+  
+  .health-value {
+    color: #4B5563;
+    font-weight: 500;
+  }
+  
+  .about-section {
+    margin-bottom: 2rem;
+  }
+  
+  .about-text {
+    color: #4B5563;
+    line-height: 1.8;
+    font-size: 1rem;
+    background: #F9FAFB;
+    padding: 1.5rem;
+    border-radius: 16px;
+    border-left: 4px solid #0D5F5C;
+  }
+  
+  .adoption-actions {
+    margin-top: auto;
+    padding-top: 2rem;
+    border-top: 2px solid #E5E7EB;
+  }
+  
+  .adopt-button {
+    width: 100%;
+    padding: 1.25rem 2rem;
+    background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
+    color: white;
+    font-weight: 800;
+    font-size: 1.25rem;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(13, 95, 92, 0.3);
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+  
+  .adopt-button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(13, 95, 92, 0.4);
+  }
+  
+  .sign-in-button {
+    width: 100%;
+    padding: 1.25rem 2rem;
+    background: linear-gradient(135deg, #F4A5B9 0%, #F48FAB 100%);
+    color: white;
+    font-weight: 800;
+    font-size: 1.25rem;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(244, 165, 185, 0.3);
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+  
+  .sign-in-button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(244, 165, 185, 0.4);
+  }
+  
+  .listing-info {
+    text-align: center;
+    margin-top: 2rem;
+    color: #6B7280;
+    font-size: 0.875rem;
+  }
+  
+  @media (max-width: 1024px) {
+    .pet-layout {
+      grid-template-columns: 1fr;
+    }
+    
+    .pet-main-image-wrapper {
+      height: 400px;
+    }
+    
+    .pet-info-section {
+      padding: 2rem;
+    }
+    
+    .pet-name-title {
+      font-size: 2.5rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .quick-info-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .pet-name-title {
+      font-size: 2rem;
+    }
+    
+    .adopt-button, .sign-in-button {
+      font-size: 1.125rem;
+      padding: 1rem 1.5rem;
+    }
+  }
+</style>
+
+<div class="pet-show-container">
+  <%= link_to pets_path, class: 'back-link-pet' do %>
+    <span>←</span> Back to Browse Pets
+  <% end %>
+  
+  <div class="pet-detail-card">
+    <div class="pet-layout">
+      <!-- Left: Image Section -->
+      <div class="pet-image-section">
+        <div class="pet-main-image-wrapper">
           <% if @pet.image.present? && @pet.image.url %>
-            <%= image_tag @pet.image.url, alt: @pet.name, class: 'w-full h-full object-cover' %>
+            <%= image_tag @pet.image.url, alt: @pet.name, class: 'pet-main-image' %>
           <% else %>
-            <%= image_tag '/images/placeholder-pet.jpg', alt: @pet.name, class: 'w-full h-full object-cover' %>
+            <div class="pet-placeholder">
+              <div>🐾</div>
+              <div style="font-size: 1.25rem; margin-top: 1rem; color: #9CA3AF;">No image available</div>
+            </div>
           <% end %>
         </div>
-
-        <%# Optional thumbnails row - suggest extracting into partial if needed %>
-        <div class="p-4">
-          <div class="flex items-center gap-3 overflow-x-auto">
-            <%# If you have multiple photos implement thumbnails here. For now show a single thumbnail copy %>
-            <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 border-2" style="background: white; border-color: #F97316;">
-              <% if @pet.image.present? && @pet.image.url %>
-                <%= image_tag @pet.image.url, alt: @pet.name, class: 'w-full h-full object-cover' %>
-              <% else %>
-                <%= image_tag '/images/placeholder-pet.jpg', alt: 'placeholder', class: 'w-full h-full object-cover' %>
-              <% end %>
+        
+        <!-- Availability Badge -->
+        <% if @pet.respond_to?(:available) %>
+          <% if @pet.available %>
+            <div class="availability-badge-show badge-available-show">
+              ✓ Available for Adoption
             </div>
+          <% else %>
+            <div class="availability-badge-show badge-adopted-show">
+              Adopted
+            </div>
+          <% end %>
+        <% end %>
+        
+        <!-- Thumbnails -->
+        <div class="pet-thumbnails">
+          <div class="thumbnail">
+            <% if @pet.image.present? && @pet.image.url %>
+              <%= image_tag @pet.image.url, alt: @pet.name %>
+            <% else %>
+              <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #E5E7EB; font-size: 2rem;">🐾</div>
+            <% end %>
           </div>
         </div>
       </div>
 
-      <!-- Right: Details + actions -->
-      <div class="lg:w-1/2 p-8">
-        <h1 class="text-4xl font-bold mb-2" style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"><%= @pet.name %></h1>
-        <p class="text-sm font-semibold text-gray-600 mb-6 flex items-center gap-1">
-          <svg class="w-4 h-4" fill="#F97316" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
-          <%= @pet.location %>
-        </p>
-
-        <div class="grid grid-cols-2 gap-4 mb-6">
-          <div class="rounded-2xl p-4 border-2" style="background: linear-gradient(135deg, #FFE4D6 0%, #FFF5EB 100%); border-color: #FED7AA;">
-            <p class="text-xs font-semibold" style="color: #EA580C;">Species</p>
-            <p class="font-bold text-gray-900"><%= @pet.pet_type.try(:capitalize) || '—' %></p>
-          </div>
-          <div class="rounded-2xl p-4 border-2" style="background: linear-gradient(135deg, #FFE4D6 0%, #FFF5EB 100%); border-color: #FED7AA;">
-            <p class="text-xs font-semibold" style="color: #EA580C;">Breed</p>
-            <p class="font-bold text-gray-900"><%= @pet.breed || '—' %></p>
-          </div>
-          <div class="rounded-2xl p-4 border-2" style="background: linear-gradient(135deg, #FFE4D6 0%, #FFF5EB 100%); border-color: #FED7AA;">
-            <p class="text-xs font-semibold" style="color: #EA580C;">Age</p>
-            <p class="font-bold text-gray-900"><%= @pet.age %> yrs</p>
-          </div>
-          <div class="rounded-2xl p-4 border-2" style="background: linear-gradient(135deg, #FFE4D6 0%, #FFF5EB 100%); border-color: #FED7AA;">
-            <p class="text-xs font-semibold" style="color: #EA580C;">Size</p>
-            <p class="font-bold text-gray-900"><%= @pet.size || '—' %></p>
-          </div>
-        </div>
-
-        <div class="mb-6 p-5 rounded-2xl" style="background: linear-gradient(135deg, #FFF5EB 0%, #FFE4D6 100%);">
-          <h3 class="text-lg font-bold mb-3" style="color: #F97316;">🌿 Health & Details</h3>
-          <ul class="space-y-2 text-sm text-gray-700">
-            <li class="flex items-start gap-2"><span class="font-bold" style="color: #EA580C;">Health:</span> <span><%= @pet.health_status.presence || 'Not specified' %></span></li>
-            <li class="flex items-start gap-2"><span class="font-bold" style="color: #EA580C;">Sex:</span> <span><%= @pet.sex || 'Not specified' %></span></li>
-            <li class="flex items-start gap-2"><span class="font-bold" style="color: #EA580C;">Vaccinated:</span> <span><%= @pet.vaccinated ? 'Yes ✅' : 'No' %></span></li>
-          </ul>
-        </div>
-
-        <div class="mb-6">
-          <h3 class="text-lg font-bold mb-3" style="color: #F97316;">📝 About</h3>
-          <p class="text-gray-700 leading-relaxed"><%= @pet.description.presence || 'A wonderful pet waiting for a loving home.' %></p>
-        </div>
-        <% if user_signed_in? %>
-          <%= form_with model: Request.new, url: pet_requests_path(@pet), method: :post, local: true do |f| %>
-            <div class="flex gap-2 w-full">
-             <%= f.hidden_field :request_type, value: 'adopt' %>
-
-             <%= f.submit '❤️ Request to Adopt', class: 'flex-1 inline-flex justify-center items-center px-6 py-4 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 text-lg', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
+      <!-- Right: Pet Information -->
+      <div class="pet-info-section">
+        <div class="pet-name-header">
+          <h1 class="pet-name-title"><%= @pet.name %></h1>
+          <% if @pet.location.present? %>
+            <div class="pet-location-info">
+              <svg style="width: 1.25rem; height: 1.25rem;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+              </svg>
+              <span><%= @pet.location %></span>
             </div>
           <% end %>
-        <% else %>
-          <%= link_to '🔑 Sign in to Request Adoption',
-          new_user_session_path,
-          class: 'inline-flex justify-center items-center w-full px-6 py-4 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 text-lg', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
-        <% end %>
+        </div>
+
+        <!-- Quick Info Grid -->
+        <div class="quick-info-grid">
+          <div class="info-box">
+            <div class="info-label">Species</div>
+            <div class="info-value"><%= @pet.pet_type&.titleize || 'Pet' %></div>
+          </div>
+          <div class="info-box">
+            <div class="info-label">Breed</div>
+            <div class="info-value"><%= @pet.breed || 'Mixed' %></div>
+          </div>
+          <div class="info-box">
+            <div class="info-label">Age</div>
+            <div class="info-value"><%= @pet.age %> <%= @pet.age == 1 ? 'year' : 'years' %></div>
+          </div>
+          <div class="info-box">
+            <div class="info-label">Size</div>
+            <div class="info-value"><%= @pet.size&.titleize || 'Medium' %></div>
+          </div>
+        </div>
+
+        <!-- Health & Details -->
+        <div class="health-details-box">
+          <h3 class="section-title">
+            <span>🩺</span> Health & Details
+          </h3>
+          <div class="health-list">
+            <div class="health-item">
+              <span class="health-label">Health Status:</span>
+              <span class="health-value"><%= @pet.health_status.presence || 'Healthy' %></span>
+            </div>
+            <div class="health-item">
+              <span class="health-label">Sex:</span>
+              <span class="health-value"><%= @pet.sex&.titleize || 'Not specified' %></span>
+            </div>
+            <div class="health-item">
+              <span class="health-label">Vaccinated:</span>
+              <span class="health-value">
+                <% if @pet.respond_to?(:vaccinated) %>
+                  <%= @pet.vaccinated ? '✅ Yes' : '❌ No' %>
+                <% else %>
+                  Not specified
+                <% end %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- About Section -->
+        <div class="about-section">
+          <h3 class="section-title">
+            <span>📖</span> About <%= @pet.name %>
+          </h3>
+          <div class="about-text">
+            <%= @pet.description.presence || "#{@pet.name} is a wonderful companion looking for a loving forever home. This adorable pet has so much love to give and can't wait to meet their new family!" %>
+          </div>
+        </div>
+
+        <!-- Adoption Actions -->
+        <div class="adoption-actions">
+          <% if user_signed_in? %>
+            <%= form_with model: Request.new, url: pet_requests_path(@pet), method: :post, local: true do |f| %>
+              <%= f.hidden_field :request_type, value: 'adopt' %>
+              <%= f.submit "❤️ Request to Adopt #{@pet.name}", class: 'adopt-button' %>
+            <% end %>
+          <% else %>
+            <%= link_to '🔑 Sign In to Request Adoption', new_user_session_path, class: 'sign-in-button' %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="mt-6 text-center">
-    <p class="text-sm text-gray-500">Listed on <%= l(@pet.created_at.to_date, format: :long) %></p>
+  <div class="listing-info">
+    <p>Listed on <%= @pet.created_at.strftime('%B %-d, %Y') %> • Pet ID: #<%= @pet.id %></p>
   </div>
 </div>

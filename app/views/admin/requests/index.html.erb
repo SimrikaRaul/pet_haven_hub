@@ -1,63 +1,328 @@
-<div class="container py-8">
-  <h1 class="text-3xl font-bold mb-6 text-gray-900">Review Requests</h1>
+<style>
+  .requests-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  
+  .requests-header {
+    margin-bottom: 2.5rem;
+  }
+  
+  .requests-title {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #0D5F5C;
+    margin-bottom: 0.5rem;
+  }
+  
+  .requests-subtitle {
+    font-size: 1.125rem;
+    color: #6B7280;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .stat-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(13, 95, 92, 0.15);
+  }
+  
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+  }
+  
+  .stat-card.open::before { background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); }
+  .stat-card.approved::before { background: linear-gradient(90deg, #10B981 0%, #059669 100%); }
+  .stat-card.rejected::before { background: linear-gradient(90deg, #EF4444 0%, #DC2626 100%); }
+  .stat-card.completed::before { background: linear-gradient(90deg, #0D5F5C 0%, #0A4946 100%); }
+  
+  .stat-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+  }
+  
+  .stat-number {
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+  
+  .stat-card.open .stat-number { color: #F59E0B; }
+  .stat-card.approved .stat-number { color: #10B981; }
+  .stat-card.rejected .stat-number { color: #EF4444; }
+  .stat-card.completed .stat-number { color: #0D5F5C; }
+  
+  .requests-table-card {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  
+  .requests-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .requests-table thead {
+    background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
+  }
+  
+  .requests-table th {
+    padding: 1.25rem 1.5rem;
+    text-align: left;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .requests-table tbody tr {
+    border-bottom: 1px solid #E5E7EB;
+    transition: all 0.2s;
+  }
+  
+  .requests-table tbody tr:hover {
+    background: #F9FAFB;
+  }
+  
+  .requests-table td {
+    padding: 1.25rem 1.5rem;
+    font-size: 0.9375rem;
+  }
+  
+  .user-name {
+    font-weight: 700;
+    color: #1F2937;
+  }
+  
+  .pet-name {
+    color: #4B5563;
+    font-weight: 600;
+  }
+  
+  .request-type-badge {
+    padding: 0.375rem 0.875rem;
+    background: linear-gradient(135deg, #B5D6D8 0%, #A5CED1 100%);
+    color: #0D5F5C;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    display: inline-block;
+  }
+  
+  .status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  
+  .status-open { background: #FEF3C7; color: #92400E; }
+  .status-approved { background: #D1FAE5; color: #065F46; }
+  .status-rejected { background: #FEE2E2; color: #991B1B; }
+  .status-completed { background: #E0F2F1; color: #0D5F5C; }
+  
+  .status-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+  }
+  
+  .status-open .status-dot { background: #F59E0B; }
+  .status-approved .status-dot { background: #10B981; }
+  .status-rejected .status-dot { background: #EF4444; }
+  .status-completed .status-dot { background: #0D5F5C; }
+  
+  .actions-cell {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .action-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  
+  .btn-view {
+    background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(13, 95, 92, 0.3);
+  }
+  
+  .btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 95, 92, 0.4);
+  }
+  
+  .btn-approve {
+    background: white;
+    color: #10B981;
+    border: 2px solid #10B981;
+  }
+  
+  .btn-approve:hover {
+    background: #10B981;
+    color: white;
+  }
+  
+  .btn-reject {
+    background: white;
+    color: #EF4444;
+    border: 2px solid #EF4444;
+  }
+  
+  .btn-reject:hover {
+    background: #EF4444;
+    color: white;
+  }
+  
+  .empty-state {
+    background: white;
+    border-radius: 24px;
+    padding: 4rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  
+  .empty-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .empty-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #1F2937;
+    margin-bottom: 0.5rem;
+  }
+  
+  .empty-text {
+    font-size: 1.125rem;
+    color: #6B7280;
+  }
+  
+  @media (max-width: 768px) {
+    .requests-title {
+      font-size: 2rem;
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
+    }
+    
+    .requests-table {
+      display: block;
+      overflow-x: auto;
+    }
+  }
+</style>
 
-  <div class="grid grid-cols-4 gap-4 mb-8">
-    <div class="bg-white rounded-lg shadow p-4 text-center">
-      <p class="text-gray-600 text-sm">Open</p>
-      <p class="text-3xl font-bold text-yellow-500"><%= Request.where(status: 'open').count %></p>
+<div class="requests-container">
+  <div class="requests-header">
+    <h1 class="requests-title">📋 Review Requests</h1>
+    <p class="requests-subtitle">Manage and approve pet adoption requests</p>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card open">
+      <div class="stat-label">⏳ Open</div>
+      <div class="stat-number"><%= Request.where(status: 'open').count %></div>
     </div>
-    <div class="bg-white rounded-lg shadow p-4 text-center">
-      <p class="text-gray-600 text-sm">Approved</p>
-      <p class="text-3xl font-bold text-green-500"><%= Request.where(status: 'approved').count %></p>
+    <div class="stat-card approved">
+      <div class="stat-label">✓ Approved</div>
+      <div class="stat-number"><%= Request.where(status: 'approved').count %></div>
     </div>
-    <div class="bg-white rounded-lg shadow p-4 text-center">
-      <p class="text-gray-600 text-sm">Rejected</p>
-      <p class="text-3xl font-bold text-red-500"><%= Request.where(status: 'rejected').count %></p>
+    <div class="stat-card rejected">
+      <div class="stat-label">✗ Rejected</div>
+      <div class="stat-number"><%= Request.where(status: 'rejected').count %></div>
     </div>
-    <div class="bg-white rounded-lg shadow p-4 text-center">
-      <p class="text-gray-600 text-sm">Completed</p>
-      <p class="text-3xl font-bold text-blue-500"><%= Request.where(status: 'completed').count %></p>
+    <div class="stat-card completed">
+      <div class="stat-label">★ Completed</div>
+      <div class="stat-number"><%= Request.where(status: 'completed').count %></div>
     </div>
   </div>
 
+  <!-- Requests Table -->
   <% if @requests.any? %>
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-      <table class="w-full">
-        <thead class="bg-gray-100 border-b">
+    <div class="requests-table-card">
+      <table class="requests-table">
+        <thead>
           <tr>
-            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">User</th>
-            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Pet</th>
-            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Type</th>
-            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Submitted</th>
-            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+            <th>User</th>
+            <th>Pet</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Actions</th>
           </tr>
         </thead>
-        <tbody class="divide-y">
+        <tbody>
           <% @requests.each do |request| %>
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 font-medium text-gray-900"><%= request.user.name %></td>
-              <td class="px-6 py-4 text-gray-600"><%= request.pet.name %></td>
-              <td class="px-6 py-4 text-gray-600"><%= request.request_type.upcase %></td>
-              <td class="px-6 py-4">
-                <span class="px-3 py-1 rounded-full text-xs font-semibold text-white
-                  <%= case request.status
-                      when 'open' then 'bg-yellow-500'
-                      when 'approved' then 'bg-green-500'
-                      when 'rejected' then 'bg-red-500'
-                      when 'completed' then 'bg-blue-500'
-                      else 'bg-gray-400'
-                      end %>">
+            <tr>
+              <td>
+                <span class="user-name"><%= request.user.name %></span>
+              </td>
+              <td>
+                <span class="pet-name"><%= request.pet.name %></span>
+              </td>
+              <td>
+                <span class="request-type-badge"><%= request.request_type.upcase %></span>
+              </td>
+              <td>
+                <span class="status-badge <%= "status-#{request.status}" %>">
+                  <span class="status-dot"></span>
                   <%= request.status.upcase %>
                 </span>
               </td>
-              <td class="px-6 py-4 text-gray-600"><%= time_ago_in_words(request.created_at) %> ago</td>
-              <td class="px-6 py-4 text-sm space-x-2 flex">
-                <%= link_to 'View', admin_request_path(request), class: 'link link-primary' %>
-                <% if request.open? %>
-                  <%= link_to 'Approve', admin_request_path(request, status: 'approved'), method: :patch, data: { confirm: 'Approve this request?' }, class: 'link link-success' %>
-                  <%= link_to 'Reject', admin_request_path(request, status: 'rejected'), method: :patch, data: { confirm: 'Reject this request?' }, class: 'link link-danger' %>
-                <% end %>
+              <td style="color: #6B7280;">
+                <%= time_ago_in_words(request.created_at) %> ago
+              </td>
+              <td>
+                <div class="actions-cell">
+                  <%= link_to 'View', admin_request_path(request), class: 'action-btn btn-view' %>
+                  <% if request.open? %>
+                    <%= link_to 'Approve', admin_request_path(request, status: 'approved'), method: :patch, data: { confirm: 'Approve this request?' }, class: 'action-btn btn-approve' %>
+                    <%= link_to 'Reject', admin_request_path(request, status: 'rejected'), method: :patch, data: { confirm: 'Reject this request?' }, class: 'action-btn btn-reject' %>
+                  <% end %>
+                </div>
               </td>
             </tr>
           <% end %>
@@ -65,8 +330,10 @@
       </table>
     </div>
   <% else %>
-    <div class="bg-white rounded-lg shadow-md p-8 text-center">
-      <p class="text-gray-600">No requests to review.</p>
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <h3 class="empty-title">No Requests Yet</h3>
+      <p class="empty-text">There are no requests to review at this time.</p>
     </div>
   <% end %>
 </div>

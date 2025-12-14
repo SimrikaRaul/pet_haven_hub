@@ -1,43 +1,325 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<style>
+  .profile-edit-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #FFF5EB 0%, #FFE4D6 100%);
+    padding: 3rem 1.5rem;
+  }
+  
+  .profile-card {
+    max-width: 700px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 30px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .profile-header {
+    background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
+    padding: 3rem 2.5rem 2rem;
+    text-align: center;
+    color: white;
+  }
+  
+  .profile-icon {
+    width: 100px;
+    height: 100px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+  
+  .profile-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+  }
+  
+  .profile-subtitle {
+    font-size: 1.125rem;
+    opacity: 0.95;
+  }
+  
+  .profile-form {
+    padding: 2.5rem;
+  }
+  
+  .form-section {
+    margin-bottom: 2.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0D5F5C;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 3px solid #B5D6D8;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .form-field {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    background: #F9FAFB;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: #0D5F5C;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(13, 95, 92, 0.1);
+  }
+  
+  .form-hint {
+    font-size: 0.875rem;
+    color: #6B7280;
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+  
+  .pending-confirmation {
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    border-left: 4px solid #F59E0B;
+    margin-bottom: 1.5rem;
+  }
+  
+  .pending-confirmation-text {
+    font-size: 0.9375rem;
+    color: #92400E;
+    font-weight: 600;
+  }
+  
+  .submit-button {
+    width: 100%;
+    padding: 1.125rem;
+    background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
+    color: white;
+    font-weight: 800;
+    font-size: 1.125rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3);
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(13, 95, 92, 0.4);
+  }
+  
+  .danger-zone {
+    background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-top: 3rem;
+  }
+  
+  .danger-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #991B1B;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .danger-text {
+    font-size: 0.9375rem;
+    color: #7F1D1D;
+    margin-bottom: 1.5rem;
+  }
+  
+  .delete-button {
+    padding: 0.875rem 1.5rem;
+    background: white;
+    color: #DC2626;
+    font-weight: 700;
+    border: 2px solid #DC2626;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .delete-button:hover {
+    background: #DC2626;
+    color: white;
+  }
+  
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0D5F5C;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s;
+  }
+  
+  .back-link:hover {
+    gap: 0.75rem;
+  }
+  
+  .error-messages {
+    background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+    border-left: 4px solid #DC2626;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .error-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #991B1B;
+    margin-bottom: 0.75rem;
+  }
+  
+  .error-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .error-item {
+    color: #7F1D1D;
+    font-size: 0.9375rem;
+    margin-bottom: 0.375rem;
+    padding-left: 1.25rem;
+    position: relative;
+  }
+  
+  .error-item:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+  }
+</style>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "users/shared/error_messages", resource: resource %>
-
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
-
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+<div class="profile-edit-container">
+  <%= link_to :back, class: 'back-link', style: 'margin-left: calc((100% - 700px) / 2); display: inline-flex;' do %>
+    <span>←</span> Back
   <% end %>
+  
+  <div class="profile-card">
+    <!-- Header -->
+    <div class="profile-header">
+      <div class="profile-icon">👤</div>
+      <h1 class="profile-title">Edit Profile</h1>
+      <p class="profile-subtitle">Update your account information</p>
+    </div>
 
-  <div class="field">
-    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-    <% if @minimum_password_length %>
-      <br />
-      <em><%= @minimum_password_length %> characters minimum</em>
-    <% end %>
+    <!-- Form -->
+    <div class="profile-form">
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+        <%= render "users/shared/error_messages", resource: resource %>
+
+        <!-- Account Information Section -->
+        <div class="form-section">
+          <h2 class="section-title">
+            <span>📧</span> Account Information
+          </h2>
+
+          <div class="form-field">
+            <%= f.label :email, 'Email Address', class: 'form-label' %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-input' %>
+          </div>
+
+          <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+            <div class="pending-confirmation">
+              <p class="pending-confirmation-text">
+                ⏳ Currently waiting confirmation for: <strong><%= resource.unconfirmed_email %></strong>
+              </p>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Change Password Section -->
+        <div class="form-section">
+          <h2 class="section-title">
+            <span>🔒</span> Change Password
+          </h2>
+
+          <div class="form-field">
+            <%= f.label :password, 'New Password', class: 'form-label' %>
+            <%= f.password_field :password, autocomplete: "new-password", class: 'form-input', placeholder: 'Enter new password' %>
+            <p class="form-hint">
+              Leave blank if you don't want to change it
+              <% if @minimum_password_length %>
+                • Minimum <%= @minimum_password_length %> characters
+              <% end %>
+            </p>
+          </div>
+
+          <div class="form-field">
+            <%= f.label :password_confirmation, 'Confirm New Password', class: 'form-label' %>
+            <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-input', placeholder: 'Confirm new password' %>
+          </div>
+        </div>
+
+        <!-- Current Password Section -->
+        <div class="form-section">
+          <h2 class="section-title">
+            <span>🔑</span> Verify Your Identity
+          </h2>
+
+          <div class="form-field">
+            <%= f.label :current_password, 'Current Password', class: 'form-label' %>
+            <%= f.password_field :current_password, autocomplete: "current-password", class: 'form-input', placeholder: 'Enter your current password' %>
+            <p class="form-hint">We need your current password to confirm your changes</p>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <%= f.submit "Update Profile", class: 'submit-button' %>
+      <% end %>
+
+      <!-- Danger Zone -->
+      <div class="danger-zone">
+        <h3 class="danger-title">
+          <span>⚠️</span> Danger Zone
+        </h3>
+        <p class="danger-text">
+          Once you delete your account, there is no going back. Please be certain.
+        </p>
+        <%= button_to "Delete My Account", registration_path(resource_name), 
+            data: { confirm: "Are you sure you want to delete your account? This action cannot be undone.", turbo_confirm: "Are you sure you want to delete your account? This action cannot be undone." }, 
+            method: :delete,
+            class: 'delete-button' %>
+      </div>
+    </div>
   </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-    <%= f.password_field :current_password, autocomplete: "current-password" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+</div>

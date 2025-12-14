@@ -1,74 +1,400 @@
-<div class="container mx-auto px-4 py-8">
-  <header class="mb-8 flex items-center justify-between">
-    <div>
-      <h1 class="text-4xl font-bold mb-2" style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🐾 Find Your Perfect Pet</h1>
-      <p class="text-gray-700">Browse our available pets and find your new best friend</p>
-    </div>
-    <div class="hidden sm:flex items-center gap-3">
-      <%= link_to 'Add Pet', new_admin_pet_path, class: 'inline-flex items-center px-5 py-2.5 text-white font-medium rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' if user_signed_in? %>
-    </div>
+<style>
+  .browse-pets-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, #FFF5EB 0%, #FFE4D6 100%);
+    border-radius: 30px;
+  }
+  
+  .page-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #0D5F5C;
+    margin-bottom: 0.75rem;
+    line-height: 1.1;
+  }
+  
+  .page-subtitle {
+    font-size: 1.25rem;
+    color: #4B5563;
+    margin-bottom: 1.5rem;
+  }
+  
+  .content-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  
+  .filters-sidebar {
+    position: sticky;
+    top: 2rem;
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  
+  .filters-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0D5F5C;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .filter-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .filter-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .filter-input, .filter-select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    font-size: 0.9375rem;
+    transition: all 0.3s;
+  }
+  
+  .filter-input:focus, .filter-select:focus {
+    outline: none;
+    border-color: #0D5F5C;
+    box-shadow: 0 0 0 3px rgba(13, 95, 92, 0.1);
+  }
+  
+  .available-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .available-checkbox input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+  }
+  
+  .available-checkbox label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #0D5F5C;
+    cursor: pointer;
+  }
+  
+  .filter-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .pets-grid-container {
+    min-height: 500px;
+  }
+  
+  .results-count {
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.5rem;
+    background: white;
+    border-radius: 12px;
+    font-size: 0.9375rem;
+    color: #6B7280;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .pets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+  
+  .pet-card {
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .pet-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(13, 95, 92, 0.15);
+  }
+  
+  .pet-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 320px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%);
+  }
+  
+  .pet-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  
+  .pet-card:hover .pet-image {
+    transform: scale(1.1);
+  }
+  
+  .pet-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .badge-available {
+    background: #10B981;
+    color: white;
+  }
+  
+  .badge-adopted {
+    background: #6B7280;
+    color: white;
+  }
+  
+  .pulse-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: white;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  .pet-details {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .pet-name {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1F2937;
+    margin-bottom: 0.75rem;
+  }
+  
+  .pet-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9375rem;
+    color: #6B7280;
+  }
+  
+  .pet-type-badge {
+    padding: 0.375rem 0.875rem;
+    background: linear-gradient(135deg, #B5D6D8 0%, #A5CED1 100%);
+    color: #0D5F5C;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8125rem;
+  }
+  
+  .pet-location {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: #9CA3AF;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+  
+  .pet-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: auto;
+  }
+  
+  .empty-state {
+    background: white;
+    border-radius: 24px;
+    padding: 4rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  
+  .empty-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .empty-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1F2937;
+    margin-bottom: 0.75rem;
+  }
+  
+  .empty-text {
+    font-size: 1.125rem;
+    color: #6B7280;
+    margin-bottom: 2rem;
+  }
+  
+  @media (max-width: 1024px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .filters-sidebar {
+      position: relative;
+      top: 0;
+    }
+    
+    .page-title {
+      font-size: 2.5rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .pets-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .page-title {
+      font-size: 2rem;
+    }
+  }
+</style>
+
+<div class="browse-pets-container">
+  <!-- Page Header -->
+  <header class="page-header">
+    <h1 class="page-title">🐾 Find Your Perfect Companion</h1>
+    <p class="page-subtitle">Browse our available pets and discover your new best friend</p>
+    <% if user_signed_in? && current_user.admin? %>
+      <%= link_to '+ Add New Pet', new_admin_pet_path, style: 'display: inline-block; padding: 0.875rem 2rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
+    <% end %>
   </header>
 
-  <div class="row flex flex-col lg:flex-row gap-8">
-    <!-- Filters / Sidebar -->
-    <aside class="w-full lg:w-1/4">
-      <div class="bg-white rounded-3xl shadow-lg p-6 sticky top-4" style="border: 2px solid #FED7AA;">
-        <h2 class="text-xl font-bold mb-5 flex items-center gap-2" style="color: #F97316;">
-          <span>🔍</span> Filters
-        </h2>
-        <%= form_with url: pets_path, method: :get, local: true do |f| %>
-          <div class="mb-4">
-            <%= f.label :species, 'Species', class: 'block text-sm font-semibold text-gray-700 mb-2' %>
-            <%= f.select :species, options_for_select([['All', ''], ['Dog','dog'], ['Cat','cat'], ['Rabbit','rabbit'], ['Bird','bird'], ['Other','other']], params[:species]), {}, class: 'form-control px-4 py-3 border-2 rounded-2xl w-full transition', style: 'border-color: #FED7AA; focus:outline-none; focus:border-color: #F97316;' %>
-          </div>
+  <div class="content-grid">
+    <!-- Filters Sidebar -->
+    <aside class="filters-sidebar">
+      <h2 class="filters-title">
+        <span>🔍</span> Filter Pets
+      </h2>
+      
+      <%= form_with url: pets_path, method: :get, local: true do |f| %>
+        <div class="filter-group">
+          <%= f.label :species, 'Species', class: 'filter-label' %>
+          <%= f.select :species, 
+              options_for_select([
+                ['All Species', ''], 
+                ['🐕 Dog','dog'], 
+                ['🐱 Cat','cat'], 
+                ['🐰 Rabbit','rabbit'], 
+                ['🐦 Bird','bird'], 
+                ['🐾 Other','other']
+              ], params[:species]), 
+              {}, 
+              class: 'filter-select' %>
+        </div>
 
-          <div class="mb-4">
-            <%= f.label :breed, 'Breed', class: 'block text-sm font-semibold text-gray-700 mb-2' %>
-            <%= f.text_field :breed, value: params[:breed], placeholder: 'e.g., Golden Retriever', class: 'form-control px-4 py-3 border-2 rounded-2xl w-full transition', style: 'border-color: #FED7AA;' %>
-          </div>
+        <div class="filter-group">
+          <%= f.label :breed, 'Breed', class: 'filter-label' %>
+          <%= f.text_field :breed, 
+              value: params[:breed], 
+              placeholder: 'e.g., Golden Retriever', 
+              class: 'filter-input' %>
+        </div>
 
-          <div class="mb-4">
-            <%= f.label :max_age, 'Max age (years)', class: 'block text-sm font-semibold text-gray-700 mb-2' %>
-            <%= f.number_field :max_age, value: params[:max_age], class: 'form-control px-4 py-3 border-2 rounded-2xl w-full transition', style: 'border-color: #FED7AA;' %>
-          </div>
+        <div class="filter-group">
+          <%= f.label :max_age, 'Maximum Age', class: 'filter-label' %>
+          <%= f.number_field :max_age, 
+              value: params[:max_age], 
+              placeholder: 'Years',
+              class: 'filter-input' %>
+        </div>
 
-          <div class="mb-4">
-            <%= f.label :size, 'Size', class: 'block text-sm font-semibold text-gray-700 mb-2' %>
-            <%= f.select :size, options_for_select([['Any',''], ['Small','small'], ['Medium','medium'], ['Large','large']], params[:size]), {}, class: 'form-control px-4 py-3 border-2 rounded-2xl w-full transition', style: 'border-color: #FED7AA;' %>
-          </div>
+        <div class="filter-group">
+          <%= f.label :size, 'Size', class: 'filter-label' %>
+          <%= f.select :size, 
+              options_for_select([
+                ['Any Size',''], 
+                ['Small','small'], 
+                ['Medium','medium'], 
+                ['Large','large']
+              ], params[:size]), 
+              {}, 
+              class: 'filter-select' %>
+        </div>
 
-          <div class="mb-6 flex items-center gap-3 p-4 rounded-2xl" style="background: linear-gradient(135deg, #FFE4D6 0%, #FED7AA 100%);">
-            <%= f.check_box :available, { class: 'h-5 w-5 rounded' }, '1', '0' %>
-            <%= f.label :available, 'Show available only', class: 'text-sm font-semibold text-gray-800' %>
-          </div>
+        <div class="available-checkbox">
+          <%= f.check_box :available, { class: 'cursor-pointer' }, '1', '0' %>
+          <%= f.label :available, 'Available pets only', class: 'cursor-pointer' %>
+        </div>
 
-          <div class="flex gap-3">
-            <%= f.submit 'Apply Filters', class: 'flex-1 inline-block text-center px-4 py-3 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
-            <%= link_to 'Clear', pets_path, class: 'flex-1 inline-block text-center px-4 py-3 border-2 font-bold rounded-full bg-white hover:shadow-lg transition-all duration-200', style: 'border-color: #F97316; color: #F97316;' %>
-          </div>
-        <% end %>
-      </div>
+        <div class="filter-buttons">
+          <%= f.submit 'Apply Filters', style: 'width: 100%; padding: 0.875rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
+          <%= link_to 'Clear Filters', pets_path, style: 'width: 100%; padding: 0.875rem; background: white; color: #0D5F5C; font-weight: 700; border: 2px solid #0D5F5C; border-radius: 12px; text-decoration: none; text-align: center; display: block; transition: all 0.3s;' %>
+        </div>
+      <% end %>
     </aside>
 
-    <!-- Main content -->
-    <main class="w-full lg:w-3/4">
+    <!-- Main Content -->
+    <main class="pets-grid-container">
       <% if @pets.any? %>
-        <div class="mb-4 text-sm text-gray-600">
-          Showing <strong><%= @pets.size %></strong> pet(s)
+        <div class="results-count">
+          Showing <strong style="color: #0D5F5C; font-weight: 700;"><%= @pets.size %></strong> <%= @pets.size == 1 ? 'pet' : 'pets' %>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div class="pets-grid">
           <% @pets.each do |pet| %>
-            <article class="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col group transform hover:-translate-y-2" style="border: 2px solid #FED7AA;">
-              <!-- Photo Section with Availability Badge -->
-              <div class="relative h-56 overflow-hidden" style="background: linear-gradient(135deg, #FFE4D6 0%, #FED7AA 100%);">
-                <% if pet.image.present? && pet.image.url %>
-                  <%= link_to pet_path(pet), class: 'block h-full' do %>
-                    <%= image_tag pet.image.url, alt: pet.name, class: 'w-full h-full object-cover group-hover:scale-110 transition-transform duration-500' %>
-                  <% end %>
-                <% else %>
-                  <%= link_to pet_path(pet), class: 'block h-full' do %>
-                    <div class="w-full h-full flex items-center justify-center">
-                      <span class="text-6xl opacity-30">🐾</span>
+            <article class="pet-card">
+              <!-- Pet Image -->
+              <div class="pet-image-wrapper">
+                <%= link_to pet_path(pet) do %>
+                  <% if pet.image.present? && pet.image.url %>
+                    <%= image_tag pet.image.url, alt: pet.name, class: 'pet-image' %>
+                  <% else %>
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 5rem; color: #D1D5DB;">
+                      🐾
                     </div>
                   <% end %>
                 <% end %>
@@ -76,50 +402,47 @@
                 <!-- Availability Badge -->
                 <% if pet.respond_to?(:available) %>
                   <% if pet.available %>
-                    <div class="absolute top-3 right-3 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg flex items-center gap-1" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
-                      <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                    <div class="pet-badge badge-available">
+                      <span class="pulse-dot"></span>
                       AVAILABLE
                     </div>
                   <% else %>
-                    <div class="absolute top-3 right-3 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg" style="background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%);">
+                    <div class="pet-badge badge-adopted">
                       ADOPTED
                     </div>
                   <% end %>
                 <% end %>
-                
-                <!-- Hover Overlay -->
-                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 pointer-events-none"></div>
               </div>
 
-              <!-- Pet Details Section -->
-              <div class="p-5 flex-1 flex flex-col">
-                <div class="mb-3">
-                  <h3 class="text-xl font-bold text-gray-900 mb-1 transition-colors" style="color: #1F2937;"><%= pet.name %></h3>
-                  <div class="flex items-center gap-2 text-sm text-gray-600">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full font-semibold" style="background: linear-gradient(135deg, #FFE4D6 0%, #FED7AA 100%); color: #EA580C;">
-                      <%= pet.pet_type.try(:capitalize) %>
-                    </span>
-                    <span class="text-gray-400">•</span>
-                    <span><%= pet.breed %></span>
-                    <span class="text-gray-400">•</span>
-                    <span><%= pet.age %> yrs</span>
-                  </div>
+              <!-- Pet Details -->
+              <div class="pet-details">
+                <h3 class="pet-name"><%= pet.name %></h3>
+                
+                <div class="pet-info">
+                  <span class="pet-type-badge"><%= pet.pet_type&.titleize || 'Pet' %></span>
+                  <span>•</span>
+                  <span><%= pet.breed %></span>
+                  <span>•</span>
+                  <span><%= pet.age %> <%= pet.age == 1 ? 'year' : 'years' %></span>
                 </div>
 
-                <div class="mb-4 flex items-center text-sm text-gray-500">
-                  <svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="truncate"><%= pet.location %></span>
-                </div>
+                <% if pet.location.present? %>
+                  <div class="pet-location">
+                    <svg style="width: 1rem; height: 1rem;" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span><%= pet.location %></span>
+                  </div>
+                <% end %>
 
                 <!-- Action Buttons -->
-                <div class="mt-auto flex gap-2">
-                  <%= link_to 'View Details', pet_path(pet), class: 'flex-1 inline-flex justify-center items-center px-4 py-2.5 text-white font-bold rounded-full shadow-md hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
+                <div class="pet-actions">
+                  <%= link_to 'View Details', pet_path(pet), style: 'flex: 1; padding: 0.875rem; text-align: center; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
+                  
                   <% if user_signed_in? %>
-                    <%= button_to '❤️ Adopt', pet_requests_path(pet), method: :post, params: { request: { request_type: 'adopt' } }, class: 'flex-1 inline-flex justify-center items-center px-4 py-2.5 border-2 font-bold rounded-full hover:shadow-lg transition-all duration-200', style: 'border-color: #F97316; color: #F97316; background: white;' %>
+                    <%= button_to '❤️ Adopt', pet_requests_path(pet), method: :post, params: { request: { request_type: 'adopt' } }, style: 'flex: 1; padding: 0.875rem; background: white; color: #F4A5B9; font-weight: 700; border: 2px solid #F4A5B9; border-radius: 12px; cursor: pointer; transition: all 0.3s;' %>
                   <% else %>
-                    <%= link_to 'Sign in', new_user_session_path, class: 'flex-1 inline-flex justify-center items-center px-4 py-2.5 border-2 font-bold rounded-full hover:shadow-lg transition-all duration-200', style: 'border-color: #F97316; color: #F97316; background: white;' %>
+                    <%= link_to 'Sign In', new_user_session_path, style: 'flex: 1; padding: 0.875rem; text-align: center; background: white; color: #F4A5B9; font-weight: 700; border: 2px solid #F4A5B9; border-radius: 12px; text-decoration: none; transition: all 0.3s;' %>
                   <% end %>
                 </div>
               </div>
@@ -127,15 +450,15 @@
           <% end %>
         </div>
 
-        <div class="mt-8 flex justify-center">
-          <%= paginate @pets%>
+        <div style="margin-top: 3rem; display: flex; justify-content: center;">
+          <%= paginate @pets %>
         </div>
       <% else %>
-        <div class="bg-white rounded-3xl shadow-lg p-12 text-center" style="border: 2px solid #FED7AA;">
-          <div class="text-6xl mb-4">🔍</div>
-          <h3 class="text-2xl font-bold mb-3 text-gray-900">No pets found</h3>
-          <p class="text-gray-600 mb-6">We couldn't find any pets matching your criteria. Try adjusting your filters or check back later.</p>
-          <%= link_to 'Reset all filters', pets_path, class: 'inline-block px-6 py-3 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
+        <div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <h3 class="empty-title">No Pets Found</h3>
+          <p class="empty-text">We couldn't find any pets matching your criteria. Try adjusting your filters or check back later for new arrivals.</p>
+          <%= link_to 'Clear All Filters', pets_path, style: 'display: inline-block; padding: 1rem 2.5rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3);' %>
         </div>
       <% end %>
     </main>
