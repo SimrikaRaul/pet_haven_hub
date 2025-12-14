@@ -9,6 +9,13 @@ class Pet < ApplicationRecord
   enum sex: { male: 'male', female: 'female' }
   enum status: { available: 'available', pending: 'pending', adopted: 'adopted', archived: 'archived' }
 
+  # Constants for recommendation fields
+  ENERGY_LEVELS = %w[low medium high].freeze
+  TEMPERAMENTS = %w[friendly shy active calm].freeze
+  TRAINABILITY_LEVELS = %w[easy medium hard].freeze
+  GROOMING_NEEDS = %w[low medium high].freeze
+  EXERCISE_NEEDS = %w[low medium high].freeze
+
   # Validations
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
   validates :pet_type, presence: true, inclusion: { in: pet_types.keys }
@@ -18,6 +25,11 @@ class Pet < ApplicationRecord
   validates :health_status, length: { maximum: 200 }, allow_blank: true
   validates :size, presence: true, inclusion: { in: sizes.keys }
   validates :sex, presence: true, inclusion: { in: sexes.keys }
+  validates :energy_level, inclusion: { in: ENERGY_LEVELS }, allow_blank: true
+  validates :temperament, inclusion: { in: TEMPERAMENTS }, allow_blank: true
+  validates :trainability, inclusion: { in: TRAINABILITY_LEVELS }, allow_blank: true
+  validates :grooming_needs, inclusion: { in: GROOMING_NEEDS }, allow_blank: true
+  validates :exercise_needs, inclusion: { in: EXERCISE_NEEDS }, allow_blank: true
   validates :latitude, numericality: true, allow_blank: true
   validates :longitude, numericality: true, allow_blank: true
   validate :image_size, if: -> { image.file.present? }
@@ -36,6 +48,16 @@ class Pet < ApplicationRecord
   scope :by_size, ->(size) { where(size: size) if size.present? }
   scope :by_sex, ->(sex) { where(sex: sex) if sex.present? }
   scope :by_age_max, ->(max_age) { where('age <= ?', max_age.to_i) if max_age.present? }
+  scope :by_energy_level, ->(level) { where(energy_level: level) if level.present? }
+  scope :by_temperament, ->(temp) { where(temperament: temp) if temp.present? }
+  scope :by_trainability, ->(level) { where(trainability: level) if level.present? }
+  scope :by_grooming_needs, ->(needs) { where(grooming_needs: needs) if needs.present? }
+  scope :by_exercise_needs, ->(needs) { where(exercise_needs: needs) if needs.present? }
+  scope :apartment_friendly, -> { where(apartment_friendly: true) }
+  scope :kids_friendly, -> { where(kids_friendly: true) }
+  scope :affectionate, -> { where(affectionate: true) }
+  scope :social_with_other_pets, -> { where(social_with_other_pets: true) }
+  scope :social_with_children, -> { where(social_with_children: true) }
   scope :vaccinated, -> { where(vaccinated: true) }
   scope :not_vaccinated, -> { where(vaccinated: false) }
   scope :recent, -> { order(created_at: :desc) }

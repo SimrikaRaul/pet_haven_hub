@@ -2,6 +2,9 @@ module Admin
   class BaseController < ApplicationController
     layout 'admin'
 
+    # Ensure CSRF protection is enabled
+    protect_from_forgery with: :exception, prepend: true
+
     before_action :authenticate_user!
     before_action :authenticate_admin!
 

@@ -443,7 +443,7 @@
         <!-- Adoption Actions -->
         <div class="adoption-actions">
           <% if user_signed_in? %>
-            <%= form_with model: Request.new, url: pet_requests_path(@pet), method: :post, local: true do |f| %>
+            <%= form_with model: Request.new, url: pet_requests_path(@pet), method: :post, data: { turbo: false } do |f| %>
               <%= f.hidden_field :request_type, value: 'adopt' %>
               <%= f.submit "❤️ Request to Adopt #{@pet.name}", class: 'adopt-button' %>
             <% end %>

@@ -95,7 +95,7 @@
           </div>
         <% end %>
 
-        <%= form_with model: [:admin, @pet], local: true, multipart: true, class: 'space-y-10' do |f| %>
+        <%= form_with model: [:admin, @pet], local: true, multipart: true, authenticity_token: true, class: 'space-y-10' do |f| %>
           <!-- Basic Information Section -->
           <div class="border-b border-gray-200 pb-10">
             <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">

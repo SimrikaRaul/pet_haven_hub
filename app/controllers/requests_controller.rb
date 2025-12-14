@@ -25,9 +25,10 @@ class RequestsController < ApplicationController
     
     if @request.save
       RecommendationRefreshJob.perform_later(current_user.id)
-      redirect_to @pet, notice: 'Adoption/Donation request submitted successfully.'
+      # Use redirect_to with explicit status to prevent caching issues
+      redirect_to pet_path(@pet), notice: 'Adoption/Donation request submitted successfully.', status: :see_other
     else
-      redirect_to @pet, alert: @request.errors.full_messages.to_sentence
+      redirect_to pet_path(@pet), alert: @request.errors.full_messages.to_sentence, status: :see_other
     end
   end
 

@@ -5,6 +5,12 @@ class ApplicationController < ActionController::Base
 
   # Authentication should run FIRST
   before_action :authenticate_user!, unless: :public_controller?
+  
+  # Prevent caching of authenticated pages to avoid stale user data
+  before_action :set_cache_headers, if: :user_signed_in?
+  
+  # Debug logging for user sessions in development
+  before_action :log_current_user, if: -> { Rails.env.development? && user_signed_in? }
 
   # Devise parameters
   before_action :configure_permitted_parameters, if: :devise_controller?
@@ -66,5 +72,15 @@ class ApplicationController < ActionController::Base
 
   def current_admin
     current_user if current_user&.admin?
+  end
+
+  def set_cache_headers
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+  end
+
+  def log_current_user
+    Rails.logger.debug "🔍 Current User: ID=#{current_user.id}, Name='#{current_user.name}', Email='#{current_user.email}', Role='#{current_user.role}'"
   end
 end
