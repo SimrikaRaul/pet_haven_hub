@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20251214093357) do
+ActiveRecord::Schema.define(version: 20251217075409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,6 +74,21 @@ ActiveRecord::Schema.define(version: 20251214093357) do
     t.index ["user_id"], name: "index_requests_on_user_id"
   end
 
+  create_table "user_preferences", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "preferred_energy_level"
+    t.string "preferred_temperament"
+    t.string "preferred_grooming_needs"
+    t.string "preferred_exercise_needs"
+    t.boolean "wants_affectionate_pet", default: false
+    t.boolean "apartment_friendly_required", default: false
+    t.boolean "kids_in_home", default: false
+    t.boolean "has_other_pets", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_preferences_on_user_id", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -101,4 +116,5 @@ ActiveRecord::Schema.define(version: 20251214093357) do
   add_foreign_key "pets", "users"
   add_foreign_key "requests", "pets"
   add_foreign_key "requests", "users"
+  add_foreign_key "user_preferences", "users"
 end

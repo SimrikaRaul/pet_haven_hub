@@ -1,0 +1,260 @@
+<style>
+  .preferences-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .preferences-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
+    border-radius: 30px;
+  }
+  
+  .preferences-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #0D5F5C;
+    margin-bottom: 0.75rem;
+  }
+  
+  .preferences-subtitle {
+    font-size: 1.125rem;
+    color: #4B5563;
+  }
+  
+  .preferences-form-card {
+    background: white;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1F2937;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #F3F4F6;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    font-size: 0.9375rem;
+    outline: none;
+    transition: all 0.2s;
+    background: #F9FAFB;
+  }
+  
+  .form-select:focus {
+    border-color: #0D5F5C;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(13, 95, 92, 0.1);
+  }
+  
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: #F0F9FF;
+    border-radius: 12px;
+    border: 2px solid #DBEAFE;
+  }
+  
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .checkbox-item input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+    accent-color: #0D5F5C;
+  }
+  
+  .checkbox-item label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    margin: 0;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .info-box {
+    background: #FFF7ED;
+    border-left: 4px solid #F59E0B;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+  
+  .info-box-text {
+    font-size: 0.9375rem;
+    color: #92400E;
+    line-height: 1.6;
+  }
+  
+  @media (max-width: 768px) {
+    .checkbox-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .preferences-title {
+      font-size: 2rem;
+    }
+  }
+</style>
+
+<div class="preferences-container">
+  <!-- Header -->
+  <header class="preferences-header">
+    <h1 class="preferences-title">🎯 Set Your Pet Preferences</h1>
+    <p class="preferences-subtitle">Tell us what you're looking for and we'll find your perfect match</p>
+  </header>
+
+  <% if @user_preference.errors.any? %>
+    <div style="background: #FEE2E2; border-left: 4px solid #EF4444; color: #991B1B; padding: 1rem 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+      <p style="font-weight: 700; margin-bottom: 0.5rem;">⚠️ <%= pluralize(@user_preference.errors.count, 'error') %> prevented your preferences from being saved:</p>
+      <ul style="margin-left: 1.5rem; list-style: disc;">
+        <% @user_preference.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="info-box">
+    <p class="info-box-text">
+      💡 <strong>How it works:</strong> Fill out your preferences below. Our recommendation system will match you with pets that best fit your lifestyle and needs. You can update these preferences anytime.
+    </p>
+  </div>
+
+  <%= form_with model: @user_preference, url: @user_preference.persisted? ? user_preferences_path : user_preferences_path, method: @user_preference.persisted? ? :patch : :post, local: true do |f| %>
+    <div class="preferences-form-card">
+      <!-- Pet Characteristics Section -->
+      <div style="margin-bottom: 2.5rem;">
+        <h2 class="section-title">
+          <span>✨</span> Pet Characteristics
+        </h2>
+        
+        <div class="form-group">
+          <%= f.label :preferred_energy_level, '⚡ Preferred Energy Level', class: 'form-label' %>
+          <%= f.select :preferred_energy_level, 
+              options_for_select([
+                ['Select energy level', ''], 
+                ['Low - Calm and relaxed pets', 'low'], 
+                ['Medium - Moderate activity level', 'medium'], 
+                ['High - Very active and playful', 'high']
+              ], @user_preference.preferred_energy_level), 
+              {}, 
+              class: 'form-select' %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :preferred_temperament, '🎭 Preferred Temperament', class: 'form-label' %>
+          <%= f.select :preferred_temperament, 
+              options_for_select([
+                ['Select temperament', ''], 
+                ['Calm - Relaxed and easygoing', 'calm'], 
+                ['Friendly - Outgoing and social', 'friendly'], 
+                ['Playful - Energetic and fun-loving', 'playful']
+              ], @user_preference.preferred_temperament), 
+              {}, 
+              class: 'form-select' %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :preferred_grooming_needs, '✂️ Grooming Commitment', class: 'form-label' %>
+          <%= f.select :preferred_grooming_needs, 
+              options_for_select([
+                ['Select grooming needs', ''], 
+                ['Low - Minimal grooming required', 'low'], 
+                ['Medium - Regular grooming needed', 'medium'], 
+                ['High - Frequent grooming required', 'high']
+              ], @user_preference.preferred_grooming_needs), 
+              {}, 
+              class: 'form-select' %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :preferred_exercise_needs, '🏃 Exercise Commitment', class: 'form-label' %>
+          <%= f.select :preferred_exercise_needs, 
+              options_for_select([
+                ['Select exercise needs', ''], 
+                ['Low - Minimal exercise needed', 'low'], 
+                ['Medium - Moderate exercise required', 'medium'], 
+                ['High - Extensive daily exercise', 'high']
+              ], @user_preference.preferred_exercise_needs), 
+              {}, 
+              class: 'form-select' %>
+        </div>
+      </div>
+
+      <!-- Your Living Situation Section -->
+      <div>
+        <h2 class="section-title">
+          <span>🏠</span> Your Living Situation
+        </h2>
+        
+        <div class="checkbox-grid">
+          <div class="checkbox-item">
+            <%= f.check_box :wants_affectionate_pet %>
+            <%= f.label :wants_affectionate_pet, '💖 I want an affectionate pet' %>
+          </div>
+
+          <div class="checkbox-item">
+            <%= f.check_box :apartment_friendly_required %>
+            <%= f.label :apartment_friendly_required, '🏢 I live in an apartment' %>
+          </div>
+          
+          <div class="checkbox-item">
+            <%= f.check_box :kids_in_home %>
+            <%= f.label :kids_in_home, '👶 I have children at home' %>
+          </div>
+
+          <div class="checkbox-item">
+            <%= f.check_box :has_other_pets %>
+            <%= f.label :has_other_pets, '🐾 I have other pets' %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <%= link_to '← Back', pets_path, style: 'padding: 0.875rem 2rem; border: 2px solid #D1D5DB; background: white; color: #6B7280; font-weight: 700; border-radius: 12px; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;' %>
+        <%= f.submit 'Get Recommendations', style: 'padding: 0.875rem 2.5rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 800; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 16px rgba(13, 95, 92, 0.3); transition: all 0.3s; font-size: 1rem; letter-spacing: 0.5px;' %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -39,8 +39,117 @@
     top: 2rem;
     background: white;
     border-radius: 24px;
-    padding: 2rem;
+    padding: 1.5rem;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+  
+  .filters-sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .filters-sidebar::-webkit-scrollbar-track {
+    background: #F3F4F6;
+    border-radius: 3px;
+  }
+  
+  .filters-sidebar::-webkit-scrollbar-thumb {
+    background: #0D5F5C;
+    border-radius: 3px;
+  }
+  
+  .section-divider {
+    margin: 1rem 0;
+    padding-top: 1rem;
+    border-top: 2px solid #F3F4F6;
+  }
+  
+  .collapsible-section {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  
+  .collapsible-header {
+    background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
+    padding: 0.875rem 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+  }
+  
+  .collapsible-header:hover {
+    background: linear-gradient(135deg, #B2DFDB 0%, #80CBC4 100%);
+  }
+  
+  .collapsible-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0D5F5C;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .collapsible-arrow {
+    transition: transform 0.3s;
+    font-size: 1.25rem;
+    color: #0D5F5C;
+  }
+  
+  .collapsible-arrow.open {
+    transform: rotate(180deg);
+  }
+  
+  .collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background: white;
+  }
+  
+  .collapsible-content.open {
+    max-height: 1000px;
+    transition: max-height 0.5s ease-in;
+  }
+  
+  .collapsible-inner {
+    padding: 1rem;
+  }
+  
+  .compact-checkboxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  
+  .compact-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  
+  .compact-checkbox input {
+    width: 0.875rem;
+    height: 0.875rem;
+    cursor: pointer;
+    accent-color: #0D5F5C;
+    margin: 0;
+  }
+  
+  .compact-checkbox label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    margin: 0;
+    white-space: nowrap;
   }
   
   .filters-title {
@@ -54,7 +163,7 @@
   }
   
   .filter-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
   }
   
   .filter-label {
@@ -317,10 +426,11 @@
     <!-- Filters Sidebar -->
     <aside class="filters-sidebar">
       <h2 class="filters-title">
-        <span>🔍</span> Filter Pets
+        <span>🔍</span> Filter & Match Pets
       </h2>
       
-      <%= form_with url: pets_path, method: :get, local: true do |f| %>
+      <%= form_with url: pets_path, method: :get, local: true, id: 'pet-filter-form' do |f| %>
+        <!-- Basic Filters Section -->
         <div class="filter-group">
           <%= f.label :species, 'Species', class: 'filter-label' %>
           <%= f.select :species, 
@@ -344,35 +454,128 @@
               class: 'filter-input' %>
         </div>
 
-        <div class="filter-group">
-          <%= f.label :max_age, 'Maximum Age', class: 'filter-label' %>
-          <%= f.number_field :max_age, 
-              value: params[:max_age], 
-              placeholder: 'Years',
-              class: 'filter-input' %>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="filter-group">
+            <%= f.label :max_age, 'Max Age', class: 'filter-label' %>
+            <%= f.number_field :max_age, 
+                value: params[:max_age], 
+                placeholder: 'Years',
+                class: 'filter-input' %>
+          </div>
+
+          <div class="filter-group">
+            <%= f.label :size, 'Size', class: 'filter-label' %>
+            <%= f.select :size, 
+                options_for_select([
+                  ['Any',''], 
+                  ['Small','small'], 
+                  ['Medium','medium'], 
+                  ['Large','large']
+                ], params[:size]), 
+                {}, 
+                class: 'filter-select' %>
+          </div>
         </div>
 
-        <div class="filter-group">
-          <%= f.label :size, 'Size', class: 'filter-label' %>
-          <%= f.select :size, 
-              options_for_select([
-                ['Any Size',''], 
-                ['Small','small'], 
-                ['Medium','medium'], 
-                ['Large','large']
-              ], params[:size]), 
-              {}, 
-              class: 'filter-select' %>
-        </div>
+        <% if user_signed_in? %>
+          <div class="section-divider"></div>
+          
+          <!-- Collapsible Personalized Matching Section -->
+          <div class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleCollapsible(event)">
+              <div class="collapsible-title">
+                <span>✨</span> Personalized Match
+              </div>
+              <span class="collapsible-arrow">▼</span>
+            </div>
+            
+            <div class="collapsible-content">
+              <div class="collapsible-inner">
+                <p style="font-size: 0.75rem; color: #6B7280; margin-bottom: 0.875rem; line-height: 1.4;">Set your preferences to see compatibility scores</p>
+                
+                <div class="filter-group">
+                  <%= f.label :preferred_energy_level, '⚡ Energy', class: 'filter-label' %>
+                  <%= f.select :preferred_energy_level, 
+                      options_for_select([
+                        ['Any', ''], 
+                        ['Low', 'low'], 
+                        ['Medium', 'medium'], 
+                        ['High', 'high']
+                      ], params[:preferred_energy_level] || current_user.user_preference&.preferred_energy_level), 
+                      {}, 
+                      class: 'filter-select' %>
+                </div>
 
-        <div class="available-checkbox">
-          <%= f.check_box :available, { class: 'cursor-pointer' }, '1', '0' %>
-          <%= f.label :available, 'Available pets only', class: 'cursor-pointer' %>
-        </div>
+                <div class="filter-group">
+                  <%= f.label :preferred_temperament, '🎭 Temperament', class: 'filter-label' %>
+                  <%= f.select :preferred_temperament, 
+                      options_for_select([
+                        ['Any', ''], 
+                        ['Calm', 'calm'], 
+                        ['Friendly', 'friendly'], 
+                        ['Playful', 'playful']
+                      ], params[:preferred_temperament] || current_user.user_preference&.preferred_temperament), 
+                      {}, 
+                      class: 'filter-select' %>
+                </div>
 
-        <div class="filter-buttons">
-          <%= f.submit 'Apply Filters', style: 'width: 100%; padding: 0.875rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
-          <%= link_to 'Clear Filters', pets_path, style: 'width: 100%; padding: 0.875rem; background: white; color: #0D5F5C; font-weight: 700; border: 2px solid #0D5F5C; border-radius: 12px; text-decoration: none; text-align: center; display: block; transition: all 0.3s;' %>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                  <div class="filter-group">
+                    <%= f.label :preferred_grooming_needs, '✂️ Grooming', class: 'filter-label' %>
+                    <%= f.select :preferred_grooming_needs, 
+                        options_for_select([
+                          ['Any', ''], 
+                          ['Low', 'low'], 
+                          ['Medium', 'medium'], 
+                          ['High', 'high']
+                        ], params[:preferred_grooming_needs] || current_user.user_preference&.preferred_grooming_needs), 
+                        {}, 
+                        class: 'filter-select' %>
+                  </div>
+
+                  <div class="filter-group">
+                    <%= f.label :preferred_exercise_needs, '🏃 Exercise', class: 'filter-label' %>
+                    <%= f.select :preferred_exercise_needs, 
+                        options_for_select([
+                          ['Any', ''], 
+                          ['Low', 'low'], 
+                          ['Medium', 'medium'], 
+                          ['High', 'high']
+                        ], params[:preferred_exercise_needs] || current_user.user_preference&.preferred_exercise_needs), 
+                        {}, 
+                        class: 'filter-select' %>
+                  </div>
+                </div>
+
+                <div class="compact-checkboxes">
+                  <div class="compact-checkbox">
+                    <%= f.check_box :wants_affectionate_pet, { checked: params[:wants_affectionate_pet] == '1' || current_user.user_preference&.wants_affectionate_pet }, '1', '0' %>
+                    <%= f.label :wants_affectionate_pet, '💖 Affectionate' %>
+                  </div>
+                  
+                  <div class="compact-checkbox">
+                    <%= f.check_box :apartment_friendly_required, { checked: params[:apartment_friendly_required] == '1' || current_user.user_preference&.apartment_friendly_required }, '1', '0' %>
+                    <%= f.label :apartment_friendly_required, '🏢 Apartment' %>
+                  </div>
+                  
+                  <div class="compact-checkbox">
+                    <%= f.check_box :kids_in_home, { checked: params[:kids_in_home] == '1' || current_user.user_preference&.kids_in_home }, '1', '0' %>
+                    <%= f.label :kids_in_home, '👶 Has Kids' %>
+                  </div>
+                  
+                  <div class="compact-checkbox">
+                    <%= f.check_box :has_other_pets, { checked: params[:has_other_pets] == '1' || current_user.user_preference&.has_other_pets }, '1', '0' %>
+                    <%= f.label :has_other_pets, '🐾 Has Pets' %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="filter-buttons" style="margin-top: 1rem;">
+          <%= f.submit user_signed_in? ? '🎯 Find Matches' : 'Apply Filters', style: 'width: 100%; padding: 0.875rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
+          <%= link_to 'Clear All', pets_path, style: 'width: 100%; padding: 0.875rem; background: white; color: #0D5F5C; font-weight: 700; border: 2px solid #0D5F5C; border-radius: 12px; text-decoration: none; text-align: center; display: block; transition: all 0.3s; margin-top: 0.5rem;' %>
         </div>
       <% end %>
     </aside>
@@ -386,6 +589,9 @@
 
         <div class="pets-grid">
           <% @pets.each do |pet| %>
+            <% match_data = defined?(@scored_pets_hash) ? @scored_pets_hash&.[](pet.id) : nil %>
+            <% match_percentage = match_data&.dig(:match_percentage) %>
+            
             <article class="pet-card">
               <!-- Pet Image -->
               <div class="pet-image-wrapper">
@@ -397,6 +603,21 @@
                       🐾
                     </div>
                   <% end %>
+                <% end %>
+                
+                <!-- Match Badge (if scored) -->
+                <% if match_percentage.present? %>
+                  <div class="pet-badge" style="<%= 
+                    if match_percentage >= 80
+                      'background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; left: 1rem; top: 1rem;'
+                    elsif match_percentage >= 60
+                      'background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: white; left: 1rem; top: 1rem;'
+                    else
+                      'background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; left: 1rem; top: 1rem;'
+                    end
+                  %>">
+                    ⭐ <%= match_percentage %>% Match
+                  </div>
                 <% end %>
                 
                 <!-- Availability Badge -->
@@ -464,3 +685,36 @@
     </main>
   </div>
 </div>
+
+<script>
+  function toggleCollapsible(event) {
+    const header = event.currentTarget;
+    const content = header.nextElementSibling;
+    const arrow = header.querySelector('.collapsible-arrow');
+    
+    // Toggle open class
+    content.classList.toggle('open');
+    arrow.classList.toggle('open');
+    
+    // Optional: Save state to localStorage
+    const isOpen = content.classList.contains('open');
+    localStorage.setItem('personalizedMatchOpen', isOpen);
+  }
+  
+  // Restore saved state on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    const savedState = localStorage.getItem('personalizedMatchOpen');
+    const content = document.querySelector('.collapsible-content');
+    const arrow = document.querySelector('.collapsible-arrow');
+    
+    // Open by default if user has any preferences set or if it was previously open
+    if (content && arrow) {
+      const hasPreferences = <%= user_signed_in? && (current_user.user_preference.present? || params[:preferred_energy_level].present?) ? 'true' : 'false' %>;
+      
+      if (savedState === 'true' || hasPreferences) {
+        content.classList.add('open');
+        arrow.classList.add('open');
+      }
+    }
+  });
+</script>

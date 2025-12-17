@@ -1,0 +1,358 @@
+<style>
+  .recommendations-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  
+  .recommendations-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, #FFF5EB 0%, #FFE4D6 100%);
+    border-radius: 30px;
+  }
+  
+  .recommendations-title {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #0D5F5C;
+    margin-bottom: 0.75rem;
+  }
+  
+  .recommendations-subtitle {
+    font-size: 1.125rem;
+    color: #4B5563;
+    margin-bottom: 1.5rem;
+  }
+  
+  .recommendations-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .pet-recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+  
+  .recommended-pet-card {
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+  }
+  
+  .recommended-pet-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(13, 95, 92, 0.15);
+  }
+  
+  .match-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .match-excellent {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+  }
+  
+  .match-good {
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    color: white;
+  }
+  
+  .match-fair {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    color: white;
+  }
+  
+  .pet-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 320px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%);
+  }
+  
+  .pet-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  
+  .recommended-pet-card:hover .pet-image {
+    transform: scale(1.1);
+  }
+  
+  .pet-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .badge-available {
+    background: #10B981;
+    color: white;
+  }
+  
+  .pulse-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: white;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  .pet-details {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .pet-name {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1F2937;
+    margin-bottom: 0.75rem;
+  }
+  
+  .pet-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9375rem;
+    color: #6B7280;
+  }
+  
+  .pet-type-badge {
+    padding: 0.375rem 0.875rem;
+    background: linear-gradient(135deg, #B5D6D8 0%, #A5CED1 100%);
+    color: #0D5F5C;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8125rem;
+  }
+  
+  .match-details {
+    background: #F0F9FF;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 2px solid #DBEAFE;
+  }
+  
+  .match-details-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #0D5F5C;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .match-attributes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #4B5563;
+  }
+  
+  .pet-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: auto;
+  }
+  
+  .empty-state {
+    background: white;
+    border-radius: 24px;
+    padding: 4rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  
+  .empty-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .empty-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1F2937;
+    margin-bottom: 0.75rem;
+  }
+  
+  .empty-text {
+    font-size: 1.125rem;
+    color: #6B7280;
+    margin-bottom: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    .recommendations-title {
+      font-size: 2rem;
+    }
+    
+    .pet-recommendations-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .match-attributes {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="recommendations-container">
+  <!-- Header -->
+  <header class="recommendations-header">
+    <h1 class="recommendations-title">✨ Your Perfect Matches</h1>
+    <p class="recommendations-subtitle">
+      Based on your preferences, we've found these amazing pets just for you!
+    </p>
+    <div class="recommendations-actions">
+      <%= link_to '🔄 Update Preferences', edit_user_preferences_path, style: 'display: inline-block; padding: 0.875rem 2rem; background: white; border: 2px solid #0D5F5C; color: #0D5F5C; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(13, 95, 92, 0.1); transition: all 0.3s;' %>
+      <%= link_to '🐾 Browse All Pets', pets_path, style: 'display: inline-block; padding: 0.875rem 2rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
+    </div>
+  </header>
+
+  <% if @recommended_pets.any? %>
+    <div class="pet-recommendations-grid">
+      <% @recommended_pets.each do |item| %>
+        <% pet = item[:pet] %>
+        <% match_percentage = item[:match_percentage] %>
+        
+        <article class="recommended-pet-card">
+          <!-- Match Badge -->
+          <div class="match-badge <%= 
+            if match_percentage >= 80
+              'match-excellent'
+            elsif match_percentage >= 60
+              'match-good'
+            else
+              'match-fair'
+            end
+          %>">
+            <span>⭐</span>
+            <%= match_percentage %>% Match
+          </div>
+
+          <!-- Pet Image -->
+          <div class="pet-image-wrapper">
+            <%= link_to pet_path(pet) do %>
+              <% if pet.image.present? && pet.image.url %>
+                <%= image_tag pet.image.url, alt: pet.name, class: 'pet-image' %>
+              <% else %>
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 5rem; color: #D1D5DB;">
+                  🐾
+                </div>
+              <% end %>
+            <% end %>
+            
+            <!-- Availability Badge -->
+            <% if pet.available %>
+              <div class="pet-badge badge-available">
+                <span class="pulse-dot"></span>
+                AVAILABLE
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Pet Details -->
+          <div class="pet-details">
+            <h3 class="pet-name"><%= pet.name %></h3>
+            
+            <div class="pet-info">
+              <span class="pet-type-badge"><%= pet.pet_type&.titleize || 'Pet' %></span>
+              <span>•</span>
+              <span><%= pet.breed %></span>
+              <span>•</span>
+              <span><%= pet.age %> <%= pet.age == 1 ? 'year' : 'years' %></span>
+            </div>
+
+            <!-- Match Details -->
+            <div class="match-details">
+              <div class="match-details-title">Why this match?</div>
+              <div class="match-attributes">
+                <% if pet.energy_level.present? %>
+                  <div>⚡ <%= pet.energy_level.titleize %> energy</div>
+                <% end %>
+                <% if pet.temperament.present? %>
+                  <div>🎭 <%= pet.temperament.titleize %></div>
+                <% end %>
+                <% if pet.grooming_needs.present? %>
+                  <div>✂️ <%= pet.grooming_needs.titleize %> grooming</div>
+                <% end %>
+                <% if pet.exercise_needs.present? %>
+                  <div>🏃 <%= pet.exercise_needs.titleize %> exercise</div>
+                <% end %>
+                <% if pet.affectionate %>
+                  <div>💖 Affectionate</div>
+                <% end %>
+                <% if pet.apartment_friendly %>
+                  <div>🏢 Apartment friendly</div>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pet-actions">
+              <%= link_to 'View Profile', pet_path(pet), style: 'flex: 1; padding: 0.875rem; text-align: center; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
+              
+              <%= button_to '❤️ Adopt', pet_requests_path(pet), method: :post, params: { request: { request_type: 'adopt' } }, style: 'flex: 1; padding: 0.875rem; background: white; color: #F4A5B9; font-weight: 700; border: 2px solid #F4A5B9; border-radius: 12px; cursor: pointer; transition: all 0.3s;' %>
+            </div>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3 class="empty-title">No Matches Found</h3>
+      <p class="empty-text">
+        We couldn't find any pets matching your current preferences. Try adjusting your preferences or browse all available pets.
+      </p>
+      <%= link_to 'Update Preferences', edit_user_preferences_path, style: 'display: inline-block; padding: 1rem 2.5rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); margin-right: 1rem;' %>
+      <%= link_to 'Browse All Pets', pets_path, style: 'display: inline-block; padding: 1rem 2.5rem; background: white; color: #0D5F5C; font-weight: 700; border: 2px solid #0D5F5C; border-radius: 12px; text-decoration: none;' %>
+    </div>
+  <% end %>
+</div>

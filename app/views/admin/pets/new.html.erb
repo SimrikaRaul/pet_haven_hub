@@ -74,7 +74,7 @@
   .upload-area {
     border: 2px dashed #D1D5DB;
     border-radius: 16px;
-    padding: 3rem;
+    padding: 2rem;
     text-align: center;
     background: #F9FAFB;
     transition: all 0.2s;
@@ -134,23 +134,25 @@
       </h2>
       
       <div class="upload-area">
-        <% if @pet.image.file.present? %>
-          <div style="margin-bottom: 1.5rem;">
-            <%= image_tag @pet.photo_url, alt: @pet.name, style: 'max-width: 300px; max-height: 300px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);' %>
-          </div>
-        <% else %>
-          <div style="margin-bottom: 1rem;">
-            <svg style="width: 64px; height: 64px; margin: 0 auto; color: #9CA3AF;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-        <% end %>
+        <div id="image-preview-container" style="margin-bottom: 1.5rem;">
+          <% if @pet.image.file.present? %>
+            <img id="image-preview" src="<%= @pet.photo_url %>" alt="<%= @pet.name %>" style="max-width: 100%; max-height: 280px; width: auto; height: auto; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: block; margin: 0 auto; object-fit: contain;">
+          <% else %>
+            <img id="image-preview" src="" alt="Image preview" style="max-width: 100%; max-height: 280px; width: auto; height: auto; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; margin: 0 auto; object-fit: contain;">
+          <% end %>
+        </div>
         
-        <%= f.file_field :image, accept: 'image/*', style: 'display: none;', id: 'pet-image-upload' %>
-        <label for="pet-image-upload" style="display: inline-block; padding: 0.875rem 2rem; background: white; border: 2px solid #0D5F5C; border-radius: 12px; font-weight: 700; color: #0D5F5C; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(13, 95, 92, 0.1);">
+        <div id="placeholder-icon" style="margin-bottom: 1rem; <%= 'display: none;' if @pet.image.file.present? %>">
+          <svg style="width: 48px; height: 48px; margin: 0 auto; color: #9CA3AF;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        
+        <%= f.file_field :image, accept: 'image/*', style: 'display: none;', id: 'pet-image-upload', onchange: 'previewImage(event)' %>
+        <label for="pet-image-upload" id="upload-label" style="display: inline-block; padding: 0.875rem 2rem; background: white; border: 2px solid #0D5F5C; border-radius: 12px; font-weight: 700; color: #0D5F5C; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(13, 95, 92, 0.1);">
           📤 Click to upload or drag and drop file PNG, JPG
         </label>
-        <p style="margin-top: 0.75rem; font-size: 0.875rem; color: #6B7280;">Maximum file size: 5MB</p>
+        <p id="upload-hint" style="margin-top: 0.75rem; font-size: 0.875rem; color: #6B7280;">Maximum file size: 5MB</p>
         
         <% if @pet.image.file.present? %>
           <div style="margin-top: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 0.75rem; background: white; border-radius: 8px; max-width: fit-content; margin-left: auto; margin-right: auto;">
@@ -377,3 +379,41 @@
     </div>
   <% end %>
 </div>
+
+<script>
+  function previewImage(event) {
+    const input = event.target;
+    const preview = document.getElementById('image-preview');
+    const placeholder = document.getElementById('placeholder-icon');
+    const uploadLabel = document.getElementById('upload-label');
+    const uploadHint = document.getElementById('upload-hint');
+    
+    // Check if a file was selected
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      
+      // Define what happens when the file is loaded
+      reader.onload = function(e) {
+        // Set the image source to the loaded file
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        
+        // Hide the placeholder icon
+        if (placeholder) {
+          placeholder.style.display = 'none';
+        }
+        
+        // Hide the upload label and hint text
+        if (uploadLabel) {
+          uploadLabel.style.display = 'none';
+        }
+        if (uploadHint) {
+          uploadHint.style.display = 'none';
+        }
+      };
+      
+      // Read the selected file as a data URL
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>

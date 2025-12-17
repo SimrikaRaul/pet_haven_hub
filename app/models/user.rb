@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :pets, dependent: :destroy
   has_many :requests, dependent: :destroy
   has_many :adoptions, class_name: 'Request', foreign_key: 'user_id', dependent: :destroy
+  has_one :user_preference, dependent: :destroy
   
   # Enums (store strings in DB). Keep _suffix if other code relies on it,
   # but we'll provide explicit predicate helpers below for compatibility.

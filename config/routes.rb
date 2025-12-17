@@ -10,6 +10,10 @@ Rails.application.routes.draw do
   end
 
   resources :requests, only: [:index]
+  
+  # User preferences and recommendations
+  resource :user_preferences, only: [:edit, :create, :update]
+  resources :recommendations, only: [:index]
 
   namespace :admin do
     root to: 'dashboard#index'
