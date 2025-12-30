@@ -87,6 +87,98 @@
       color: #1E40AF;
     }
 
+    .sign-in-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .sign-in-button {
+      background: white;
+      color: #3B82F6;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+    }
+
+    .sign-in-button:hover {
+      background: #BFDBFE;
+      color: #1E40AF;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .sign-in-button::after {
+      content: '▼';
+      font-size: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .sign-in-dropdown.active .sign-in-button::after {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      min-width: 200px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .sign-in-dropdown.active .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-item {
+      display: block;
+      padding: 14px 20px;
+      color: #1F2937;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #F3F4F6;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-item:hover {
+      background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+      color: #1E40AF;
+      padding-left: 24px;
+    }
+
+    .dropdown-item.create-account {
+      background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+      color: white;
+      font-weight: 600;
+    }
+
+    .dropdown-item.create-account:hover {
+      background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);
+      padding-left: 20px;
+    }
+
     .user-menu {
       display: flex;
       align-items: center;
@@ -189,8 +281,19 @@
           <%= link_to 'Logout', destroy_user_session_path, method: :delete, data: { turbo: false }, class: 'user-menu-item' %>
         </div>
       <% else %>
-        <%= link_to 'Login', new_user_session_path, class: 'btn btn-outline' %>
-        <%= link_to 'Sign Up', new_user_registration_path, class: 'btn btn-primary' %>
+        <div class="sign-in-dropdown" id="signInDropdown">
+          <button class="sign-in-button" onclick="toggleSignInDropdown()">
+            👤 Sign In
+          </button>
+          <div class="dropdown-menu">
+            <%= link_to new_user_session_path, class: 'dropdown-item' do %>
+              🔑 Log In
+            <% end %>
+            <%= link_to new_user_registration_path, class: 'dropdown-item create-account' do %>
+              ✨ Create Account
+            <% end %>
+          </div>
+        </div>
       <% end %>
     </div>
   </div>
@@ -201,4 +304,17 @@
     const menu = document.getElementById('navbar-menu');
     menu.classList.toggle('active');
   }
+
+  function toggleSignInDropdown() {
+    const dropdown = document.getElementById('signInDropdown');
+    dropdown.classList.toggle('active');
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('signInDropdown');
+    if (dropdown && !dropdown.contains(event.target)) {
+      dropdown.classList.remove('active');
+    }
+  });
 </script>
