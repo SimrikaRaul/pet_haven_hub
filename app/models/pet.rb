@@ -4,10 +4,10 @@ class Pet < ApplicationRecord
   has_many :requests, dependent: :destroy
   mount_uploader :image, ImageUploader
   # Enums
-  enum pet_type: { dog: 'dog', cat: 'cat', rabbit: 'rabbit', bird: 'bird', other: 'other' }
-  enum size: { small: 'small', medium: 'medium', large: 'large' }
-  enum sex: { male: 'male', female: 'female' }
-  enum status: { available: 'available', pending: 'pending', adopted: 'adopted', archived: 'archived' }
+  enum :pet_type, { dog: 'dog', cat: 'cat', rabbit: 'rabbit', bird: 'bird', other: 'other' }
+  enum :size, { small: 'small', medium: 'medium', large: 'large' }
+  enum :sex, { male: 'male', female: 'female' }
+  enum :status, { available: 'available', pending: 'pending', adopted: 'adopted', archived: 'archived' }
 
   # Constants for recommendation fields
   ENERGY_LEVELS = %w[low medium high].freeze

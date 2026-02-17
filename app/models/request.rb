@@ -4,8 +4,8 @@ class Request < ApplicationRecord
   belongs_to :pet
 
   # Enums
-  enum status: { open: 'open', approved: 'approved', rejected: 'rejected', scheduled: 'scheduled', completed: 'completed' }
-  enum request_type: { adopt: 'adopt', donate: 'donate' }
+  enum :status, { open: 'open', approved: 'approved', rejected: 'rejected', scheduled: 'scheduled', completed: 'completed' }
+  enum :request_type, { adopt: 'adopt', donate: 'donate' }
 
   # Validations
   validates :user_id, :pet_id, :request_type, :status, presence: true

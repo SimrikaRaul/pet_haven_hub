@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  include Pundit
+  include Pundit::Authorization
 
   protect_from_forgery with: :exception
 
@@ -55,7 +55,6 @@ class ApplicationController < ActionController::Base
 
   private
 
-  # 👇 PUBLIC CONTROLLERS FOR VISITORS (NO LOGIN REQUIRED)
   def public_controller?
     controller_name.in?(%w[home pets])
   end
