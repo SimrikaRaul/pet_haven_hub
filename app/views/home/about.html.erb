@@ -1,0 +1,323 @@
+<style>
+  .about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .about-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .about-title {
+    font-size: 48px;
+    font-weight: 800;
+    color: #1F2937;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .about-subtitle {
+    font-size: 20px;
+    color: #6B7280;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  .about-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+  }
+
+  .about-card {
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .about-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .about-card-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+  }
+
+  .about-card-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1F2937;
+    margin-bottom: 15px;
+  }
+
+  .about-card-text {
+    color: #6B7280;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  .mission-section {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    padding: 60px 40px;
+    border-radius: 20px;
+    margin-bottom: 60px;
+    text-align: center;
+    color: white;
+  }
+
+  .mission-title {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 20px;
+  }
+
+  .mission-text {
+    font-size: 18px;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+    opacity: 0.95;
+  }
+
+  .stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .stat-number {
+    font-size: 48px;
+    font-weight: 800;
+    color: #10B981;
+    margin-bottom: 10px;
+  }
+
+  .stat-label {
+    font-size: 16px;
+    color: #6B7280;
+    font-weight: 600;
+  }
+
+  .team-section {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .section-title {
+    font-size: 36px;
+    font-weight: 800;
+    color: #1F2937;
+    margin-bottom: 40px;
+  }
+
+  .cta-section {
+    background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+    padding: 60px 40px;
+    border-radius: 20px;
+    text-align: center;
+  }
+
+  .cta-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1F2937;
+    margin-bottom: 20px;
+  }
+
+  .cta-text {
+    font-size: 18px;
+    color: #6B7280;
+    margin-bottom: 30px;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 15px 40px;
+    background-color: #10B981;
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+  }
+
+  .cta-button:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
+  }
+
+  @media (max-width: 768px) {
+    .about-title {
+      font-size: 36px;
+    }
+
+    .about-content {
+      grid-template-columns: 1fr;
+    }
+
+    .stats-section {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="about-container">
+  <div class="about-header">
+    <h1 class="about-title">
+      <span>🐾</span> About Pet Haven Hub
+    </h1>
+    <p class="about-subtitle">
+      Connecting loving families with pets in need of homes. Our mission is to simplify and modernize the pet adoption process.
+    </p>
+  </div>
+
+  <div class="mission-section">
+    <h2 class="mission-title">Our Mission</h2>
+    <p class="mission-text">
+      Pet Haven Hub was created to bridge the gap between compassionate families and pets waiting for their forever homes. 
+      We believe every pet deserves a loving family, and every family deserves to find their perfect companion. 
+      Through our intelligent matching system and streamlined adoption process, we make it easier than ever to find your new best friend.
+    </p>
+  </div>
+
+  <div class="stats-section">
+    <div class="stat-card">
+      <div class="stat-number"><%= Pet.where(available: false).count %></div>
+      <div class="stat-label">Successful Adoptions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= Pet.where(available: true).count %></div>
+      <div class="stat-label">Pets Waiting for Homes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= User.count %></div>
+      <div class="stat-label">Happy Families</div>
+    </div>
+  </div>
+
+  <div class="about-content">
+    <div class="about-card">
+      <div class="about-card-icon">🏠</div>
+      <h3 class="about-card-title">Find Your Perfect Match</h3>
+      <p class="about-card-text">
+        Our intelligent recommendation system helps you discover pets that match your lifestyle, preferences, and living situation. 
+        We consider factors like pet size, energy level, and care requirements to ensure the best fit.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <div class="about-card-icon">💝</div>
+      <h3 class="about-card-title">Support Through Donations</h3>
+      <p class="about-card-text">
+        Can't adopt right now? You can still make a difference! Our donation program allows you to support pets in need, 
+        helping cover medical care, food, and shelter expenses while they wait for their forever homes.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <div class="about-card-icon">🎯</div>
+      <h3 class="about-card-title">Streamlined Process</h3>
+      <p class="about-card-text">
+        We've simplified the adoption process to save you time. Browse available pets, submit adoption requests online, 
+        and track your application status all in one place. No more endless paperwork or complicated procedures.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <div class="about-card-icon">📍</div>
+      <h3 class="about-card-title">Location-Based Matching</h3>
+      <p class="about-card-text">
+        Find pets near you with our smart location-based search. We calculate optimal routes and display pets available 
+        in your area, making it convenient to visit and meet your potential new family member.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <div class="about-card-icon">🔒</div>
+      <h3 class="about-card-title">Safe & Secure</h3>
+      <p class="about-card-text">
+        Your privacy and security matter to us. All adoption requests are handled with care, and our verification process 
+        ensures that pets go to safe, loving homes. We're committed to protecting both pets and adopters.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <div class="about-card-icon">👥</div>
+      <h3 class="about-card-title">Community Driven</h3>
+      <p class="about-card-text">
+        Join a community of pet lovers dedicated to animal welfare. Share experiences, get advice, and be part of a 
+        movement that's changing lives—one adoption at a time.
+      </p>
+    </div>
+  </div>
+
+  <div class="team-section">
+    <h2 class="section-title">How It Works</h2>
+    <div class="about-content">
+      <div class="about-card">
+        <div class="about-card-icon">1️⃣</div>
+        <h3 class="about-card-title">Create Your Profile</h3>
+        <p class="about-card-text">
+          Sign up and tell us about your preferences, living situation, and what you're looking for in a pet companion.
+        </p>
+      </div>
+
+      <div class="about-card">
+        <div class="about-card-icon">2️⃣</div>
+        <h3 class="about-card-title">Browse & Discover</h3>
+        <p class="about-card-text">
+          Explore our database of available pets or let our recommendation engine suggest perfect matches based on your profile.
+        </p>
+      </div>
+
+      <div class="about-card">
+        <div class="about-card-icon">3️⃣</div>
+        <h3 class="about-card-title">Submit Request</h3>
+        <p class="about-card-text">
+          Found your match? Submit an adoption or donation request with just a few clicks. Track your request status in real-time.
+        </p>
+      </div>
+
+      <div class="about-card">
+        <div class="about-card-icon">4️⃣</div>
+        <h3 class="about-card-title">Welcome Home</h3>
+        <p class="about-card-text">
+          Once approved, it's time to welcome your new family member home! We'll guide you through the final steps.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-section">
+    <h2 class="cta-title">Ready to Make a Difference?</h2>
+    <p class="cta-text">
+      Whether you're looking to adopt or support through donations, every action counts. Start your journey today!
+    </p>
+    <%= link_to 'Browse Pets', pets_path, class: 'cta-button' %>
+  </div>
+</div>
+
+<%= render 'shared/footer' %>

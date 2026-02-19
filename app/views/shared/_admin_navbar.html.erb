@@ -115,6 +115,7 @@
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: inherit;
   }
 
   .sidebar-logout:hover {
@@ -184,7 +185,7 @@
       <div class="sidebar-user-name"><%= current_user.full_name %></div>
       <div class="sidebar-user-role">Administrator</div>
     </div>
-    <%= link_to 'Logout', destroy_user_session_path, method: :delete, data: { turbo: false }, class: 'sidebar-logout' %>
+    <%= button_to 'Logout', destroy_user_session_path, method: :delete, class: 'sidebar-logout', form: { style: 'display: inline;' } %>
   </div>
 </aside>
 

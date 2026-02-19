@@ -4,4 +4,7 @@ class HomeController < ApplicationController
     @total_pets = Pet.where(available: true).count
     @total_adopted = Pet.where(available: false).count
   end
+
+  def about
+  end
 end

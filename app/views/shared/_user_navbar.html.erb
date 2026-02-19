@@ -1,14 +1,14 @@
 <nav class="navbar">
   <style>
     .navbar {
-      background: white;
-      color: #1F2937;
+      background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+      color: #F9FAFB;
       padding: 16px 0;
-      box-shadow: 0 2px 12px rgba(249, 115, 22, 0.1);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
       position: sticky;
       top: 0;
       z-index: 1000;
-      border-bottom: 2px solid #FED7AA;
+      border-bottom: 2px solid #10B981;
     }
 
     .navbar-container {
@@ -26,12 +26,12 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      color: #F97316;
+      color: #10B981;
       text-decoration: none;
     }
 
     .navbar-brand:hover {
-      color: #EA580C;
+      color: #34D399;
     }
 
     .navbar-menu {
@@ -42,7 +42,7 @@
     }
 
     .navbar-menu a {
-      color: #1F2937;
+      color: #F9FAFB;
       text-decoration: none;
       font-weight: 500;
       font-size: 14px;
@@ -52,8 +52,8 @@
     }
 
     .navbar-menu a:hover {
-      background: linear-gradient(135deg, #FFE4D6 0%, #FED7AA 100%);
-      color: #EA580C;
+      background: rgba(16, 185, 129, 0.2);
+      color: #34D399;
     }
 
     .navbar-auth {
@@ -191,7 +191,7 @@
     }
 
     .user-menu-item {
-      color: #1F2937;
+      color: #F9FAFB;
       padding: 8px 16px;
       border-radius: 20px;
       cursor: pointer;
@@ -200,7 +200,16 @@
     }
 
     .user-menu-item:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(16, 185, 129, 0.2);
+      color: #34D399;
+    }
+
+    button.user-menu-item {
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
     }
 
     .mobile-toggle {
@@ -270,7 +279,7 @@
       <% if user_signed_in? %>
         <li><%= link_to 'My Requests', requests_path, data: { turbo_action: 'replace' } %></li>
       <% end %>
-      <li><%= link_to 'About', '#' %></li>
+      <li><%= link_to 'About', about_path %></li>
     </ul>
 
     <div class="navbar-auth">
@@ -278,7 +287,7 @@
         <div class="user-menu">
           <span class="user-menu-item" data-user-id="<%= current_user.id %>" data-user-email="<%= current_user.email %>"><%= current_user.full_name %></span>
           <%= link_to 'Profile', edit_user_registration_path, class: 'user-menu-item' %>
-          <%= link_to 'Logout', destroy_user_session_path, method: :delete, data: { turbo: false }, class: 'user-menu-item' %>
+          <%= button_to 'Logout', destroy_user_session_path, method: :delete, class: 'user-menu-item', form: { style: 'display: inline;' } %>
         </div>
       <% else %>
         <div class="sign-in-dropdown" id="signInDropdown">
