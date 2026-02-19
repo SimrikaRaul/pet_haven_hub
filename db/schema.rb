@@ -2,52 +2,51 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20251217075409) do
-
+ActiveRecord::Schema[8.1].define(version: 2025_12_17_075409) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+  enable_extension "pg_catalog.plpgsql"
 
   create_table "pets", force: :cascade do |t|
-    t.string "name"
-    t.string "pet_type"
-    t.string "breed"
+    t.boolean "affectionate", default: false
     t.integer "age"
-    t.string "location"
-    t.text "description"
-    t.string "status"
-    t.bigint "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "size"
-    t.string "sex"
-    t.string "health_status"
-    t.boolean "vaccinated", default: false
-    t.float "lat"
-    t.float "lon"
+    t.boolean "apartment_friendly", default: false
     t.boolean "available", default: true
+    t.string "breed"
     t.string "city"
     t.string "country"
-    t.float "latitude"
-    t.float "longitude"
-    t.string "image"
+    t.datetime "created_at", null: false
+    t.text "description"
     t.string "energy_level"
-    t.boolean "apartment_friendly", default: false
-    t.boolean "kids_friendly", default: false
-    t.boolean "affectionate", default: false
-    t.string "temperament"
-    t.boolean "social_with_other_pets", default: false
-    t.boolean "social_with_children", default: false
-    t.string "trainability"
-    t.string "grooming_needs"
     t.string "exercise_needs"
+    t.string "grooming_needs"
+    t.string "health_status"
+    t.string "image"
+    t.boolean "kids_friendly", default: false
+    t.float "lat"
+    t.float "latitude"
+    t.string "location"
+    t.float "lon"
+    t.float "longitude"
+    t.string "name"
+    t.string "pet_type"
+    t.string "sex"
+    t.string "size"
+    t.boolean "social_with_children", default: false
+    t.boolean "social_with_other_pets", default: false
+    t.string "status"
+    t.string "temperament"
+    t.string "trainability"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.boolean "vaccinated", default: false
     t.index ["available"], name: "index_pets_on_available"
     t.index ["breed"], name: "index_pets_on_breed"
     t.index ["pet_type"], name: "index_pets_on_pet_type"
@@ -55,18 +54,18 @@ ActiveRecord::Schema.define(version: 20251217075409) do
   end
 
   create_table "requests", force: :cascade do |t|
-    t.string "status"
-    t.bigint "pet_id"
-    t.bigint "user_id"
+    t.datetime "completed_at"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "request_type"
     t.text "notes"
+    t.bigint "pet_id"
+    t.text "rejection_reason"
+    t.string "request_type"
     t.string "route"
     t.float "route_distance"
     t.datetime "scheduled_date"
-    t.datetime "completed_at"
-    t.text "rejection_reason"
+    t.string "status"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["pet_id"], name: "index_requests_on_pet_id"
     t.index ["request_type"], name: "index_requests_on_request_type"
     t.index ["status"], name: "index_requests_on_status"
@@ -75,39 +74,39 @@ ActiveRecord::Schema.define(version: 20251217075409) do
   end
 
   create_table "user_preferences", force: :cascade do |t|
-    t.bigint "user_id"
-    t.string "preferred_energy_level"
-    t.string "preferred_temperament"
-    t.string "preferred_grooming_needs"
-    t.string "preferred_exercise_needs"
-    t.boolean "wants_affectionate_pet", default: false
     t.boolean "apartment_friendly_required", default: false
-    t.boolean "kids_in_home", default: false
-    t.boolean "has_other_pets", default: false
     t.datetime "created_at", null: false
+    t.boolean "has_other_pets", default: false
+    t.boolean "kids_in_home", default: false
+    t.string "preferred_energy_level"
+    t.string "preferred_exercise_needs"
+    t.string "preferred_grooming_needs"
+    t.string "preferred_temperament"
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.boolean "wants_affectionate_pet", default: false
     t.index ["user_id"], name: "index_user_preferences_on_user_id", unique: true
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.string "role"
-    t.string "password_digest"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "encrypted_password", default: "", null: false
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.string "preferred_species"
-    t.string "phone"
     t.string "address"
+    t.text "bio"
     t.string "city"
     t.string "country"
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.string "encrypted_password", default: "", null: false
     t.float "latitude"
     t.float "longitude"
-    t.text "bio"
+    t.string "name"
+    t.string "password_digest"
+    t.string "phone"
+    t.string "preferred_species"
+    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at"
+    t.string "reset_password_token"
+    t.string "role"
+    t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["role"], name: "index_users_on_role"
