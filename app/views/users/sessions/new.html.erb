@@ -47,13 +47,6 @@
           <%= f.password_field :password, autocomplete: "current-password", style: 'width: 100%; padding: 1rem 1.25rem; border: 2px solid #B5D6D8; border-radius: 25px; background: #F9FAFB; font-size: 1rem; outline: none; transition: all 0.2s;' %>
         </div>
 
-        <% if devise_mapping.rememberable? %>
-          <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;">
-            <%= f.check_box :remember_me, style: 'width: 1.25rem; height: 1.25rem; accent-color: #F4A5B9; cursor: pointer;' %>
-            <%= f.label :remember_me, "Remember me", style: 'font-size: 0.875rem; font-weight: 600; color: #0D5F5C; cursor: pointer;' %>
-          </div>
-        <% end %>
-
         <div style="margin-bottom: 1.5rem;">
           <%= f.submit "Log in", style: 'width: 100%; padding: 1.25rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 900; font-size: 1.125rem; letter-spacing: 0.5px; border: none; border-radius: 30px; cursor: pointer; box-shadow: 0 10px 30px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
         </div>

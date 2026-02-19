@@ -1,76 +1,293 @@
-<h1>Manage Users</h1>
+<style>
+  .users-table-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  } 
+  
+  .users-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  
+  .stats-summary {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .stat-badge {
+    background: #F9FAFB;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    border: 2px solid #E5E7EB;
+  }
+  
+  .stat-badge strong {
+    color: #0D5F5C;
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+  
+  .stat-badge.total {
+    border-color: #B5D6D8;
+    background: #EBF8F9;
+  }
+  
+  .stat-badge.admin {
+    border-color: #F4B5C8;
+    background: #FEF3F6;
+  }
+  
+  .stat-badge.active {
+    border-color: #D1FAE5;
+    background: #ECFDF5;
+  }
+  
+  .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .users-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .users-table thead th {
+    background: white;
+    padding: 1.25rem 1.5rem;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1F2937;
+    border-bottom: 2px solid #F3F4F6;
+  }
+  
+  .users-table tbody tr {
+    border-bottom: 1px solid #F3F4F6;
+    transition: all 0.2s;
+  }
+  
+  .users-table tbody tr:hover {
+    background: #F9FAFB;
+  }
+  
+  .users-table tbody td {
+    padding: 1.25rem 1.5rem;
+    font-size: 0.9375rem;
+  }
+  
+  .user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #B5D6D8 0%, #0D5F5C 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.125rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .role-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  
+  .role-admin {
+    background: #FEF3C7;
+    color: #92400E;
+  }
+  
+  .role-shelter {
+    background: #DBEAFE;
+    color: #1E40AF;
+  }
+  
+  .role-user {
+    background: #E0E7FF;
+    color: #3730A3;
+  }
+  
+  .action-btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+  }
+  
+  .btn-view {
+    background: white;
+    color: #1F2937;
+    border-color: #E5E7EB;
+  }
+  
+  .btn-view:hover {
+    border-color: #0D5F5C;
+    color: #0D5F5C;
+  }
+  
+  .btn-admin-action {
+    background: white;
+    color: #1F2937;
+    border-color: #E5E7EB;
+  }
+  
+  .btn-admin-action:hover {
+    border-color: #F4A5B9;
+    color: #F4A5B9;
+  }
+  
+  .btn-delete {
+    background: white;
+    color: #DC2626;
+    border-color: #E5E7EB;
+  }
+  
+  .btn-delete:hover {
+    background: #DC2626;
+    border-color: #DC2626;
+    color: white;
+  }
+  
+  .email-code {
+    background: #F3F4F6;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-family: 'Monaco', 'Courier New', monospace;
+    color: #374151;
+  }
+</style>
 
-<div class="card" style="margin-bottom: 40px;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <h2>User List</h2>
-    <div style="display: flex; gap: 12px;">
-      <span style="background: #EBF4FF; padding: 8px 16px; border-radius: 6px; font-size: 13px;">
-        <strong style="color: #2C5282;"><%= @total_users %></strong> Total Users
-      </span>
-      <span style="background: #E6FFED; padding: 8px 16px; border-radius: 6px; font-size: 13px;">
-        <strong style="color: #22543D;"><%= @admin_users %></strong> Admins
-      </span>
-      <span style="background: #FFF5EB; padding: 8px 16px; border-radius: 6px; font-size: 13px;">
-        <strong style="color: #7C2D12;"><%= @active_users %></strong> Active
-      </span>
+<div class="users-table-container">
+  <div class="table-header">
+    <div>
+      <h1 style="font-size: 2.5rem; font-weight: 800; color: #1F2937; margin-bottom: 0.5rem;">Manage Users</h1>
+      <p style="color: #6B7280; font-size: 0.9375rem;">View and manage all registered users in the system</p>
+    </div>
+    
+    <div class="stats-summary">
+      <div class="stat-badge total">
+        <strong><%= @total_users %></strong> Total
+      </div>
+      <div class="stat-badge admin">
+        <strong><%= @admin_users %></strong> Admins
+      </div>
+      <div class="stat-badge active">
+        <strong><%= @active_users %></strong> Active
+      </div>
     </div>
   </div>
 
   <% if @users.any? %>
-    <div style="margin-top: 20px; overflow-x: auto;">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Role</th>
-            <th>Pets</th>
-            <th>Requests</th>
-            <th>Joined</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @users.each do |user| %>
+    <div class="users-card">
+      <div class="table-wrapper">
+        <table class="users-table">
+          <thead>
             <tr>
-              <td><strong><%= user.full_name %></strong></td>
-              <td><code style="background: #EDF2F7; padding: 4px 8px; border-radius: 4px; font-size: 12px;"><%= user.email %></code></td>
-              <td><%= user.phone || '—' %></td>
-              <td>
-                <% if user.admin? %>
-                  <span class="badge badge-warning" style="background: #FFF5EB; color: #7C2D12;">Admin</span>
-                <% elsif user.shelter_manager? %>
-                  <span class="badge badge-info" style="background: #EBF4FF; color: #2C5282;">Shelter Manager</span>
-                <% else %>
-                  <span class="badge badge-primary" style="background: #EBF4FF; color: #2C5282;">User</span>
-                <% end %>
-              </td>
-              <td><%= user.pets.count %></td>
-              <td><%= user.requests.count %></td>
-              <td style="font-size: 13px; color: #718096;"><%= user.created_at.strftime('%b %d, %Y') %></td>
-              <td>
-                <div style="display: flex; gap: 6px;">
-                  <%= link_to 'View', admin_user_path(user), class: 'btn btn-small btn-outline', style: 'padding: 6px 12px; font-size: 12px;' %>
-                  <% if user.admin? %>
-                    <%= link_to 'Remove Admin', admin_remove_admin_user_path(user), method: :patch, class: 'btn btn-small btn-danger', style: 'padding: 6px 12px; font-size: 12px;' %>
-                  <% else %>
-                    <%= link_to 'Make Admin', admin_make_admin_user_path(user), method: :patch, class: 'btn btn-small btn-primary', style: 'padding: 6px 12px; font-size: 12px;' %>
-                  <% end %>
-                  <%= link_to 'Delete', admin_user_path(user), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-small btn-danger', style: 'padding: 6px 12px; font-size: 12px;' %>
-                </div>
-              </td>
+              <th></th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Role</th>
+              <th>Pets</th>
+              <th>Requests</th>
+              <th>Joined</th>
+              <th>Actions</th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            <% @users.each do |user| %>
+              <tr>
+                <td>
+                  <div class="user-avatar">
+                    <%= user.name.present? ? user.name.first.upcase : user.email.first.upcase %>
+                  </div>
+                </td>
+                <td style="font-weight: 600; color: #1F2937; font-size: 1rem;">
+                  <%= user.name %>
+                </td>
+                <td>
+                  <code class="email-code"><%= user.email %></code>
+                </td>
+                <td style="color: #6B7280;">
+                  <%= user.phone.present? ? user.phone : '—' %>
+                </td>
+                <td>
+                  <% if user.admin? %>
+                    <span class="role-badge role-admin">👑 Admin</span>
+                  <% elsif user.shelter_manager? %>
+                    <span class="role-badge role-shelter">🏠 Shelter Manager</span>
+                  <% else %>
+                    <span class="role-badge role-user">👤 User</span>
+                  <% end %>
+                </td>
+                <td style="color: #6B7280; font-weight: 600;">
+                  <%= user.pets.count %>
+                </td>
+                <td style="color: #6B7280; font-weight: 600;">
+                  <%= user.requests.count %>
+                </td>
+                <td style="color: #6B7280; font-size: 0.875rem;">
+                  <%= user.created_at.strftime('%b %d, %Y') %>
+                </td>
+                <td>
+                  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <%= link_to 'View', admin_user_path(user), class: 'action-btn btn-view' %>
+                    
+                    <% if current_user.id != user.id %>
+                      <% if user.admin? %>
+                        <%= link_to 'Remove Admin', remove_admin_admin_user_path(user), method: :patch, data: { confirm: "Remove #{user.name} as admin?" }, class: 'action-btn btn-admin-action' %>
+                      <% else %>
+                        <%= link_to 'Make Admin', make_admin_admin_user_path(user), method: :patch, data: { confirm: "Make #{user.name} an admin?" }, class: 'action-btn btn-admin-action' %>
+                      <% end %>
+                      
+                      <%= link_to 'Delete', admin_user_path(user), method: :delete, data: { confirm: "Are you sure you want to delete #{user.name}? This action cannot be undone." }, class: 'action-btn btn-delete' %>
+                    <% else %>
+                      <span style="color: #9CA3AF; font-size: 0.875rem; padding: 0.5rem;">(You)</span>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
 
-    <!-- Pagination -->
-    <div style="margin-top: 24px; text-align: center;">
-      <%= paginate @users %>
+      <!-- Pagination -->
+      <% if @users.respond_to?(:total_pages) && @users.total_pages > 1 %>
+        <div style="padding: 1.5rem; border-top: 2px solid #F3F4F6; display: flex; justify-content: center;">
+          <%= paginate @users %>
+        </div>
+      <% end %>
     </div>
   <% else %>
-    <p style="margin-top: 20px; color: #718096; text-align: center;">No users found.</p>
+    <div class="users-card" style="padding: 4rem; text-align: center;">
+      <div style="font-size: 4rem; margin-bottom: 1rem;">👥</div>
+      <h3 style="font-size: 1.5rem; font-weight: 700; color: #1F2937; margin-bottom: 0.5rem;">No users found</h3>
+      <p style="color: #6B7280;">Users will appear here once they register.</p>
+    </div>
   <% end %>
 </div>

@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :validatable
 
   has_many :pets, dependent: :destroy
   has_many :requests, dependent: :destroy
@@ -19,7 +19,8 @@ class User < ApplicationRecord
   validates :address, length: { maximum: 500 }, allow_blank: true
   validates :city, length: { maximum: 100 }, allow_blank: true
 
-  scope :active_users, -> { where("confirmed_at IS NOT NULL OR sign_in_count > 0") }
+  # Active users are those who have listed pets or made requests
+  scope :active_users, -> { where('EXISTS(SELECT 1 FROM pets WHERE pets.user_id = users.id) OR EXISTS(SELECT 1 FROM requests WHERE requests.user_id = users.id)') }
   scope :recent, -> { order(created_at: :desc) }
   scope :admins, -> { where(role: 'admin') }
   scope :with_adoption_history, -> { joins(:requests).distinct }
