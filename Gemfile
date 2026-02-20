@@ -38,8 +38,13 @@ gem "redis"
 # MessagePack for Rails cache
 gem "msgpack", ">= 1.7.0"
 
-# File uploads
-gem "carrierwave"
+# File uploads with ActiveStorage (no image processing on Windows to avoid vips/ffi issues)
+# gem "image_processing", ">= 1.2"  # Disabled: causes ffi/vips issues on Windows
+# gem "mini_magick", ">= 4.9.5"
+# gem "ffi", ">= 1.15.0"
+
+# File uploads (legacy - switching to ActiveStorage)
+# gem "carrierwave"
 
 # Geolocation
 gem "geocoder"

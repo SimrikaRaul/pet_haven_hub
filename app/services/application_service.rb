@@ -1,7 +1,7 @@
-# Base service class — subclass for concrete services
+
 class ApplicationService
-  def self.call(*args)
-    new(*args).call
+  def self.call(**kwargs)
+    new(**kwargs).call
   end
 
   def call

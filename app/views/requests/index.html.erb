@@ -92,8 +92,8 @@
           <div class="flex flex-col md:flex-row gap-6">
             <!-- Pet Image -->
             <div class="flex-shrink-0">
-              <% if req.pet.image.present? %>
-                <%= image_tag req.pet.image.url, alt: req.pet.name, class: 'pet-thumbnail' %>
+              <% if req.pet.image.attached? %>
+                <%= image_tag req.pet.image, alt: req.pet.name, class: 'pet-thumbnail' %>
               <% else %>
                 <div class="pet-thumbnail flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-200 text-4xl">
                   <%= req.pet.pet_type == 'dog' ? '🐕' : req.pet.pet_type == 'cat' ? '🐈' : '🐾' %>

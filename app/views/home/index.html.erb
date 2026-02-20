@@ -266,8 +266,8 @@
         <% @featured_pets.each do |pet| %>
           <%= link_to pet_path(pet), style: 'text-decoration: none;' do %>
             <div class="pet-card-home">
-              <% if pet.image.present? && pet.image.url %>
-                <%= image_tag pet.image.url, alt: pet.name, class: 'pet-card-image' %>
+              <% if pet.image.attached? %>
+                <%= image_tag pet.image, alt: pet.name, class: 'pet-card-image' %>
               <% else %>
                 <div class="pet-card-image" style="background: linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem;">
                   🐾

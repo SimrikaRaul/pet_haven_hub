@@ -2,21 +2,22 @@ class Pet < ApplicationRecord
   # Associations
   belongs_to :user, optional: true
   has_many :requests, dependent: :destroy
-  mount_uploader :image, ImageUploader
+  has_one_attached :image
+  
   # Enums
   enum :pet_type, { dog: 'dog', cat: 'cat', rabbit: 'rabbit', bird: 'bird', other: 'other' }
   enum :size, { small: 'small', medium: 'medium', large: 'large' }
   enum :sex, { male: 'male', female: 'female' }
   enum :status, { available: 'available', pending: 'pending', adopted: 'adopted', archived: 'archived' }
 
-  # Constants for recommendation fields
+ 
   ENERGY_LEVELS = %w[low medium high].freeze
   TEMPERAMENTS = %w[friendly shy active calm].freeze
   TRAINABILITY_LEVELS = %w[easy medium hard].freeze
   GROOMING_NEEDS = %w[low medium high].freeze
   EXERCISE_NEEDS = %w[low medium high].freeze
 
-  # Validations
+ 
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
   validates :pet_type, presence: true, inclusion: { in: pet_types.keys }
   validates :breed, presence: true, length: { minimum: 2, maximum: 100 }
@@ -32,7 +33,7 @@ class Pet < ApplicationRecord
   validates :exercise_needs, inclusion: { in: EXERCISE_NEEDS }, allow_blank: true
   validates :latitude, numericality: true, allow_blank: true
   validates :longitude, numericality: true, allow_blank: true
-  validate :image_size, if: -> { image.file.present? }
+  validate :image_size, if: -> { image.attached? }
 
   # Callbacks
   before_save :geocode_location_if_needed
@@ -40,7 +41,7 @@ class Pet < ApplicationRecord
   after_initialize :set_default_status
   after_update :notify_status_change
 
-  # Scopes
+  
   scope :available, -> { where(available: true) }
   scope :unavailable, -> { where(available: false) }
   scope :by_species, ->(species) { where(pet_type: species) if species.present? }
@@ -68,7 +69,7 @@ class Pet < ApplicationRecord
     end
   end
 
-  # Instance Methods
+  
   def location_name
     "#{city}, #{country}" if city.present? && country.present?
   end
@@ -89,11 +90,9 @@ class Pet < ApplicationRecord
     image.file.present? ? image.url : '/images/placeholder-pet.jpg'
   end
 
-  # Status helpers
+  
   def set_default_status
-    # If the `status` attribute isn't present on this instance (e.g. a select omitted it),
-    # reading it will raise ActiveModel::MissingAttributeError. Guard by checking loaded
-    # attributes first and only set a default when it's safe.
+ 
     return unless has_attribute?(:status)
 
     self.status ||= 'available'
@@ -145,19 +144,19 @@ class Pet < ApplicationRecord
   end
 
   def image_size
-    return unless image.file.present?
-    if image.file.size > 5.megabytes
+    return unless image.attached?
+    if image.blob.byte_size > 5.megabytes
       errors.add(:image, "should be less than 5MB")
     end
   end
 
-  # Returns true when an image file has been uploaded
+  # Check if image is uploaded (ActiveStorage)
   def image_uploaded?
-    image.file.present?
+    image.attached?
   end
 
   def send_pet_added_notification
-    # Notify admins about new pet listing
+ 
     AdminMailer.new_pet_added_notification(self).deliver_later
   end
 end
