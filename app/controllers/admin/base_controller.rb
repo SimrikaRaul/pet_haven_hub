@@ -2,20 +2,20 @@ module Admin
   class BaseController < ApplicationController
     layout 'admin'
 
-    # Ensure CSRF protection is enabled
+   
     protect_from_forgery with: :exception, prepend: true
+    
+    before_action :authenticate_user!      # Ensure user is logged in (from Devise)
+    before_action :require_admin           # Ensure user has admin role (from ApplicationController)
 
-    before_action :authenticate_user!
-    before_action :authenticate_admin!
-
+    
+    helper_method :admin_layout_title
+    
     private
 
-    # Ensure only admins can access admin controllers
-    def authenticate_admin!
-      unless admin_user?
-        flash[:alert] = "You are not authorized to access the administration page."
-        redirect_to root_path
-      end
+   
+    def admin_layout_title
+      "Admin Dashboard"
     end
   end
 end

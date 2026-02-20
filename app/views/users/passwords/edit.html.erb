@@ -1,25 +1,80 @@
-<h2>Change your password</h2>
+<div class="min-h-screen flex items-center justify-center px-4 py-12" style="background: #FFFFFF;">
+  <div class="max-w-xl w-full">
+    <!-- Card Container -->
+    <div class="bg-white rounded-3xl shadow-lg p-10 md:p-12 text-center">
+      
+      <!-- Pet Image Circle -->
+      <div class="flex justify-center mb-8">
+        <div class="w-40 h-40 rounded-full overflow-hidden border-4 border-orange-300 shadow-lg">
+          <%= image_tag "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&h=400&fit=crop", 
+              alt: "Pet", 
+              class: "w-full h-full object-cover",
+              onerror: "this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22%3E%3Crect fill=%22%23FED7AA%22 width=%22160%22 height=%22160%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2260%22 text-anchor=%22middle%22 dy=%22.3em%22%3E🐈%3C/text%3E%3C/svg%3E';" %>
+        </div>
+      </div>
+      
+      <!-- Header -->
+      <div class="mb-6">
+        <h2 class="text-4xl font-extrabold mb-4 text-gray-800">
+          Create New Password
+        </h2>
+        <p class="text-gray-600 text-base mb-2 leading-relaxed">
+          Please enter your new password below<br>
+          to secure your account.
+        </p>
+        <% if @minimum_password_length %>
+          <p class="text-gray-500 text-sm">
+            Minimum <%= @minimum_password_length %> characters required
+          </p>
+        <% end %>
+      </div>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "users/shared/error_messages", resource: resource %>
-  <%= f.hidden_field :reset_password_token %>
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+        <%= render "users/shared/error_messages", resource: resource %>
+        <%= f.hidden_field :reset_password_token %>
 
-  <div class="field">
-    <%= f.label :password, "New password" %><br />
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
-    <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
+        <!-- New Password Input -->
+        <div class="mb-5">
+          <%= f.password_field :password, 
+              autofocus: true, 
+              autocomplete: "new-password", 
+              placeholder: 'Enter New Password',
+              class: 'w-full px-6 py-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-800 text-center placeholder-gray-400 focus:border-orange-400 focus:bg-white focus:outline-none transition-all duration-200 text-lg' %>
+        </div>
+
+        <!-- Confirm Password Input -->
+        <div class="mb-6">
+          <%= f.password_field :password_confirmation, 
+              autocomplete: "new-password", 
+              placeholder: 'Confirm New Password',
+              class: 'w-full px-6 py-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-800 text-center placeholder-gray-400 focus:border-orange-400 focus:bg-white focus:outline-none transition-all duration-200 text-lg' %>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="mb-4">
+          <%= f.submit "Change Password", 
+              class: 'w-full md:w-64 mx-auto block py-4 px-8 rounded-full font-bold text-white text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer',
+              style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
+        </div>
+      <% end %>
+
+    </div>
+
+    <!-- Bottom Links -->
+    <div class="text-center mt-8 space-y-3">
+      <%= link_to new_session_path(resource_name), class: 'block text-gray-600 hover:text-orange-600 font-medium text-sm transition-colors duration-200' do %>
+        <span>← Back to Login</span>
+      <% end %>
+      
+      <% if devise_mapping.registerable? %>
+        <div class="text-gray-600 text-sm">
+          Don't have an account?
+          <%= link_to "Sign up", new_registration_path(resource_name), class: 'text-orange-600 hover:text-orange-700 font-semibold ml-1' %>
+        </div>
+      <% end %>
+    </div>
   </div>
+</div>
 
-  <div class="field">
-    <%= f.label :password_confirmation, "Confirm new password" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
 
-  <div class="actions">
-    <%= f.submit "Change my password" %>
-  </div>
-<% end %>
 
-<%= render "users/shared/links" %>

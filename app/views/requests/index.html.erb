@@ -1,67 +1,262 @@
-<div class="container py-8">
-  <h1 class="text-4xl font-bold mb-6" style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">📦 My Adoption & Donation Requests</h1>
+<style>
+  .request-card {
+    transition: all 0.3s ease;
+  }
+  .request-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+  .filter-tab {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .filter-tab.active {
+    background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+    color: white;
+    border-color: #EA580C;
+  }
+  .filter-tab:not(.active):hover {
+    background: #FED7AA;
+    border-color: #F97316;
+  }
+  .pet-thumbnail {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 3px solid #F97316;
+  }
+  .browse-pets-btn {
+    transition: all 0.3s ease;
+  }
+  .browse-pets-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.4);
+  }
+  .empty-state-container {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  @media (max-width: 768px) {
+    .pet-thumbnail {
+      width: 80px;
+      height: 80px;
+    }
+    .empty-state-container {
+      min-height: 50vh;
+    }
+  }
+</style>
+
+<div class="container py-6 md:py-8">
+  <!-- Modern Header with Flexbox and Divider -->
+  <div class="mb-6 pb-5 border-b-2 border-orange-200">
+    <div class="flex items-center gap-3">
+      <span class="text-3xl md:text-4xl">📦</span>
+      <h1 class="text-2xl md:text-3xl font-bold" style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+        My Adoption & Donation Requests
+      </h1>
+    </div>
+    <p class="text-sm md:text-base text-gray-600 mt-2 ml-12 md:ml-14">Track and manage all your pet adoption and donation requests</p>
+  </div>
 
   <% if @requests.any? %>
-    <div class="grid gap-6">
+    <!-- Filter Tabs -->
+    <div class="mb-6 flex flex-wrap gap-3">
+      <button class="filter-tab active px-6 py-2.5 rounded-full font-semibold border-2 border-gray-300 bg-white" data-filter="all">
+        All Requests
+      </button>
+      <button class="filter-tab px-6 py-2.5 rounded-full font-semibold border-2 border-gray-300 bg-white" data-filter="open">
+        Pending
+      </button>
+      <button class="filter-tab px-6 py-2.5 rounded-full font-semibold border-2 border-gray-300 bg-white" data-filter="approved">
+        Approved
+      </button>
+      <button class="filter-tab px-6 py-2.5 rounded-full font-semibold border-2 border-gray-300 bg-white" data-filter="rejected">
+        Rejected
+      </button>
+      <button class="filter-tab px-6 py-2.5 rounded-full font-semibold border-2 border-gray-300 bg-white" data-filter="completed">
+        Completed
+      </button>
+    </div>
+
+    <!-- Request Cards Grid -->
+    <div class="grid gap-6" id="requests-container">
       <% @requests.each do |req| %>
-        <div class="bg-white rounded-3xl shadow-lg p-6 border-l-8" style="border-color: #F97316;">
+        <div class="request-card bg-white rounded-2xl shadow-lg p-6 border-l-8 transition-all duration-300" 
+             style="border-color: #F97316;" 
+             data-status="<%= req.status %>">
+          
           <div class="flex flex-col md:flex-row gap-6">
-            <!-- Pet Info -->
-            <div class="flex-1">
-              <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                <%= req.pet.name %>
-              </h3>
-              <p class="text-gray-600 mb-4">
-                <strong><%= req.request_type.upcase %></strong> Request • Created <%= time_ago_in_words(req.created_at) %> ago
-              </p>
-              <div class="space-y-2 text-sm text-gray-700">
-                <p><strong>Species:</strong> <%= req.pet.pet_type %></p>
-                <p><strong>Breed:</strong> <%= req.pet.breed %></p>
-                <p><strong>Location:</strong> <%= req.pet.location %></p>
-              </div>
+            <!-- Pet Image -->
+            <div class="flex-shrink-0">
+              <% if req.pet.image.present? %>
+                <%= image_tag req.pet.image.url, alt: req.pet.name, class: 'pet-thumbnail' %>
+              <% else %>
+                <div class="pet-thumbnail flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-200 text-4xl">
+                  <%= req.pet.pet_type == 'dog' ? '🐕' : req.pet.pet_type == 'cat' ? '🐈' : '🐾' %>
+                </div>
+              <% end %>
             </div>
 
-            <!-- Status & Actions -->
-            <div class="flex flex-col items-end justify-center">
-              <div class="mb-4">
-                <span class="inline-block px-5 py-2.5 rounded-full font-bold text-white shadow-md
-                  <%= case req.status
-                      when 'open' then 'bg-yellow-500'
-                      when 'approved' then 'bg-green-500'
-                      when 'rejected' then 'bg-red-500'
-                      when 'scheduled' then 'bg-blue-500'
-                      when 'completed' then 'bg-gray-500'
-                      else 'bg-gray-400'
-                      end %>">
-                  <%= req.status.upcase %>
-                </span>
+            <!-- Pet Info -->
+            <div class="flex-1">
+              <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-3">
+                <div>
+                  <h3 class="text-2xl font-bold text-gray-900 mb-1">
+                    <%= req.pet.name %>
+                  </h3>
+                  <p class="text-sm text-gray-500 mb-2">
+                    <span class="font-semibold text-orange-600"><%= req.request_type.upcase %></span> Request
+                  </p>
+                </div>
+                
+                <!-- Status Badge -->
+                <div class="flex-shrink-0">
+                  <span class="inline-block px-4 py-2 rounded-full font-bold text-sm text-white shadow-md
+                    <%= case req.status
+                        when 'open' then 'bg-yellow-500'
+                        when 'approved' then 'bg-green-500'
+                        when 'rejected' then 'bg-red-500'
+                        when 'scheduled' then 'bg-purple-500'
+                        when 'completed' then 'bg-blue-500'
+                        else 'bg-gray-400'
+                        end %>">
+                    <%= req.status == 'open' ? 'PENDING' : req.status.upcase %>
+                  </span>
+                </div>
               </div>
 
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm mb-4">
+                <div class="flex items-center gap-2">
+                  <span class="text-gray-600">🐾 Type:</span>
+                  <span class="font-semibold text-gray-800"><%= req.pet.pet_type.titleize %></span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-gray-600">🎯 Breed:</span>
+                  <span class="font-semibold text-gray-800"><%= req.pet.breed %></span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-gray-600">📅 Requested:</span>
+                  <span class="font-semibold text-gray-800"><%= req.created_at.strftime('%b %d, %Y') %></span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-gray-600">📍 Location:</span>
+                  <span class="font-semibold text-gray-800"><%= req.pet.location %></span>
+                </div>
+              </div>
+
+              <!-- Additional Info -->
               <% if req.approved? && req.route_distance.present? %>
-                <div class="text-right text-sm text-gray-600">
-                  <p><strong>Route Distance:</strong> <%= req.route_distance.round(2) %> units</p>
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                  <p class="text-sm text-green-800">
+                    <strong>✓ Route Distance:</strong> <%= req.route_distance.round(2) %> km
+                  </p>
                 </div>
               <% end %>
 
-              <%= link_to 'View Details', pet_path(req.pet), class: 'btn mt-4 px-6 py-2.5 text-white font-bold rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
+              <!-- Rejection Reason -->
+              <% if req.rejected? && req.rejection_reason.present? %>
+                <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                  <p class="text-sm text-red-800">
+                    <strong>✗ Rejection Reason:</strong> <%= req.rejection_reason %>
+                  </p>
+                </div>
+              <% end %>
+
+              <!-- User Notes -->
+              <% if req.notes.present? %>
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
+                  <p class="text-sm text-gray-600"><strong>Your Notes:</strong></p>
+                  <p class="text-sm text-gray-800 mt-1"><%= req.notes %></p>
+                </div>
+              <% end %>
+
+              <!-- Action Buttons -->
+              <div class="flex flex-wrap gap-3 mt-4">
+                <%= link_to pet_path(req.pet), 
+                    class: 'btn px-5 py-2 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200', 
+                    style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' do %>
+                  <%= req.rejected? ? '👁️ View Pet Details' : req.open? ? '📝 View Pet Details' : '✓ View Pet Details' %>
+                <% end %>
+
+                <% if req.open? %>
+                  <span class="px-5 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg border border-gray-300 font-medium">
+                    ⏳ Awaiting Review
+                  </span>
+                <% elsif req.approved? %>
+                  <span class="px-5 py-2 text-sm text-green-700 bg-green-100 rounded-lg border border-green-300 font-medium">
+                    ✓ Request Approved
+                  </span>
+                <% elsif req.completed? %>
+                  <span class="px-5 py-2 text-sm text-blue-700 bg-blue-100 rounded-lg border border-blue-300 font-medium">
+                    ✓ Completed
+                  </span>
+                <% end %>
+              </div>
             </div>
           </div>
-
-          <!-- Notes if present -->
-          <% if req.notes.present? %>
-            <div class="mt-4 pt-4 border-t">
-              <p class="text-sm text-gray-600"><strong>Your Notes:</strong></p>
-              <p class="text-gray-700"><%= req.notes %></p>
-            </div>
-          <% end %>
         </div>
       <% end %>
     </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        const requestCards = document.querySelectorAll('.request-card');
+
+        filterTabs.forEach(tab => {
+          tab.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            
+            // Update active tab
+            filterTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            // Filter cards
+            requestCards.forEach(card => {
+              const cardStatus = card.getAttribute('data-status');
+              if (filter === 'all' || cardStatus === filter) {
+                card.style.display = 'block';
+                setTimeout(() => card.style.opacity = '1', 10);
+              } else {
+                card.style.opacity = '0';
+                setTimeout(() => card.style.display = 'none', 300);
+              }
+            });
+          });
+        });
+      });
+    </script>
+
   <% else %>
-    <div class="bg-white rounded-3xl shadow-lg p-12 text-center" style="border: 2px solid #FED7AA;">
-      <div class="text-6xl mb-4">🐾</div>
-      <p class="text-xl text-gray-700 mb-6 font-semibold">You haven't submitted any requests yet.</p>
-      <%= link_to '🔍 Browse Pets', pets_path, class: 'btn px-8 py-4 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
+    <!-- Improved Empty State Section -->
+    <div class="empty-state-container">
+      <div class="bg-white rounded-2xl shadow-md p-8 md:p-12 text-center max-w-lg mx-auto border border-orange-100">
+        <!-- Multi-icon illustration -->
+        <div class="flex justify-center items-center gap-3 mb-6">
+          <span class="text-5xl md:text-6xl animate-bounce" style="animation-duration: 2s;">🐕</span>
+          <span class="text-6xl md:text-7xl">🐾</span>
+          <span class="text-5xl md:text-6xl animate-bounce" style="animation-duration: 2s; animation-delay: 0.3s;">🐈</span>
+        </div>
+        
+        <!-- Friendly message with better typography -->
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-3">No Requests Yet</h2>
+        <p class="text-base md:text-lg text-gray-600 mb-8 leading-relaxed">
+          Start your journey to find a perfect companion!<br>
+          Browse our available pets and submit your first adoption request.
+        </p>
+        
+        <!-- Enhanced Browse Pets button -->
+        <%= link_to pets_path, class: 'browse-pets-btn inline-flex items-center gap-3 px-8 py-4 text-base md:text-lg text-white font-bold rounded-xl shadow-lg', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' do %>
+          <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <span>Browse Available Pets</span>
+        <% end %>
+      </div>
     </div>
   <% end %>
 </div>
