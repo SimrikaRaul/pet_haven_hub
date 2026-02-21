@@ -264,7 +264,7 @@
                         <%= link_to 'Make Admin', make_admin_admin_user_path(user), method: :patch, data: { confirm: "Make #{user.name} an admin?" }, class: 'action-btn btn-admin-action' %>
                       <% end %>
                       
-                      <%= link_to 'Delete', admin_user_path(user), method: :delete, data: { confirm: "Are you sure you want to delete #{user.name}? This action cannot be undone." }, class: 'action-btn btn-delete' %>
+                      <%= button_to 'Delete', admin_user_path(user), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete #{user.name}? This action cannot be undone." } }, class: 'action-btn btn-delete' %>
                     <% else %>
                       <span style="color: #9CA3AF; font-size: 0.875rem; padding: 0.5rem;">(You)</span>
                     <% end %>

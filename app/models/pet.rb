@@ -87,7 +87,7 @@ class Pet < ApplicationRecord
   end
 
   def photo_url
-    image.file.present? ? image.url : '/images/placeholder-pet.jpg'
+    image.attached? ? Rails.application.routes.url_helpers.url_for(image) : '/images/placeholder-pet.jpg'
   end
 
   

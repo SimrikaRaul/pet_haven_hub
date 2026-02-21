@@ -213,7 +213,7 @@
                       <% end %>
                     <% end %>
                     
-                    <%= link_to 'Delete', admin_pet_path(pet), method: :delete, data: { confirm: 'Are you sure you want to delete this pet?' }, class: 'action-btn btn-delete' %>
+                    <%= button_to 'Delete', admin_pet_path(pet), method: :delete, form: { data: { turbo_confirm: 'Are you sure you want to delete this pet?' } }, class: 'action-btn btn-delete' %>
                   </div>
                 </td>
               </tr>

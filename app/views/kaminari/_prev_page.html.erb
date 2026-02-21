@@ -1,3 +1,15 @@
-<li>
-  <%= link_to_unless current_page.first?, raw(t 'views.pagination.previous'), url, rel: 'prev', remote: remote, class: 'px-4 py-2 border text-sm font-medium text-gray-700 rounded-l-md border-gray-300 bg-white hover:bg-gray-50' %>
-</li>
+<% if current_page.first? %>
+  <span class="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+    </svg>
+    <span>Previous</span>
+  </span>
+<% else %>
+  <%= link_to url, rel: 'prev', remote: remote, class: 'inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105' do %>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+    </svg>
+    <span>Previous</span>
+  <% end %>
+<% end %>
