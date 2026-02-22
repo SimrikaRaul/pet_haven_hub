@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   get 'about', to: 'home#about'
   
   resources :pets, only: [:index, :show] do
-    resources :requests, only: [:create]
+    resources :requests, only: [:new, :create]
   end
 
   resources :requests, only: [:index]

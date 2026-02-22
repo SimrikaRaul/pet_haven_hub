@@ -1,7 +1,9 @@
 class RequestsController < ApplicationController
-  before_action :authenticate_user!,only: [:index, :create]
-  before_action :set_pet, only: [:create]
+  before_action :authenticate_user!, only: [:index, :new, :create]
+  before_action :set_pet, only: [:new, :create]
   before_action :set_request, only: [:show, :update]
+  before_action :check_pet_availability, only: [:new, :create]
+  before_action :check_duplicate_request, only: [:new, :create]
 
   def index
     if current_user&.admin?
@@ -17,6 +19,10 @@ class RequestsController < ApplicationController
   def show
     authorize @request
   end
+  
+  def new
+    @request = Request.new
+  end
 
   def create
     @request = current_user.requests.build(request_params)
@@ -25,10 +31,9 @@ class RequestsController < ApplicationController
     
     if @request.save
       RecommendationRefreshJob.perform_later(current_user.id)
-      # Use redirect_to with explicit status to prevent caching issues
-      redirect_to pet_path(@pet), notice: 'Adoption/Donation request submitted successfully.', status: :see_other
+      redirect_to pet_path(@pet), notice: 'Your adoption request has been sent to admin. Please wait for approval.', status: :see_other
     else
-      redirect_to pet_path(@pet), alert: @request.errors.full_messages.to_sentence, status: :see_other
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -52,6 +57,21 @@ class RequestsController < ApplicationController
   end
 
   def request_params
-    params.require(:request).permit(:request_type, :notes, :scheduled_date)
+    params.require(:request).permit(:request_type, :notes, :scheduled_date, 
+                                   :citizenship_number, :phone_number, :address, 
+                                   :house_type, :has_other_pets, :experience, :reason,
+                                   :citizenship_photo)
+  end
+  
+  def check_pet_availability
+    unless @pet.available?
+      redirect_to pet_path(@pet), alert: 'This pet is no longer available for adoption.', status: :see_other
+    end
+  end
+  
+  def check_duplicate_request
+    if current_user.requests.where(pet_id: @pet.id, status: ['open', 'approved', 'scheduled']).exists?
+      redirect_to pet_path(@pet), alert: 'You have already submitted a request for this pet.', status: :see_other
+    end
   end
 end

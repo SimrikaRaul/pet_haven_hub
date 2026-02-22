@@ -11,27 +11,27 @@
     transition: all 0.2s ease;
   }
   .filter-tab.active {
-    background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+    background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
     color: white;
-    border-color: #EA580C;
+    border-color: #0A4946;
   }
   .filter-tab:not(.active):hover {
-    background: #FED7AA;
-    border-color: #F97316;
+    background: #E0F2F1;
+    border-color: #0D5F5C;
   }
   .pet-thumbnail {
     width: 120px;
     height: 120px;
     object-fit: cover;
     border-radius: 12px;
-    border: 3px solid #F97316;
+    border: 3px solid #0D5F5C;
   }
   .browse-pets-btn {
     transition: all 0.3s ease;
   }
   .browse-pets-btn:hover {
     transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.4);
+    box-shadow: 0 12px 28px rgba(13, 95, 92, 0.4);
   }
   .empty-state-container {
     min-height: 60vh;
@@ -52,14 +52,14 @@
 
 <div class="container py-6 md:py-8">
   <!-- Modern Header with Flexbox and Divider -->
-  <div class="mb-6 pb-5 border-b-2 border-orange-200">
+  <div class="mb-6 pb-5 border-b-2" style="border-color: #B2DFDB;">
     <div class="flex items-center gap-3">
-      <span class="text-3xl md:text-4xl">📦</span>
-      <h1 class="text-2xl md:text-3xl font-bold" style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-        My Adoption & Donation Requests
+      <span class="text-3xl md:text-4xl">📋</span>
+      <h1 class="text-2xl md:text-3xl font-bold" style="background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+        My Adoption Requests
       </h1>
     </div>
-    <p class="text-sm md:text-base text-gray-600 mt-2 ml-12 md:ml-14">Track and manage all your pet adoption and donation requests</p>
+    <p class="text-sm md:text-base text-gray-600 mt-2 ml-12 md:ml-14">Track and manage your pet adoption requests</p>
   </div>
 
   <% if @requests.any? %>
@@ -86,7 +86,7 @@
     <div class="grid gap-6" id="requests-container">
       <% @requests.each do |req| %>
         <div class="request-card bg-white rounded-2xl shadow-lg p-6 border-l-8 transition-all duration-300" 
-             style="border-color: #F97316;" 
+             style="border-color: #0D5F5C;" 
              data-status="<%= req.status %>">
           
           <div class="flex flex-col md:flex-row gap-6">
@@ -95,7 +95,7 @@
               <% if req.pet.image.attached? %>
                 <%= image_tag req.pet.image, alt: req.pet.name, class: 'pet-thumbnail' %>
               <% else %>
-                <div class="pet-thumbnail flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-200 text-4xl">
+                <div class="pet-thumbnail flex items-center justify-center bg-gradient-to-br from-teal-100 to-teal-200 text-4xl" style="background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);">
                   <%= req.pet.pet_type == 'dog' ? '🐕' : req.pet.pet_type == 'cat' ? '🐈' : '🐾' %>
                 </div>
               <% end %>
@@ -109,7 +109,7 @@
                     <%= req.pet.name %>
                   </h3>
                   <p class="text-sm text-gray-500 mb-2">
-                    <span class="font-semibold text-orange-600"><%= req.request_type.upcase %></span> Request
+                    <span class="font-semibold" style="color: #0D5F5C;"><%= req.request_type.upcase %></span> Request
                   </p>
                 </div>
                 
@@ -178,7 +178,7 @@
               <div class="flex flex-wrap gap-3 mt-4">
                 <%= link_to pet_path(req.pet), 
                     class: 'btn px-5 py-2 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200', 
-                    style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' do %>
+                    style: 'background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);' do %>
                   <%= req.rejected? ? '👁️ View Pet Details' : req.open? ? '📝 View Pet Details' : '✓ View Pet Details' %>
                 <% end %>
 
@@ -234,7 +234,7 @@
   <% else %>
     <!-- Improved Empty State Section -->
     <div class="empty-state-container">
-      <div class="bg-white rounded-2xl shadow-md p-8 md:p-12 text-center max-w-lg mx-auto border border-orange-100">
+      <div class="bg-white rounded-2xl shadow-md p-8 md:p-12 text-center max-w-lg mx-auto" style="border: 2px solid #B2DFDB;">
         <!-- Multi-icon illustration -->
         <div class="flex justify-center items-center gap-3 mb-6">
           <span class="text-5xl md:text-6xl animate-bounce" style="animation-duration: 2s;">🐕</span>
@@ -243,14 +243,14 @@
         </div>
         
         <!-- Friendly message with better typography -->
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-3">No Requests Yet</h2>
+        <h2 class="text-2xl md:text-3xl font-bold mb-3" style="color: #0D5F5C;">No Requests Yet</h2>
         <p class="text-base md:text-lg text-gray-600 mb-8 leading-relaxed">
           Start your journey to find a perfect companion!<br>
           Browse our available pets and submit your first adoption request.
         </p>
         
         <!-- Enhanced Browse Pets button -->
-        <%= link_to pets_path, class: 'browse-pets-btn inline-flex items-center gap-3 px-8 py-4 text-base md:text-lg text-white font-bold rounded-xl shadow-lg', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' do %>
+        <%= link_to pets_path, class: 'browse-pets-btn inline-flex items-center gap-3 px-8 py-4 text-base md:text-lg text-white font-bold rounded-xl shadow-lg', style: 'background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);' do %>
           <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>

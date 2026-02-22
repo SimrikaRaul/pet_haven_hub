@@ -2,6 +2,9 @@ class Request < ApplicationRecord
   # Associations
   belongs_to :user
   belongs_to :pet
+  
+  # ActiveStorage
+  has_one_attached :citizenship_photo
 
   # Enums
   enum :status, { open: 'open', approved: 'approved', rejected: 'rejected', scheduled: 'scheduled', completed: 'completed' }
@@ -14,6 +17,27 @@ class Request < ApplicationRecord
   validates :notes, length: { maximum: 1000 }, allow_blank: true
   validates :route_distance, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :scheduled_date, presence: true, if: proc { scheduled? }
+  
+  # Adoption request validations
+  validates :citizenship_number, presence: { message: "is required for adoption requests" }, if: :adopt?
+  validates :citizenship_number, format: { with: /\A\d{6,20}\z/, message: "must contain only numbers and be between 6-20 digits" }, allow_blank: true
+  validates :citizenship_number, length: { minimum: 6, maximum: 20, message: "must be between 6-20 digits" }, allow_blank: true
+  
+  validates :phone_number, presence: { message: "is required for adoption requests" }, if: :adopt?
+  validates :phone_number, format: { with: /\A[\d\s\-\+\(\)]+\z/, message: "must be a valid phone number" }, allow_blank: true
+  validates :phone_number, length: { minimum: 7, maximum: 20, message: "must be between 7-20 characters" }, allow_blank: true
+  
+  validates :address, presence: { message: "is required for adoption requests" }, if: :adopt?
+  validates :address, length: { minimum: 10, maximum: 500, message: "must be between 10-500 characters" }, allow_blank: true
+  
+  validates :house_type, presence: { message: "is required for adoption requests" }, if: :adopt?
+  validates :house_type, inclusion: { in: %w[apartment house_with_yard farmhouse condo other], message: "must be a valid house type" }, allow_blank: true
+  
+  validates :reason, presence: { message: "is required for adoption requests" }, if: :adopt?
+  validates :reason, length: { minimum: 20, maximum: 1000, message: "must be between 20-1000 characters" }, allow_blank: true
+  
+  # Citizenship photo validation
+  validate :citizenship_photo_validation, if: :adopt?
 
   # Callbacks
   after_create :send_request_confirmation
@@ -72,6 +96,24 @@ class Request < ApplicationRecord
   end
 
   private
+
+  def citizenship_photo_validation
+    return unless adopt?
+    
+    if citizenship_photo.attached?
+      # Check file size (max 5MB)
+      if citizenship_photo.blob.byte_size > 5.megabytes
+        errors.add(:citizenship_photo, 'must be less than 5MB')
+      end
+      
+      # Check content type
+      unless citizenship_photo.content_type.in?(%w[image/jpeg image/jpg image/png image/gif])
+        errors.add(:citizenship_photo, 'must be a JPEG, PNG, or GIF image')
+      end
+    else
+      errors.add(:citizenship_photo, 'is required for adoption requests')
+    end
+  end
 
   def send_request_confirmation
     RequestMailer.request_confirmation(self).deliver_later

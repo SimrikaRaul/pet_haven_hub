@@ -445,10 +445,7 @@
         <!-- Adoption Actions -->
         <div class="adoption-actions">
           <% if user_signed_in? %>
-            <%= form_with model: Request.new, url: pet_requests_path(@pet), method: :post, data: { turbo: false } do |f| %>
-              <%= f.hidden_field :request_type, value: 'adopt' %>
-              <%= f.submit "❤️ Request to Adopt #{@pet.name}", class: 'adopt-button' %>
-            <% end %>
+            <%= link_to "❤️ Request to Adopt #{@pet.name}", new_pet_request_path(@pet), class: 'adopt-button' %>
           <% else %>
             <%= link_to '🔑 Sign In to Request Adoption', new_user_session_path, class: 'sign-in-button' %>
           <% end %>
