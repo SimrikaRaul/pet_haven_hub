@@ -1,202 +1,663 @@
 <style>
-  .request-card {
-    transition: all 0.3s ease;
+  :root {
+    --green-primary: #10B981;
+    --green-dark: #059669;
+    --green-light: #34D399;
+    --green-soft: #D1FAE5;
+    --green-gradient: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+    --warm-peach: #FFE4D6;
+    --warm-cream: #FFF5EB;
+    --warm-orange: #F97316;
   }
-  .request-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+
+  .page-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(180deg, var(--warm-cream) 0%, #FAFAFA 100%);
+    min-height: 100vh;
+    position: relative;
   }
+
+  .page-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 300px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(52, 211, 153, 0.05) 100%);
+    pointer-events: none;
+  }
+
+  .content-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .page-header {
+    margin-bottom: 36px;
+    text-align: center;
+    position: relative;
+  }
+
+  .page-header::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: var(--green-gradient);
+    margin: 20px auto 0;
+    border-radius: 2px;
+  }
+
+  .page-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #1F2937 0%, var(--green-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    letter-spacing: -0.03em;
+  }
+
+  .page-subtitle {
+    color: #64748B;
+    font-size: 1.125rem;
+    font-weight: 400;
+    margin-bottom: 0;
+  }
+
+  .filter-container {
+    background: white;
+    padding: 8px;
+    border-radius: 16px;
+    display: inline-flex;
+    gap: 6px;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+  }
+
   .filter-tab {
     cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .filter-tab.active {
-    background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
-    color: white;
-    border-color: #0A4946;
-  }
-  .filter-tab:not(.active):hover {
-    background: #E0F2F1;
-    border-color: #0D5F5C;
-  }
-  .pet-thumbnail {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
+    color: #6B7280;
+    border: none;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    font-size: 0.9rem;
+    padding: 12px 24px;
     border-radius: 12px;
-    border: 3px solid #0D5F5C;
+    position: relative;
+    overflow: hidden;
   }
-  .browse-pets-btn {
-    transition: all 0.3s ease;
+
+  .filter-tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--green-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 12px;
   }
-  .browse-pets-btn:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 12px 28px rgba(13, 95, 92, 0.4);
+
+  .filter-tab span {
+    position: relative;
+    z-index: 1;
   }
-  .empty-state-container {
-    min-height: 60vh;
+
+  .filter-tab.active {
+    color: white;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  }
+
+  .filter-tab.active::before {
+    opacity: 1;
+  }
+
+  .filter-tab:not(.active):hover {
+    background: var(--green-soft);
+    color: var(--green-primary);
+    transform: translateY(-1px);
+  }
+
+  .requests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    width: 100%;
+  }
+
+  .request-card {
+    background: white;
+    border-radius: 24px;
+    border: 1px solid rgba(16, 185, 129, 0.08);
+    box-shadow: 0 4px 24px rgba(16, 185, 129, 0.06);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+  }
+
+  .request-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--green-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .request-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.15);
+  }
+
+  .request-card:hover::before {
+    opacity: 1;
+  }
+
+  .card-image-wrapper {
+    position: relative;
+    padding: 24px 24px 0;
+  }
+
+  .request-card-image {
+    width: 100%;
+    max-width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 20px;
+    margin: 0 auto;
+    display: block;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .request-card:hover .request-card-image {
+    transform: scale(1.03);
+    box-shadow: 0 12px 32px rgba(16, 185, 129, 0.2);
+  }
+
+  .request-card-image-placeholder {
+    background: var(--green-gradient);
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 4rem;
   }
-  @media (max-width: 768px) {
-    .pet-thumbnail {
-      width: 80px;
-      height: 80px;
+
+  .card-content {
+    padding: 24px 28px 28px;
+  }
+
+  .pet-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1F2937;
+    text-align: center;
+    margin-bottom: 12px;
+    transition: color 0.3s ease;
+  }
+
+  .request-card:hover .pet-name {
+    color: var(--green-primary);
+  }
+
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .request-type-badge {
+    background: var(--green-gradient);
+    color: white;
+    padding: 6px 16px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+  }
+
+  .status-badge {
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: inline-block;
+    text-transform: uppercase;
+  }
+
+  .status-pending {
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    color: #92400E;
+    border: 1px solid #F59E0B;
+  }
+
+  .status-approved {
+    background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+    color: #065F46;
+    border: 1px solid #10B981;
+  }
+
+  .status-rejected {
+    background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+    color: #991B1B;
+    border: 1px solid #EF4444;
+  }
+
+  .status-scheduled {
+    background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%);
+    color: #5B21B6;
+    border: 1px solid #8B5CF6;
+  }
+
+  .status-completed {
+    background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+    color: #1E40AF;
+    border: 1px solid #3B82F6;
+  }
+
+  .info-section {
+    background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin: 16px 0;
+    border: 1px solid #E5E7EB;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  .info-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .info-icon {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);
+    flex-shrink: 0;
+  }
+
+  .info-label {
+    color: #6B7280;
+    font-weight: 500;
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+
+  .info-value {
+    color: #1F2937;
+    font-weight: 600;
+  }
+
+  .view-details-btn {
+    background: var(--green-gradient);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .view-details-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .view-details-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+  }
+
+  .view-details-btn:hover::before {
+    left: 100%;
+  }
+
+  .status-text {
+    text-align: center;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed #E5E7EB;
+  }
+
+  .awaiting-text {
+    color: #6B7280;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    padding: 8px 16px;
+    background: #F9FAFB;
+    border-radius: 20px;
+  }
+
+  .awaiting-text.approved { color: #059669; background: #ECFDF5; }
+  .awaiting-text.completed { color: #2563EB; background: #EFF6FF; }
+  .awaiting-text.rejected { color: #DC2626; background: #FEF2F2; }
+
+  .alert-box {
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .alert-success {
+    background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+    border: 1px solid #10B981;
+    color: #065F46;
+  }
+
+  .alert-danger {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    border: 1px solid #EF4444;
+    color: #991B1B;
+  }
+
+  .alert-info {
+    background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+    border: 1px solid #D1D5DB;
+    color: #4B5563;
+  }
+
+  .browse-pets-btn {
+    background: var(--green-gradient);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+  }
+
+  .browse-pets-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px rgba(16, 185, 129, 0.06);
+  }
+
+  .empty-icon-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .empty-icon {
+    font-size: 3.5rem;
+    animation: bounce 2s infinite;
+  }
+
+  .empty-icon:nth-child(2) {
+    font-size: 4.5rem;
+    animation-delay: 0.2s;
+  }
+
+  .empty-icon:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @media (max-width: 1024px) {
+    .content-wrapper {
+      padding: 40px 24px;
     }
-    .empty-state-container {
-      min-height: 50vh;
+
+    .requests-grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .content-wrapper {
+      padding: 30px 16px;
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+
+    .page-subtitle {
+      font-size: 1rem;
+    }
+
+    .filter-container {
+      flex-direction: column;
+      width: 100%;
+      gap: 6px;
+    }
+
+    .filter-tab {
+      width: 100%;
+      text-align: center;
+    }
+
+    .requests-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .request-card-image {
+      max-width: 150px;
+      height: 150px;
+    }
+
+    .card-content {
+      padding: 20px;
+    }
+
+    .info-label {
+      min-width: 70px;
     }
   }
 </style>
 
-<div class="container py-6 md:py-8">
-  <!-- Modern Header with Flexbox and Divider -->
-  <div class="mb-6 pb-5 border-b-2" style="border-color: #B2DFDB;">
-    <div class="flex items-center gap-3">
-      <span class="text-3xl md:text-4xl">📋</span>
-      <h1 class="text-2xl md:text-3xl font-bold" style="background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-        My Adoption Requests
-      </h1>
+<div class="page-container">
+  <div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">My Adoption Requests</h1>
+      <p class="page-subtitle">Track and manage your adoption applications</p>
     </div>
-    <p class="text-sm md:text-base text-gray-600 mt-2 ml-12 md:ml-14">Track and manage your pet adoption requests</p>
-  </div>
 
   <% if @requests.any? %>
     <!-- Filter Tabs -->
-    <div class="mb-6 flex flex-wrap gap-3">
-      <button class="filter-tab active px-6 py-2.5 rounded-full font-semibold border-2 border-gray-300 bg-white" data-filter="all">
-        All Requests
-      </button>
-      <button class="filter-tab px-6 py-2.5 rounded-full font-semibold border-2 border-gray-300 bg-white" data-filter="open">
-        Pending
-      </button>
-      <button class="filter-tab px-6 py-2.5 rounded-full font-semibold border-2 border-gray-300 bg-white" data-filter="approved">
-        Approved
-      </button>
-      <button class="filter-tab px-6 py-2.5 rounded-full font-semibold border-2 border-gray-300 bg-white" data-filter="rejected">
-        Rejected
-      </button>
-      <button class="filter-tab px-6 py-2.5 rounded-full font-semibold border-2 border-gray-300 bg-white" data-filter="completed">
-        Completed
-      </button>
+    <div style="text-align: center; margin-bottom: 32px;">
+      <div class="filter-container">
+        <button class="filter-tab active" data-filter="all">
+          <span>All Requests</span>
+        </button>
+        <button class="filter-tab" data-filter="in-progress">
+          <span>In Progress</span>
+        </button>
+        <button class="filter-tab" data-filter="completed">
+          <span>Completed</span>
+        </button>
+      </div>
     </div>
 
     <!-- Request Cards Grid -->
-    <div class="grid gap-6" id="requests-container">
+    <div class="requests-grid" id="requests-container">
       <% @requests.each do |req| %>
-        <div class="request-card bg-white rounded-2xl shadow-lg p-6 border-l-8 transition-all duration-300" 
-             style="border-color: #0D5F5C;" 
-             data-status="<%= req.status %>">
+        <div data-status="<%= req.status %>" style="transition: opacity 0.3s ease;">
+          <div class="request-card">
           
-          <div class="flex flex-col md:flex-row gap-6">
             <!-- Pet Image -->
-            <div class="flex-shrink-0">
+            <div class="card-image-wrapper">
               <% if req.pet.image.attached? %>
-                <%= image_tag req.pet.image, alt: req.pet.name, class: 'pet-thumbnail' %>
+                <%= image_tag req.pet.image, alt: req.pet.name, class: 'request-card-image' %>
               <% else %>
-                <div class="pet-thumbnail flex items-center justify-center bg-gradient-to-br from-teal-100 to-teal-200 text-4xl" style="background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);">
+                <div class="request-card-image request-card-image-placeholder">
                   <%= req.pet.pet_type == 'dog' ? '🐕' : req.pet.pet_type == 'cat' ? '🐈' : '🐾' %>
                 </div>
               <% end %>
             </div>
 
-            <!-- Pet Info -->
-            <div class="flex-1">
-              <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-3">
-                <div>
-                  <h3 class="text-2xl font-bold text-gray-900 mb-1">
-                    <%= req.pet.name %>
-                  </h3>
-                  <p class="text-sm text-gray-500 mb-2">
-                    <span class="font-semibold" style="color: #0D5F5C;"><%= req.request_type.upcase %></span> Request
-                  </p>
-                </div>
-                
-                <!-- Status Badge -->
-                <div class="flex-shrink-0">
-                  <span class="inline-block px-4 py-2 rounded-full font-bold text-sm text-white shadow-md
-                    <%= case req.status
-                        when 'open' then 'bg-yellow-500'
-                        when 'approved' then 'bg-green-500'
-                        when 'rejected' then 'bg-red-500'
-                        when 'scheduled' then 'bg-purple-500'
-                        when 'completed' then 'bg-blue-500'
-                        else 'bg-gray-400'
-                        end %>">
-                    <%= req.status == 'open' ? 'PENDING' : req.status.upcase %>
-                  </span>
-                </div>
+            <div class="card-content">
+              <!-- Pet Name -->
+              <h3 class="pet-name"><%= req.pet.name %></h3>
+
+              <!-- Badges Row -->
+              <div class="badge-row">
+                <span class="request-type-badge">
+                  <%= req.request_type == 'adopt' ? '🏠' : '💝' %> <%= req.request_type.upcase %>
+                </span>
+                <span class="status-badge <%= case req.status
+                    when 'open' then 'status-pending'
+                    when 'approved' then 'status-approved'
+                    when 'rejected' then 'status-rejected'
+                    when 'scheduled' then 'status-scheduled'
+                    when 'completed' then 'status-completed'
+                    else 'status-pending'
+                    end %>">
+                  <%= req.status == 'open' ? 'PENDING' : req.status.upcase %>
+                </span>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm mb-4">
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-600">🐾 Type:</span>
-                  <span class="font-semibold text-gray-800"><%= req.pet.pet_type.titleize %></span>
+              <!-- Pet Details -->
+              <div class="info-section">
+                <div class="info-row">
+                  <span class="info-icon">🐾</span>
+                  <span class="info-label">Type</span>
+                  <span class="info-value"><%= req.pet.pet_type.titleize %></span>
                 </div>
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-600">🎯 Breed:</span>
-                  <span class="font-semibold text-gray-800"><%= req.pet.breed %></span>
+                <div class="info-row">
+                  <span class="info-icon">🎯</span>
+                  <span class="info-label">Breed</span>
+                  <span class="info-value"><%= req.pet.breed %></span>
                 </div>
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-600">📅 Requested:</span>
-                  <span class="font-semibold text-gray-800"><%= req.created_at.strftime('%b %d, %Y') %></span>
+                <div class="info-row">
+                  <span class="info-icon">📅</span>
+                  <span class="info-label">Requested</span>
+                  <span class="info-value"><%= req.created_at.strftime('%b %d, %Y') %></span>
                 </div>
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-600">📍 Location:</span>
-                  <span class="font-semibold text-gray-800"><%= req.pet.location %></span>
+                <div class="info-row">
+                  <span class="info-icon">📍</span>
+                  <span class="info-label">Location</span>
+                  <span class="info-value"><%= req.pet.location %></span>
                 </div>
               </div>
 
               <!-- Additional Info -->
               <% if req.approved? && req.route_distance.present? %>
-                <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-                  <p class="text-sm text-green-800">
-                    <strong>✓ Route Distance:</strong> <%= req.route_distance.round(2) %> km
-                  </p>
+                <div class="alert-box alert-success">
+                  <span>✓</span>
+                  <span><strong>Distance:</strong> <%= req.route_distance.round(2) %> km from you</span>
                 </div>
               <% end %>
 
               <!-- Rejection Reason -->
               <% if req.rejected? && req.rejection_reason.present? %>
-                <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-                  <p class="text-sm text-red-800">
-                    <strong>✗ Rejection Reason:</strong> <%= req.rejection_reason %>
-                  </p>
+                <div class="alert-box alert-danger">
+                  <span>✗</span>
+                  <span><strong>Reason:</strong> <%= req.rejection_reason %></span>
                 </div>
               <% end %>
 
               <!-- User Notes -->
               <% if req.notes.present? %>
-                <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
-                  <p class="text-sm text-gray-600"><strong>Your Notes:</strong></p>
-                  <p class="text-sm text-gray-800 mt-1"><%= req.notes %></p>
+                <div class="alert-box alert-info">
+                  <span>📝</span>
+                  <span><strong>Notes:</strong> <%= req.notes.truncate(100) %></span>
                 </div>
               <% end %>
 
-              <!-- Action Buttons -->
-              <div class="flex flex-wrap gap-3 mt-4">
-                <%= link_to pet_path(req.pet), 
-                    class: 'btn px-5 py-2 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200', 
-                    style: 'background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);' do %>
-                  <%= req.rejected? ? '👁️ View Pet Details' : req.open? ? '📝 View Pet Details' : '✓ View Pet Details' %>
-                <% end %>
+              <!-- Action Button -->
+              <%= link_to pet_path(req.pet), class: 'view-details-btn' do %>
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+                View Pet Details
+              <% end %>
 
+              <!-- Status Text -->
+              <div class="status-text">
                 <% if req.open? %>
-                  <span class="px-5 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg border border-gray-300 font-medium">
+                  <span class="awaiting-text">
                     ⏳ Awaiting Review
                   </span>
                 <% elsif req.approved? %>
-                  <span class="px-5 py-2 text-sm text-green-700 bg-green-100 rounded-lg border border-green-300 font-medium">
+                  <span class="awaiting-text approved">
                     ✓ Request Approved
                   </span>
                 <% elsif req.completed? %>
-                  <span class="px-5 py-2 text-sm text-blue-700 bg-blue-100 rounded-lg border border-blue-300 font-medium">
-                    ✓ Completed
+                  <span class="awaiting-text completed">
+                    ✓ Adoption Completed
+                  </span>
+                <% elsif req.rejected? %>
+                  <span class="awaiting-text rejected">
+                    ✗ Request Rejected
                   </span>
                 <% end %>
               </div>
-            </div>
           </div>
         </div>
       <% end %>
@@ -205,7 +666,7 @@
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         const filterTabs = document.querySelectorAll('.filter-tab');
-        const requestCards = document.querySelectorAll('.request-card');
+        const requestCards = document.querySelectorAll('#requests-container > div');
 
         filterTabs.forEach(tab => {
           tab.addEventListener('click', function() {
@@ -218,7 +679,17 @@
             // Filter cards
             requestCards.forEach(card => {
               const cardStatus = card.getAttribute('data-status');
-              if (filter === 'all' || cardStatus === filter) {
+              let shouldShow = false;
+
+              if (filter === 'all') {
+                shouldShow = true;
+              } else if (filter === 'in-progress') {
+                shouldShow = ['open', 'approved', 'scheduled', 'rejected'].includes(cardStatus);
+              } else if (filter === 'completed') {
+                shouldShow = cardStatus === 'completed';
+              }
+
+              if (shouldShow) {
                 card.style.display = 'block';
                 setTimeout(() => card.style.opacity = '1', 10);
               } else {
@@ -232,31 +703,26 @@
     </script>
 
   <% else %>
-    <!-- Improved Empty State Section -->
-    <div class="empty-state-container">
-      <div class="bg-white rounded-2xl shadow-md p-8 md:p-12 text-center max-w-lg mx-auto" style="border: 2px solid #B2DFDB;">
-        <!-- Multi-icon illustration -->
-        <div class="flex justify-center items-center gap-3 mb-6">
-          <span class="text-5xl md:text-6xl animate-bounce" style="animation-duration: 2s;">🐕</span>
-          <span class="text-6xl md:text-7xl">🐾</span>
-          <span class="text-5xl md:text-6xl animate-bounce" style="animation-duration: 2s; animation-delay: 0.3s;">🐈</span>
-        </div>
-        
-        <!-- Friendly message with better typography -->
-        <h2 class="text-2xl md:text-3xl font-bold mb-3" style="color: #0D5F5C;">No Requests Yet</h2>
-        <p class="text-base md:text-lg text-gray-600 mb-8 leading-relaxed">
-          Start your journey to find a perfect companion!<br>
-          Browse our available pets and submit your first adoption request.
-        </p>
-        
-        <!-- Enhanced Browse Pets button -->
-        <%= link_to pets_path, class: 'browse-pets-btn inline-flex items-center gap-3 px-8 py-4 text-base md:text-lg text-white font-bold rounded-xl shadow-lg', style: 'background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);' do %>
-          <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-          <span>Browse Available Pets</span>
-        <% end %>
+    <!-- Beautiful Empty State Section -->
+    <div class="empty-state">
+      <div class="empty-icon-group">
+        <span class="empty-icon">🐕</span>
+        <span class="empty-icon">🐾</span>
+        <span class="empty-icon">🐈</span>
       </div>
+      
+      <h2 style="font-size: 1.75rem; font-weight: 700; color: #1F2937; margin-bottom: 12px;">No Requests Yet</h2>
+      <p style="font-size: 1.1rem; color: #64748B; margin-bottom: 32px; max-width: 400px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+        Start your journey to find a perfect furry companion! Browse our available pets and submit your first adoption request.
+      </p>
+      
+      <%= link_to pets_path, class: 'browse-pets-btn inline-flex items-center gap-3 px-8 py-4 text-white font-semibold rounded-xl', style: 'display: inline-flex; align-items: center; gap: 12px; text-decoration: none;' do %>
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <span>Browse Available Pets</span>
+      <% end %>
     </div>
   <% end %>
+</div>
 </div>
