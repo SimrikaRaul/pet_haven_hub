@@ -46,9 +46,6 @@ gem "msgpack", ">= 1.7.0"
 # File uploads (legacy - switching to ActiveStorage)
 # gem "carrierwave"
 
-# Geolocation
-gem "geocoder"
-
 # Grouping by date
 gem "groupdate"
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_20_144841) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_26_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -58,11 +58,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_20_144841) do
     t.string "health_status"
     t.string "image"
     t.boolean "kids_friendly", default: false
-    t.float "lat"
-    t.float "latitude"
-    t.string "location"
-    t.float "lon"
-    t.float "longitude"
     t.string "name"
     t.string "pet_type"
     t.string "sex"
@@ -82,14 +77,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_20_144841) do
   end
 
   create_table "requests", force: :cascade do |t|
+    t.text "address"
+    t.string "citizenship_number"
     t.datetime "completed_at"
     t.datetime "created_at", null: false
+    t.text "experience"
+    t.boolean "has_other_pets"
+    t.string "house_type"
     t.text "notes"
     t.bigint "pet_id"
+    t.string "phone_number"
+    t.text "reason"
     t.text "rejection_reason"
     t.string "request_type"
-    t.string "route"
-    t.float "route_distance"
     t.datetime "scheduled_date"
     t.string "status"
     t.datetime "updated_at", null: false
@@ -124,8 +124,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_20_144841) do
     t.datetime "created_at", null: false
     t.string "email"
     t.string "encrypted_password", default: "", null: false
-    t.float "latitude"
-    t.float "longitude"
     t.string "name"
     t.string "password_digest"
     t.string "phone"

@@ -46,14 +46,10 @@ RABBIT_BREEDS = %w[Dutch Lionhead Mini\ Lop Holland\ Lop Flemish\ Giant Rex Ango
 BIRD_BREEDS = %w[Parakeet Cockatiel Lovebird Canary Finch Parrot Budgie Conure Macaw African\ Grey]
 
 LOCATIONS = [
-  { location: "Thamel, Kathmandu", city: "Kathmandu", country: "Nepal" },
-  { location: "Lakeside, Pokhara", city: "Pokhara", country: "Nepal" },
-  { location: "Boudha, Kathmandu", city: "Kathmandu", country: "Nepal" },
-  { location: "Patan Durbar Square", city: "Lalitpur", country: "Nepal" },
-  { location: "Bhaktapur Durbar Square", city: "Bhaktapur", country: "Nepal" },
-  { location: "Sanepa, Lalitpur", city: "Lalitpur", country: "Nepal" },
-  { location: "Jhamsikhel, Lalitpur", city: "Lalitpur", country: "Nepal" },
-  { location: "New Road, Kathmandu", city: "Kathmandu", country: "Nepal" }
+  { city: "Kathmandu", country: "Nepal" },
+  { city: "Pokhara", country: "Nepal" },
+  { city: "Lalitpur", country: "Nepal" },
+  { city: "Bhaktapur", country: "Nepal" }
 ]
 
 # Description templates
@@ -100,17 +96,12 @@ DESCRIPTION_TEMPLATES = {
   ]
 }
 
-# ============================================================================
-# SEEDING LOGIC
-# ============================================================================
-
-# Track progress
 created_count = 0
 skipped_count = 0
 failed_count = 0
 images_attached = 0
 
-# Generate 100 pets
+
 100.times do |i|
   
   pet_type = ['dog', 'cat', 'rabbit', 'bird'].sample
@@ -184,7 +175,6 @@ images_attached = 0
       age: age,
       sex: sex,
       size: size,
-      location: location_data[:location],
       city: location_data[:city],
       country: location_data[:country],
       description: description,
@@ -205,12 +195,12 @@ images_attached = 0
       user_id: nil  
     )
     
-    # Attach a random image from db/seeds_images folder using ActiveStorage
+  
     if image_files.any?
       random_image = image_files.sample
       filename = File.basename(random_image)
       
-      # Determine content type based on file extension
+    
       content_type = case File.extname(random_image).downcase
                      when '.jpg', '.jpeg' then 'image/jpeg'
                      when '.png' then 'image/png'
@@ -219,7 +209,7 @@ images_attached = 0
                      else 'image/jpeg'
                      end
       
-      # Attach the image using ActiveStorage
+   e
       pet.image.attach(
         io: File.open(random_image),
         filename: filename,
