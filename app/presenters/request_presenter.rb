@@ -1,6 +1,6 @@
 class RequestPresenter
   delegate :id, :status, :request_type, :notes, :created_at, :updated_at, 
-           :route, :route_distance, :scheduled_date, :completed_at, to: :request
+           :scheduled_date, :completed_at, to: :request
 
   def initialize(request)
     @request = request
@@ -66,14 +66,6 @@ class RequestPresenter
     "Pending for #{days_pending} day#{'s' if days_pending != 1}"
   end
 
-  def route_distance_display
-    if route_distance.present?
-      "#{route_distance.round(2)} km"
-    else
-      'N/A'
-    end
-  end
-
   def scheduled_date_display
     scheduled_date&.strftime('%B %d, %Y at %I:%M %p') || 'Not scheduled'
   end
@@ -87,7 +79,7 @@ class RequestPresenter
     when 'open'
       ['approve', 'reject']
     when 'approved'
-      ['view_route', 'mark_completed']
+      ['mark_completed']
     when 'scheduled'
       ['mark_completed', 'cancel']
     when 'rejected'
@@ -115,8 +107,7 @@ class RequestPresenter
       pet: pet_info,
       user: user_info,
       created_at: created_at.strftime('%B %d, %Y'),
-      days_pending: days_pending,
-      route_distance: route_distance_display
+      days_pending: days_pending
     }
   end
 end

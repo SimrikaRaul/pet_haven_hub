@@ -33,8 +33,7 @@ module Admin
     def approve
       if @request.can_be_approved?
         @request.approve!
-        RouteCalculationJob.perform_later(@request.id)
-        redirect_to admin_requests_path, notice: 'Request approved and route calculation scheduled.'
+        redirect_to admin_requests_path, notice: 'Request approved successfully.'
       else
         redirect_to admin_requests_path, alert: 'Cannot approve this request. Pet may not be available.'
       end

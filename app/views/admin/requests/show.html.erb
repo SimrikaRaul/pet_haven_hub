@@ -207,13 +207,6 @@
           </div>
         </div>
         
-        <% if @request.route_distance.present? %>
-          <div class="info-row">
-            <div class="info-label">📍 Distance</div>
-            <div class="info-value"><%= @request.route_distance.round(2) %> km</div>
-          </div>
-        <% end %>
-
         <% if @request.open? %>
           <div class="action-buttons">
             <%= link_to admin_request_path(@request, status: 'approved'), method: :patch, data: { confirm: 'Are you sure you want to approve this request?' }, class: 'btn-action btn-approve-action' do %>

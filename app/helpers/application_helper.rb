@@ -85,15 +85,6 @@ module ApplicationHelper
     paginate(collection, views_prefix: 'kaminari')
   end
 
-  # Format distance in kilometers
-  def distance_label(distance_km)
-    if distance_km
-      "#{distance_km.round(2)} km"
-    else
-      'N/A'
-    end
-  end
-
   # User avatar placeholder
   def user_avatar(user, size = 'md')
     initials = user.full_name.split.map(&:first).join.upcase

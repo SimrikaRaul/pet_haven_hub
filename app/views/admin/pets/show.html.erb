@@ -152,13 +152,6 @@
         <p style="font-size: 1rem; color: #4B5563; line-height: 1.7; white-space: pre-wrap;"><%= @pet.description.presence || 'No description provided.' %></p>
       </div>
 
-      <% if @pet.location.present? %>
-        <div class="info-group">
-          <h3 class="info-label">📍 Location</h3>
-          <p class="info-value"><%= @pet.location %></p>
-        </div>
-      <% end %>
-
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
         <div class="info-group" style="margin-bottom: 0;">
           <h3 class="info-label">Created</h3>

@@ -15,7 +15,6 @@ class Request < ApplicationRecord
   validates :request_type, inclusion: { in: request_types.keys }
   validates :status, inclusion: { in: statuses.keys }
   validates :notes, length: { maximum: 1000 }, allow_blank: true
-  validates :route_distance, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :scheduled_date, presence: true, if: proc { scheduled? }
   
   # Adoption request validations
@@ -42,7 +41,7 @@ class Request < ApplicationRecord
   # Callbacks
   after_create :send_request_confirmation
   after_update :handle_status_change, if: :saved_change_to_status?
-  after_update :schedule_route_calculation, if: proc { approved? && route.blank? }
+
 
   # Scopes
   scope :open, -> { where(status: 'open') }
@@ -87,10 +86,6 @@ class Request < ApplicationRecord
     %w[open approved scheduled].include?(status)
   end
 
-  def route_distance_in_km
-    "#{route_distance.round(2)} km" if route_distance.present?
-  end
-
   def days_pending
     ((Time.current - created_at) / 1.day).round
   end
@@ -128,10 +123,6 @@ class Request < ApplicationRecord
     when 'completed'
       send_completion_notification
     end
-  end
-
-  def schedule_route_calculation
-    RouteCalculationJob.perform_later(id) if approved?
   end
 
   def send_approval_notification

@@ -19,29 +19,23 @@ class ApplicationController < ActionController::Base
     current_user&.admin?
   end
 
-  # Check if current user is a shelter manager
-  # @return [Boolean] true if current user has shelter_manager role
   helper_method :shelter_manager?
   def shelter_manager?
     current_user&.shelter_manager?
   end
 
-  # Return current user if they are an admin, nil otherwise
-  # @return [User, nil] current user if admin, nil otherwise
+
   helper_method :current_admin
   def current_admin
     current_user if admin_user?
   end
 
-  # Check if current user has any administrative privileges
-  # @return [Boolean] true if user is admin or shelter manager
+
   helper_method :has_admin_access?
   def has_admin_access?
     admin_user? || shelter_manager?
   end
 
-  # Require user to be an admin - use as before_action in controllers  
-  # Redirects to root with alert if user is not an admin
   def require_admin
     unless admin_user?
       flash[:alert] = 'You are not authorized to access this page. Admin access required.'
@@ -49,8 +43,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # Require user to be a shelter manager - use as before_action in controllers  
-  # Redirects to root with alert if user is not a shelter manager
+  
   def require_shelter_manager
     unless shelter_manager?
       flash[:alert] = 'You are not authorized to access this page. Shelter manager access required.'
@@ -58,7 +51,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # Require user to have any admin access (admin or shelter manager)
+
   def require_admin_access
     unless has_admin_access?
       flash[:alert] = 'You are not authorized to access this page. Administrative access required.'
@@ -70,16 +63,15 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :email, :phone, :address, :city, :country, :latitude, :longitude])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :email, :phone, :address, :city, :country, :latitude, :longitude])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :email, :phone, :address, :city, :country])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :email, :phone, :address, :city, :country])
   end
 
-  # Redirect after successful login based on user role
   def after_sign_in_path_for(resource)
     stored_location_for(resource) || (resource.admin? ? admin_dashboard_path : root_path)
   end
 
-  # Redirect after logout
+
   def after_sign_out_path_for(resource_or_scope)
     root_path
   end

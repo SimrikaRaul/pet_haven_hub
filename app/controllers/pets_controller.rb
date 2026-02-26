@@ -4,48 +4,27 @@ class PetsController < ApplicationController
 
   def index
     @pets = Pet.available.recent
-
-    # Apply optional filters (species, breed, size, sex)
     @pets = @pets.by_species(params[:species]) if params[:species].present?
     @pets = @pets.by_breed(params[:breed]) if params[:breed].present?
     @pets = @pets.by_size(params[:size]) if params[:size].present?
     @pets = @pets.by_sex(params[:sex]) if params[:sex].present?
-
-    # Keep existing optional filters/search/location if present
     @pets = @pets.by_age_max(params[:max_age]) if params[:max_age].present?
     @pets = @pets.where('LOWER(name) LIKE ?', "%#{params[:search].downcase}%") if params[:search].present?
-    if params[:latitude].present? && params[:longitude].present?
-      @pets = @pets.near_location(params[:latitude], params[:longitude], params[:radius] || 50)
-    end
-
-    # Handle user preferences for recommendation scoring
     if user_signed_in? && has_preference_params?
-      # Save or update user preferences
       save_user_preferences
-      
-      # Get scored recommendations
       scored_pets = PetRecommendationService.new(current_user).call
-      
-      # Extract pet IDs from scored results to maintain filter
       if scored_pets.any?
         scored_pet_ids = scored_pets.map { |item| item[:pet].id }
-        # Filter pets to only include scored ones, maintaining ActiveRecord relation
         @pets = @pets.where(id: scored_pet_ids)
-        
-        # Convert to array and manually sort by recommendation score
         pets_array = @pets.to_a
         @scored_pets_hash = scored_pets.index_by { |item| item[:pet].id }
         pets_array.sort_by! { |pet| -(@scored_pets_hash[pet.id]&.dig(:score) || 0) }
-        
-        # Paginate manually
         @pets = Kaminari.paginate_array(pets_array).page(params[:page]).per(10)
       end
     else
-      # Standard pagination without scoring
       @pets = @pets.page(params[:page]).per(10)
     end
-    
-    # Get available species for filter dropdown
+  
     @available_species = Pet.select(:pet_type).distinct.map(&:pet_type)
     @available_breeds = Pet.select(:breed).distinct.map(&:breed)
     

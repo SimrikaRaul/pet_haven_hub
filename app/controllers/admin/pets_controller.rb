@@ -69,7 +69,7 @@ module Admin
       params.require(:pet).permit(
         :name, :pet_type, :breed, :age, :size, :sex, :description,
         :health_status, :vaccinated, :available, :city, :country,
-        :latitude, :longitude, :image, :image_cache, :remove_image,
+        :image, :image_cache, :remove_image,
         :energy_level, :apartment_friendly, :kids_friendly,
         :affectionate, :temperament, :social_with_other_pets, :social_with_children,
         :trainability, :grooming_needs, :exercise_needs

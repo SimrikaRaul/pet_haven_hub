@@ -1,6 +1,6 @@
 class PetPresenter
   delegate :id, :name, :pet_type, :breed, :age, :size, :sex, :health_status, 
-           :vaccinated, :description, :city, :country, :latitude, :longitude, to: :pet
+           :vaccinated, :description, :city, :country, to: :pet
 
   def initialize(pet)
     @pet = pet
@@ -58,10 +58,6 @@ class PetPresenter
     pet.available? ? 'Available' : 'Adopted'
   end
 
-  def location
-    "#{city}, #{country}" if city && country
-  end
-
   def pending_requests_count
     pet.requests.where(status: 'open').count
   end
@@ -79,7 +75,6 @@ class PetPresenter
       age: pet.age,
       size: size_label,
       sex: sex,
-      location: location,
       available: pet.available?
     }
   end

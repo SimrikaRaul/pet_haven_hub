@@ -49,24 +49,6 @@ class User < ApplicationRecord
     requests.where(status: 'approved').count
   end
 
-  def location_coordinates
-    [latitude, longitude] if latitude.present? && longitude.present?
-  end
-
-  def geocode_location
-    return unless address.present? && city.present?
-
-    begin
-      result = Geocoder.search("#{address}, #{city}").first
-      if result
-        self.latitude = result.latitude
-        self.longitude = result.longitude
-      end
-    rescue StandardError => e
-      Rails.logger.error("Geocoding error for user #{id}: #{e.message}")
-    end
-  end
-
   private
 
   def set_default_role

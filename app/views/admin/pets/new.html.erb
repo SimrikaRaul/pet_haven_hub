@@ -347,31 +347,6 @@
       </div>
     </div>
 
-    <!-- Location Information Section -->
-    <div class="form-card">
-      <h2 class="section-title">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="12" cy="10" r="3" stroke-width="2"/>
-        </svg>
-        Location Information
-      </h2>
-      
-      <div class="form-grid">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">📍 Latitude</label>
-            <%= f.number_field :latitude, step: 0.0001, placeholder: '0.0000', class: 'form-input' %>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">📍 Longitude</label>
-            <%= f.number_field :longitude, step: 0.0001, placeholder: '0.0000', class: 'form-input' %>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Action Buttons -->
     <div style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1.5rem 0;">
       <%= link_to '← Cancel', admin_pets_path, style: 'padding: 0.875rem 2rem; border: 2px solid #D1D5DB; background: white; color: #6B7280; font-weight: 700; border-radius: 12px; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;' %>

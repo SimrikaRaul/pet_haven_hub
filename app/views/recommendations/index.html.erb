@@ -263,18 +263,25 @@
         
         <article class="recommended-pet-card">
           <!-- Match Badge -->
-          <div class="match-badge <%= 
-            if match_percentage >= 80
-              'match-excellent'
-            elsif match_percentage >= 60
-              'match-good'
-            else
-              'match-fair'
-            end
-          %>">
-            <span>⭐</span>
-            <%= match_percentage %>% Match
-          </div>
+          <% if item[:collaborative] %>
+            <div class="match-badge match-fair">
+              <span>🤝</span>
+              Suggested
+            </div>
+          <% else %>
+            <div class="match-badge <%= 
+              if match_percentage >= 80
+                'match-excellent'
+              elsif match_percentage >= 60
+                'match-good'
+              else
+                'match-fair'
+              end
+            %>">
+              <span>⭐</span>
+              <%= match_percentage %>% Match
+            </div>
+          <% end %>
 
           <!-- Pet Image -->
           <div class="pet-image-wrapper">
@@ -311,27 +318,34 @@
 
             <!-- Match Details -->
             <div class="match-details">
-              <div class="match-details-title">Why this match?</div>
-              <div class="match-attributes">
-                <% if pet.energy_level.present? %>
-                  <div>⚡ <%= pet.energy_level.titleize %> energy</div>
-                <% end %>
-                <% if pet.temperament.present? %>
-                  <div>🎭 <%= pet.temperament.titleize %></div>
-                <% end %>
-                <% if pet.grooming_needs.present? %>
-                  <div>✂️ <%= pet.grooming_needs.titleize %> grooming</div>
-                <% end %>
-                <% if pet.exercise_needs.present? %>
-                  <div>🏃 <%= pet.exercise_needs.titleize %> exercise</div>
-                <% end %>
-                <% if pet.affectionate %>
-                  <div>💖 Affectionate</div>
-                <% end %>
-                <% if pet.apartment_friendly %>
-                  <div>🏢 Apartment friendly</div>
-                <% end %>
-              </div>
+              <% if item[:collaborative] %>
+                <div class="match-details-title">Why this suggestion?</div>
+                <div class="match-attributes">
+                  <div>🤝 Users with similar taste adopted this pet</div>
+                </div>
+              <% else %>
+                <div class="match-details-title">Why this match?</div>
+                <div class="match-attributes">
+                  <% if pet.energy_level.present? %>
+                    <div>⚡ <%= pet.energy_level.titleize %> energy</div>
+                  <% end %>
+                  <% if pet.temperament.present? %>
+                    <div>🎭 <%= pet.temperament.titleize %></div>
+                  <% end %>
+                  <% if pet.grooming_needs.present? %>
+                    <div>✂️ <%= pet.grooming_needs.titleize %> grooming</div>
+                  <% end %>
+                  <% if pet.exercise_needs.present? %>
+                    <div>🏃 <%= pet.exercise_needs.titleize %> exercise</div>
+                  <% end %>
+                  <% if pet.affectionate %>
+                    <div>💖 Affectionate</div>
+                  <% end %>
+                  <% if pet.apartment_friendly %>
+                    <div>🏢 Apartment friendly</div>
+                  <% end %>
+                </div>
+              <% end %>
             </div>
 
             <!-- Action Buttons -->

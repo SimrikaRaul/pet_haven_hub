@@ -12,7 +12,7 @@
     </div>
     <div style="display:flex; justify-content:space-between; align-items:center; padding-top:1rem; border-top: 2px solid #FED7AA;">
       <div style="color:#6B7280; font-size:0.875rem;">
-        <div>📍 <%= pet[:location] || 'City Shelter' %></div>
+        <div>📍 <%= [pet[:city], pet[:country]].compact.join(', ').presence || 'City Shelter' %></div>
       </div>
       <div>
         <%= link_to 'View', pet[:path] || '#', class: 'px-5 py-2.5 text-white font-bold rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>

@@ -31,12 +31,9 @@ class Pet < ApplicationRecord
   validates :trainability, inclusion: { in: TRAINABILITY_LEVELS }, allow_blank: true
   validates :grooming_needs, inclusion: { in: GROOMING_NEEDS }, allow_blank: true
   validates :exercise_needs, inclusion: { in: EXERCISE_NEEDS }, allow_blank: true
-  validates :latitude, numericality: true, allow_blank: true
-  validates :longitude, numericality: true, allow_blank: true
   validate :image_size, if: -> { image.attached? }
 
   # Callbacks
-  before_save :geocode_location_if_needed
   after_create :send_pet_added_notification
   after_initialize :set_default_status
   after_update :notify_status_change
@@ -62,17 +59,7 @@ class Pet < ApplicationRecord
   scope :vaccinated, -> { where(vaccinated: true) }
   scope :not_vaccinated, -> { where(vaccinated: false) }
   scope :recent, -> { order(created_at: :desc) }
-  scope :near_location, ->(lat, lon, radius = 50) do
-    if lat.present? && lon.present?
-      where("(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) < ?", 
-            lat.to_f, lon.to_f, lat.to_f, radius.to_i)
-    end
-  end
 
-  
-  def location_name
-    "#{city}, #{country}" if city.present? && country.present?
-  end
 
   def adoption_requests_count
     requests.where(request_type: 'adopt').count
@@ -125,23 +112,6 @@ class Pet < ApplicationRecord
   end
 
   private
-
-  def geocode_location_if_needed
-    return unless (latitude.blank? || longitude.blank?) && city.present?
-    geocode_location
-  end
-
-  def geocode_location
-    begin
-      result = Geocoder.search("#{city}, #{country}").first
-      if result
-        self.latitude = result.latitude
-        self.longitude = result.longitude
-      end
-    rescue StandardError => e
-      Rails.logger.error("Geocoding error for pet #{id}: #{e.message}")
-    end
-  end
 
   def image_size
     return unless image.attached?

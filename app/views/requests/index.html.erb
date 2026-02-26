@@ -598,20 +598,6 @@
                   <span class="info-label">Requested</span>
                   <span class="info-value"><%= req.created_at.strftime('%b %d, %Y') %></span>
                 </div>
-                <div class="info-row">
-                  <span class="info-icon">📍</span>
-                  <span class="info-label">Location</span>
-                  <span class="info-value"><%= req.pet.location %></span>
-                </div>
-              </div>
-
-              <!-- Additional Info -->
-              <% if req.approved? && req.route_distance.present? %>
-                <div class="alert-box alert-success">
-                  <span>✓</span>
-                  <span><strong>Distance:</strong> <%= req.route_distance.round(2) %> km from you</span>
-                </div>
-              <% end %>
 
               <!-- Rejection Reason -->
               <% if req.rejected? && req.rejection_reason.present? %>
