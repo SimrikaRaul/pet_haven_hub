@@ -43,7 +43,7 @@ namespace :pets do
       'dog' => 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600',
       'cat' => 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600',
       'rabbit' => 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600',
-      'bird' => 'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=600'
+      'parrot' => 'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=600'
     }
     
     Pet.find_each do |pet|

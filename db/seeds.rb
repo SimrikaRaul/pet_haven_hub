@@ -38,12 +38,12 @@ puts "=" * 70
 DOG_NAMES = %w[Max Bella Luna Charlie Cooper Daisy Rocky Bailey Lucy Sadie Molly Buddy Duke Bear Oliver Sophie Jack Lola Riley Toby Maggie Chluna Bentley Coco Zeus Pepper Harley Shadow Tucker Milo Ruby Rosie Jasper]
 CAT_NAMES = %w[Luna Oliver Simba Milo Bella Cleo Tigger Charlie Kitty Smokey Shadow Misty Whiskers Felix Nala Oscar Leo Ginger Mittens Pumpkin Oreo Patches Salem Socks Tiger Loki Princess Jasper Chloe]
 RABBIT_NAMES = %w[Thumper Cottontail Bunny Fluffy Snowball Clover Marshmallow Peter Hoppy Nibbles Cookie Cinnamon Patches Flopsy Cotton Pepper Hazel Daisy Maple Willow Honey]
-BIRD_NAMES = %w[Tweety Chirpy Kiwi Sunny Rio Blue Sky Phoenix Coco Mango Charlie Pepper Angel Buddy Lucky Pearl Ruby Sunny Sweetie Ziggy]
+PARROT_NAMES = %w[Tweety Chirpy Kiwi Sunny Rio Blue Sky Phoenix Coco Mango Charlie Pepper Angel Buddy Lucky Pearl Ruby Sunny Sweetie Ziggy]
 
 DOG_BREEDS = %w[Labrador Golden\ Retriever German\ Shepherd Beagle Bulldog Poodle Rottweiler Boxer Husky Dachshund Shih\ Tzu Pug Chihuahua Border\ Collie Cocker\ Spaniel Maltese Doberman Terrier Mastiff Corgi]
 CAT_BREEDS = %w[Persian Siamese Maine\ Coon Ragdoll Bengal Sphynx British\ Shorthair Abyssinian Scottish\ Fold American\ Shorthair Russian\ Blue Norwegian\ Forest Birman Burmese Himalayan Exotic\ Shorthair Devon\ Rex Tabby Calico Mixed]
 RABBIT_BREEDS = %w[Dutch Lionhead Mini\ Lop Holland\ Lop Flemish\ Giant Rex Angora Netherland\ Dwarf English\ Lop Polish Himalayan]
-BIRD_BREEDS = %w[Parakeet Cockatiel Lovebird Canary Finch Parrot Budgie Conure Macaw African\ Grey]
+PARROT_BREEDS = %w[African\ Grey Macaw Cockatiel Conure Amazon Eclectus Cockatoo Lovebird Budgerigar Senegal]
 
 LOCATIONS = [
   { city: "Kathmandu", country: "Nepal" },
@@ -84,14 +84,14 @@ DESCRIPTION_TEMPLATES = {
     "Gentle soul looking for a quiet, loving home.",
     "Social and friendly. Enjoys companionship."
   ],
-  bird: [
-    "Cheerful and vocal. Loves to sing and chirp.",
+  parrot: [
+    "Cheerful and vocal. Loves to sing and talk.",
     "Social and friendly. Enjoys interaction and playtime.",
     "Bright and colorful. Brings joy to any home.",
-    "Playful and intelligent. Can learn simple tricks.",
+    "Playful and intelligent. Can learn words and tricks.",
     "Gentle and sweet-natured. Perfect feathered friend.",
     "Active and entertaining. Loves toys and mirrors.",
-    "Melodious singer. Brightens up the day with songs.",
+    "Talkative and charming. Brightens up the day with chatter.",
     "Friendly and social. Enjoys human company."
   ]
 }
@@ -104,21 +104,21 @@ images_attached = 0
 
 100.times do |i|
   
-  pet_type = ['dog', 'cat', 'rabbit', 'bird'].sample
+  pet_type = ['dog', 'cat', 'rabbit', 'parrot'].sample
   
  
   name = case pet_type
          when 'dog' then DOG_NAMES.sample
          when 'cat' then CAT_NAMES.sample
          when 'rabbit' then RABBIT_NAMES.sample
-         when 'bird' then BIRD_NAMES.sample
+         when 'parrot' then PARROT_NAMES.sample
          end
   
   breed = case pet_type
           when 'dog' then DOG_BREEDS.sample
           when 'cat' then CAT_BREEDS.sample
           when 'rabbit' then RABBIT_BREEDS.sample
-          when 'bird' then BIRD_BREEDS.sample
+          when 'parrot' then PARROT_BREEDS.sample
           end
   
 
@@ -130,7 +130,7 @@ images_attached = 0
          when 'dog' then ['small', 'medium', 'large'].sample
          when 'cat' then ['small', 'medium'].sample
          when 'rabbit' then ['small', 'medium'].sample
-         when 'bird' then 'small'
+         when 'parrot' then 'small'
          end
   
 
