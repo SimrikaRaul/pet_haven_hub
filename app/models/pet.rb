@@ -46,16 +46,16 @@ class Pet < ApplicationRecord
   
   scope :available, -> { where(available: true) }
   scope :unavailable, -> { where(available: false) }
-  scope :by_species, ->(species) { where(pet_type: species) if species.present? }
-  scope :by_breed, ->(breed) { where(breed: breed) if breed.present? }
-  scope :by_size, ->(size) { where(size: size) if size.present? }
-  scope :by_sex, ->(sex) { where(sex: sex) if sex.present? }
+  scope :by_species, ->(species) { where(pet_type: species&.downcase) if species.present? }
+  scope :by_breed, ->(breed) { where('LOWER(breed) = LOWER(?)', breed) if breed.present? }
+  scope :by_size, ->(size) { where(size: size&.downcase) if size.present? }
+  scope :by_sex, ->(sex) { where(sex: sex&.downcase) if sex.present? }
   scope :by_age_max, ->(max_age) { where('age <= ?', max_age.to_i) if max_age.present? }
-  scope :by_energy_level, ->(level) { where(energy_level: level) if level.present? }
-  scope :by_temperament, ->(temp) { where(temperament: temp) if temp.present? }
-  scope :by_trainability, ->(level) { where(trainability: level) if level.present? }
-  scope :by_grooming_needs, ->(needs) { where(grooming_needs: needs) if needs.present? }
-  scope :by_exercise_needs, ->(needs) { where(exercise_needs: needs) if needs.present? }
+  scope :by_energy_level, ->(level) { where(energy_level: level&.downcase) if level.present? }
+  scope :by_temperament, ->(temp) { where(temperament: temp&.downcase) if temp.present? }
+  scope :by_trainability, ->(level) { where(trainability: level&.downcase) if level.present? }
+  scope :by_grooming_needs, ->(needs) { where(grooming_needs: needs&.downcase) if needs.present? }
+  scope :by_exercise_needs, ->(needs) { where(exercise_needs: needs&.downcase) if needs.present? }
   scope :apartment_friendly, -> { where(apartment_friendly: true) }
   scope :kids_friendly, -> { where(kids_friendly: true) }
   scope :affectionate, -> { where(affectionate: true) }

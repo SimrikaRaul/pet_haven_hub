@@ -3,23 +3,45 @@ class PetsController < ApplicationController
   before_action :set_pet, only: [:show]
 
   def index
+    # Start with all available pets
     @pets = Pet.available.recent
+    Rails.logger.info "[Pets#index] Starting with #{@pets.count} available pets"
+    
+    # Apply strict filters (species, breed, size, etc.)
     @pets = @pets.by_species(params[:species]) if params[:species].present?
+    Rails.logger.info "[Pets#index] After species filter (#{params[:species]}): #{@pets.count}" if params[:species].present?
+    
     @pets = @pets.by_breed(params[:breed]) if params[:breed].present?
+    Rails.logger.info "[Pets#index] After breed filter (#{params[:breed]}): #{@pets.count}" if params[:breed].present?
+    
     @pets = @pets.by_size(params[:size]) if params[:size].present?
+    Rails.logger.info "[Pets#index] After size filter (#{params[:size]}): #{@pets.count}" if params[:size].present?
+    
     @pets = @pets.by_sex(params[:sex]) if params[:sex].present?
     @pets = @pets.by_age_max(params[:max_age]) if params[:max_age].present?
     @pets = @pets.where('LOWER(name) LIKE ?', "%#{params[:search].downcase}%") if params[:search].present?
+    
+    Rails.logger.info "[Pets#index] After all filters: #{@pets.count} pets"
+    Rails.logger.info "[Pets#index] has_preference_params? = #{has_preference_params?}"
+    
+    # If user has preference parameters, score and sort the FILTERED pets
     if user_signed_in? && has_preference_params?
       save_user_preferences
-      scored_pets = PetRecommendationService.new(current_user).call
+      
+      # Score the already-filtered pets (not all pets!)
+      scored_pets = score_filtered_pets(@pets)
+      Rails.logger.info "[Pets#index] Scored #{scored_pets.count} pets"
+      
       if scored_pets.any?
-        scored_pet_ids = scored_pets.map { |item| item[:pet].id }
-        @pets = @pets.where(id: scored_pet_ids)
-        pets_array = @pets.to_a
+        # Sort by score descending
+        pets_array = scored_pets.sort_by { |item| -item[:score] }.map { |item| item[:pet] }
         @scored_pets_hash = scored_pets.index_by { |item| item[:pet].id }
-        pets_array.sort_by! { |pet| -(@scored_pets_hash[pet.id]&.dig(:score) || 0) }
         @pets = Kaminari.paginate_array(pets_array).page(params[:page]).per(10)
+        Rails.logger.info "[Pets#index] Final paginated count: #{@pets.size}"
+      else
+        # No pets match filters at all - show empty with message
+        Rails.logger.info "[Pets#index] No scored pets, using original filtered list"
+        @pets = @pets.page(params[:page]).per(10)
       end
     else
       @pets = @pets.page(params[:page]).per(10)
@@ -73,5 +95,104 @@ class PetsController < ApplicationController
       kids_in_home: params[:kids_in_home] == '1',
       has_other_pets: params[:has_other_pets] == '1'
     )
+  end
+
+  # Score filtered pets based on user preferences
+  # This scores ALL filtered pets (not just top 5) so filtering works correctly
+  def score_filtered_pets(pets_scope)
+    pref = current_user.user_preference
+    return [] unless pref
+    
+    pets_scope.map do |pet|
+      score = 0
+      max_score = 0
+      
+      # Energy level (weight: 3)
+      if params[:preferred_energy_level].present?
+        max_score += 3
+        score += score_level_match(params[:preferred_energy_level], pet.energy_level, 3)
+      end
+      
+      # Temperament (weight: 3)
+      if params[:preferred_temperament].present?
+        max_score += 3
+        score += score_temperament_match(params[:preferred_temperament], pet.temperament, 3)
+      end
+      
+      # Grooming needs (weight: 2)
+      if params[:preferred_grooming_needs].present?
+        max_score += 2
+        score += score_level_match(params[:preferred_grooming_needs], pet.grooming_needs, 2)
+      end
+      
+      # Exercise needs (weight: 2)
+      if params[:preferred_exercise_needs].present?
+        max_score += 2
+        score += score_level_match(params[:preferred_exercise_needs], pet.exercise_needs, 2)
+      end
+      
+      # Boolean preferences (weight: 1 each)
+      if params[:wants_affectionate_pet] == '1'
+        max_score += 1
+        score += 1 if pet.affectionate
+      end
+      
+      if params[:apartment_friendly_required] == '1'
+        max_score += 1
+        score += 1 if pet.apartment_friendly
+      end
+      
+      if params[:kids_in_home] == '1'
+        max_score += 1
+        score += 1 if pet.kids_friendly || pet.social_with_children
+      end
+      
+      if params[:has_other_pets] == '1'
+        max_score += 1
+        score += 1 if pet.social_with_other_pets
+      end
+      
+      match_percentage = max_score > 0 ? ((score.to_f / max_score) * 100).round : 0
+      
+      {
+        pet: pet,
+        score: score,
+        match_percentage: match_percentage
+      }
+    end
+  end
+
+  def score_level_match(preferred, actual, weight)
+    return 0 if preferred.blank? || actual.blank?
+    
+    levels = { 'low' => 1, 'medium' => 2, 'high' => 3 }
+    pref_val = levels[preferred.to_s.downcase] || 2
+    actual_val = levels[actual.to_s.downcase] || 2
+    
+    diff = (pref_val - actual_val).abs
+    case diff
+    when 0 then weight        # Perfect match
+    when 1 then weight * 0.5  # Close match
+    else 0                    # No match
+    end
+  end
+
+  def score_temperament_match(preferred, actual, weight)
+    return 0 if preferred.blank? || actual.blank?
+    return weight if preferred.downcase == actual.downcase
+    
+    # Compatible temperaments
+    compatible = {
+      'calm' => ['friendly'],
+      'friendly' => ['calm', 'active'],
+      'active' => ['friendly'],
+      'shy' => ['calm']
+    }
+    
+    if compatible[preferred.downcase]&.include?(actual.downcase)
+      weight * 0.6
+    else
+      0
+    end
   end
 end
