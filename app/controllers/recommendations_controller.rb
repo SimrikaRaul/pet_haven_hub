@@ -9,19 +9,40 @@ class RecommendationsController < ApplicationController
       return
     end
 
+    # Use HybridRecommendationService for combined content + collaborative filtering
+  
+    debug_mode = Rails.env.development? || params[:debug].present?
     
-    content_based = PetRecommendationService.new(current_user).call
-    collaborative_pets = CollaborativeRecommendationService.new(current_user, limit: 5).call  # [Pet, ...]
-    seen_ids = content_based.map { |item| item[:pet].id }.to_set
-    collaborative_items = collaborative_pets.reject { |pet| seen_ids.include?(pet.id) }.map do |pet|
-      {
-        pet: pet,
-        score: 0,
-        match_percentage: 0,
-        collaborative: true
-      }
+    hybrid_results = HybridRecommendationService.new(
+      current_user, 
+      limit: 10, 
+      debug: debug_mode
+    ).recommend
+    
+    # Format results for the view
+    if hybrid_results.first.is_a?(Hash)
+      # Debug mode returns hashes with scores
+      @recommended_pets = hybrid_results.map do |item|
+        {
+          pet: item[:pet],
+          score: item[:final_score] || 0,
+          match_percentage: item[:final_score]&.round(0) || 0,
+          content_score: item[:content_score],
+          collaborative_score: item[:collaborative_score]
+        }
+      end
+    else
+      # Normal mode returns pet records
+      @recommended_pets = hybrid_results.map do |pet|
+        {
+          pet: pet,
+          score: 0,
+          match_percentage: 0
+        }
+      end
     end
-
-    @recommended_pets = content_based + collaborative_items
+    
+    # Log for debugging
+    Rails.logger.info "[Recommendations] Generated #{@recommended_pets.count} recommendations for user #{current_user.id}"
   end
 end

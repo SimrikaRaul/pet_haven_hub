@@ -22,7 +22,7 @@ class PetPresenter
       '🐈'
     when 'rabbit'
       '🐰'
-    when 'bird'
+    when 'parrot'
       '🦜'
     else
       '🐾'

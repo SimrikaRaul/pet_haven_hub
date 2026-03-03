@@ -38,7 +38,7 @@ module ApplicationHelper
       '🐈'
     when 'rabbit'
       '🐰'
-    when 'bird'
+    when 'parrot'
       '🦜'
     else
       '🐾'

@@ -30,7 +30,7 @@
   /* Pet Category Colors */
   --cat-color: #8B5CF6;
   --dog-color: #F59E0B;
-  --bird-color: #10B981;
+  --parrot-color: #10B981;
   --rabbit-color: #EC4899;
   --other-color: #6B7280;
 
@@ -370,7 +370,7 @@ a, button, input, select, textarea {
 /* Pet category buttons */
 .btn-cat { background: var(--cat-color); color: white; }
 .btn-dog { background: var(--dog-color); color: white; }
-.btn-bird { background: var(--bird-color); color: white; }
+.btn-parrot { background: var(--parrot-color); color: white; }
 
 /* Button groups */
 .btn-group {
@@ -562,7 +562,7 @@ a, button, input, select, textarea {
 
 .pet-card[data-category="cat"]::before { background: var(--cat-color); }
 .pet-card[data-category="dog"]::before { background: var(--dog-color); }
-.pet-card[data-category="bird"]::before { background: var(--bird-color); }
+.pet-card[data-category="parrot"]::before { background: var(--parrot-color); }
 .pet-card[data-category="rabbit"]::before { background: var(--rabbit-color); }
 
 .pet-card:hover {
@@ -601,7 +601,7 @@ a, button, input, select, textarea {
 
 .pet-card-badge.cat { background: var(--cat-color); color: white; }
 .pet-card-badge.dog { background: var(--dog-color); color: white; }
-.pet-card-badge.bird { background: var(--bird-color); color: white; }
+.pet-card-badge.parrot { background: var(--parrot-color); color: white; }
 
 /* ============================================
    ADVANCED HERO SECTION

@@ -41,6 +41,7 @@ class Request < ApplicationRecord
   # Callbacks
   after_create :send_request_confirmation
   after_update :handle_status_change, if: :saved_change_to_status?
+  after_update :record_adoption_interaction, if: :became_completed_adoption?
 
 
   # Scopes
@@ -135,5 +136,17 @@ class Request < ApplicationRecord
 
   def send_completion_notification
     RequestMailer.request_completed(self).deliver_later
+  end
+
+  # Check if the request just became a completed adoption
+  def became_completed_adoption?
+    saved_change_to_status? && 
+    status == 'completed' && 
+    adopt?
+  end
+
+  # Record a strong interaction (weight=5) when adoption is completed
+  def record_adoption_interaction
+    Interaction.record_adoption(user, pet)
   end
 end

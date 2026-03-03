@@ -1,0 +1,18 @@
+<%# Wishlist button partial - renders a toggleable wishlist button for a pet %>
+<div id="wishlist-button-<%= pet.id %>" class="wishlist-button-container">
+  <% if user_signed_in? %>
+    <% if current_user.wishlisted?(pet) %>
+      <%= button_to wishlist_pet_path(pet), method: :delete, class: "wishlist-btn wishlisted" do %>
+        <span>⭐</span> In Wishlist
+      <% end %>
+    <% else %>
+      <%= button_to wishlist_pet_path(pet), method: :post, class: "wishlist-btn" do %>
+        <span>☆</span> Add to Wishlist
+      <% end %>
+    <% end %>
+  <% else %>
+    <%= link_to new_user_session_path, class: "wishlist-btn" do %>
+      <span>☆</span> Add to Wishlist
+    <% end %>
+  <% end %>
+</div>

@@ -7,6 +7,11 @@ class User < ApplicationRecord
   has_many :adoptions, class_name: 'Request', foreign_key: 'user_id', dependent: :destroy
   has_one :user_preference, dependent: :destroy
   
+  # Interaction associations for recommendation system
+  has_many :interactions, dependent: :destroy
+  has_many :liked_pets, -> { where(interactions: { action: 'like' }) }, through: :interactions, source: :pet
+  has_many :wishlisted_pets, -> { where(interactions: { action: 'wishlist' }) }, through: :interactions, source: :pet
+  
   enum :role, { user: 'user', admin: 'admin', shelter_manager: 'shelter_manager' }, suffix: true
 
   after_initialize :set_default_role, if: :new_record?
@@ -47,6 +52,39 @@ class User < ApplicationRecord
 
   def approved_requests_count
     requests.where(status: 'approved').count
+  end
+
+  # Interaction helper methods
+  def liked?(pet)
+    interactions.exists?(pet: pet, action: 'like')
+  end
+
+  def wishlisted?(pet)
+    interactions.exists?(pet: pet, action: 'wishlist')
+  end
+
+  def like!(pet)
+    Interaction.record_like(self, pet)
+  end
+
+  def unlike!(pet)
+    Interaction.remove_like(self, pet)
+  end
+
+  def add_to_wishlist!(pet)
+    Interaction.record_wishlist(self, pet)
+  end
+
+  def remove_from_wishlist!(pet)
+    Interaction.remove_wishlist(self, pet)
+  end
+
+  def toggle_like!(pet)
+    liked?(pet) ? unlike!(pet) : like!(pet)
+  end
+
+  def toggle_wishlist!(pet)
+    wishlisted?(pet) ? remove_from_wishlist!(pet) : add_to_wishlist!(pet)
   end
 
   private

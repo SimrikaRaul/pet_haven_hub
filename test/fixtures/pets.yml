@@ -5,7 +5,6 @@ one:
   pet_type: MyString
   breed: MyString
   age: 1
-  location: MyString
   description: MyText
   status: MyString
   user: one
@@ -15,7 +14,6 @@ two:
   pet_type: MyString
   breed: MyString
   age: 1
-  location: MyString
   description: MyText
   status: MyString
   user: two

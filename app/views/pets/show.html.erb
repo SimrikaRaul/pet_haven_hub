@@ -228,6 +228,60 @@
     border-top: 2px solid #E5E7EB;
   }
   
+  .interaction-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .like-btn, .wishlist-btn {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border: 3px solid;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+  }
+  
+  .like-btn {
+    background: white;
+    border-color: #F87171;
+    color: #F87171;
+  }
+  
+  .like-btn:hover, .like-btn.liked {
+    background: #FEF2F2;
+    transform: translateY(-2px);
+  }
+  
+  .like-btn.liked {
+    background: #F87171;
+    color: white;
+  }
+  
+  .wishlist-btn {
+    background: white;
+    border-color: #FBBF24;
+    color: #D97706;
+  }
+  
+  .wishlist-btn:hover, .wishlist-btn.wishlisted {
+    background: #FFFBEB;
+    transform: translateY(-2px);
+  }
+  
+  .wishlist-btn.wishlisted {
+    background: #FBBF24;
+    color: white;
+  }
+  
   .adopt-button {
     width: 100%;
     padding: 1.25rem 2rem;
@@ -427,6 +481,35 @@
 
         <!-- Adoption Actions -->
         <div class="adoption-actions">
+          <%# Like and Wishlist Buttons %>
+          <% if user_signed_in? %>
+            <div class="interaction-buttons">
+              <div id="like-button-<%= @pet.id %>" class="like-button-container">
+                <% if current_user.liked?(@pet) %>
+                  <%= button_to like_pet_path(@pet), method: :delete, class: "like-btn liked" do %>
+                    <span>❤️</span> Liked
+                  <% end %>
+                <% else %>
+                  <%= button_to like_pet_path(@pet), method: :post, class: "like-btn" do %>
+                    <span>🤍</span> Like
+                  <% end %>
+                <% end %>
+              </div>
+              
+              <div id="wishlist-button-<%= @pet.id %>" class="wishlist-button-container">
+                <% if current_user.wishlisted?(@pet) %>
+                  <%= button_to wishlist_pet_path(@pet), method: :delete, class: "wishlist-btn wishlisted" do %>
+                    <span>⭐</span> In Wishlist
+                  <% end %>
+                <% else %>
+                  <%= button_to wishlist_pet_path(@pet), method: :post, class: "wishlist-btn" do %>
+                    <span>☆</span> Add to Wishlist
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+          
           <% if user_signed_in? %>
             <%= link_to "❤️ Request to Adopt #{@pet.name}", new_pet_request_path(@pet), class: 'adopt-button' %>
           <% else %>

@@ -1,0 +1,77 @@
+<div class="container py-4">
+  <h1 class="mb-4">My Saved Pets</h1>
+
+  <%# Wishlisted Pets Section %>
+  <section class="mb-5">
+    <h2 class="h4 mb-3">
+      <i class="fas fa-bookmark text-warning"></i> Wishlist
+      <span class="badge bg-secondary"><%= @wishlisted_pets.count %></span>
+    </h2>
+    
+    <% if @wishlisted_pets.any? %>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <% @wishlisted_pets.each do |pet| %>
+          <div class="col">
+            <div class="card h-100">
+              <% if pet.image.attached? %>
+                <%= image_tag pet.image, class: "card-img-top", style: "height: 200px; object-fit: cover;" %>
+              <% else %>
+                <img src="/images/placeholder-pet.jpg" class="card-img-top" style="height: 200px; object-fit: cover;" alt="Pet placeholder">
+              <% end %>
+              <div class="card-body">
+                <h5 class="card-title"><%= pet.name %></h5>
+                <p class="card-text text-muted">
+                  <%= pet.breed %> · <%= pet.age %> years old · <%= pet.sex.capitalize %>
+                </p>
+                <div class="d-flex gap-2">
+                  <%= link_to "View", pet_path(pet), class: "btn btn-primary btn-sm" %>
+                  <%= render 'interactions/wishlist_button', pet: pet %>
+                  <%= render 'interactions/like_button', pet: pet %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-muted">You haven't added any pets to your wishlist yet.</p>
+    <% end %>
+  </section>
+
+  <%# Liked Pets Section %>
+  <section>
+    <h2 class="h4 mb-3">
+      <i class="fas fa-heart text-danger"></i> Liked Pets
+      <span class="badge bg-secondary"><%= @liked_pets.count %></span>
+    </h2>
+    
+    <% if @liked_pets.any? %>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <% @liked_pets.each do |pet| %>
+          <div class="col">
+            <div class="card h-100">
+              <% if pet.image.attached? %>
+                <%= image_tag pet.image, class: "card-img-top", style: "height: 200px; object-fit: cover;" %>
+              <% else %>
+                <img src="/images/placeholder-pet.jpg" class="card-img-top" style="height: 200px; object-fit: cover;" alt="Pet placeholder">
+              <% end %>
+              <div class="card-body">
+                <h5 class="card-title"><%= pet.name %></h5>
+                <p class="card-text text-muted">
+                  <%= pet.breed %> · <%= pet.age %> years old · <%= pet.sex.capitalize %>
+                </p>
+                <div class="d-flex gap-2">
+                  <%= link_to "View", pet_path(pet), class: "btn btn-primary btn-sm" %>
+                  <%= render 'interactions/like_button', pet: pet %>
+                  <%= render 'interactions/wishlist_button', pet: pet %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-muted">You haven't liked any pets yet.</p>
+    <% end %>
+  </section>
+</div>

@@ -4,8 +4,13 @@ class Pet < ApplicationRecord
   has_many :requests, dependent: :destroy
   has_one_attached :image
   
+  # Interaction associations for recommendation system
+  has_many :interactions, dependent: :destroy
+  has_many :liking_users, -> { where(interactions: { action: 'like' }) }, through: :interactions, source: :user
+  has_many :wishlisting_users, -> { where(interactions: { action: 'wishlist' }) }, through: :interactions, source: :user
+  
   # Enums
-  enum :pet_type, { dog: 'dog', cat: 'cat', rabbit: 'rabbit', bird: 'bird', other: 'other' }
+  enum :pet_type, { dog: 'dog', cat: 'cat', rabbit: 'rabbit', parrot: 'parrot', other: 'other' }
   enum :size, { small: 'small', medium: 'medium', large: 'large' }
   enum :sex, { male: 'male', female: 'female' }
   enum :status, { available: 'available', pending: 'pending', adopted: 'adopted', archived: 'archived' }
@@ -71,6 +76,23 @@ class Pet < ApplicationRecord
 
   def pending_requests?
     requests.where(status: 'open').any?
+  end
+
+  # Interaction statistics for recommendation visibility
+  def likes_count
+    interactions.likes.count
+  end
+
+  def wishlists_count
+    interactions.wishlists.count
+  end
+
+  def views_count
+    interactions.views.count
+  end
+
+  def engagement_score
+    interactions.sum(:weight)
   end
 
   def photo_url

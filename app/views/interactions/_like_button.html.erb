@@ -1,0 +1,18 @@
+<%# Like button partial - renders a toggleable like button for a pet %>
+<div id="like-button-<%= pet.id %>" class="like-button-container">
+  <% if user_signed_in? %>
+    <% if current_user.liked?(pet) %>
+      <%= button_to like_pet_path(pet), method: :delete, class: "like-btn liked" do %>
+        <span>❤️</span> Liked
+      <% end %>
+    <% else %>
+      <%= button_to like_pet_path(pet), method: :post, class: "like-btn" do %>
+        <span>🤍</span> Like
+      <% end %>
+    <% end %>
+  <% else %>
+    <%= link_to new_user_session_path, class: "like-btn" do %>
+      <span>🤍</span> Like
+    <% end %>
+  <% end %>
+</div>

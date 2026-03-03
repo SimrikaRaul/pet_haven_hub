@@ -38,6 +38,9 @@ class PetsController < ApplicationController
     authorize @pet, :show?
     @request = Request.new
     @similar_pets = Recommendations::ContentBasedService.call(user: current_user, pet: @pet, limit: 4) if user_signed_in?
+    
+    # Record view interaction for recommendations (low weight)
+    Interaction.record_view(current_user, @pet) if user_signed_in?
   end
 
   private
