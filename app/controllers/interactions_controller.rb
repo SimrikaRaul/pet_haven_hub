@@ -1,16 +1,7 @@
-# Interactions Controller
-# Handles like and wishlist toggle actions for pets.
-# These interactions feed into the collaborative filtering recommendation system.
-#
-# Interaction weights:
-#   - view = 1 (recorded automatically on pet show page)
-#   - like = 2
-#   - wishlist = 3
-#   - adopt = 5 (recorded automatically when adoption is completed)
-#
+# Controller for handling user interactions with pets, such as liking and wishlisting.
 class InteractionsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_pet, except: [:index]
+  before_action :set_pet, except: [:index, :likes, :wishlist_list]
 
   # POST /pets/:pet_id/like
   def like
@@ -80,6 +71,16 @@ class InteractionsController < ApplicationController
   def index
     @wishlisted_pets = current_user.wishlisted_pets.available.recent
     @liked_pets = current_user.liked_pets.available.recent
+  end
+
+  # GET /my_likes - Show only liked pets
+  def likes
+    @liked_pets = current_user.liked_pets.available.recent
+  end
+
+  # GET /my_wishlist - Show only wishlisted pets
+  def wishlist_list
+    @wishlisted_pets = current_user.wishlisted_pets.available.recent
   end
 
   private

@@ -24,7 +24,17 @@
   .page-subtitle {
     font-size: 1rem;
     color: #4B5563;
-    margin-bottom: 0;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-count-badge {
+    display: inline-block;
+    padding: 0.375rem 1.25rem;
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    color: white;
+    font-weight: 700;
+    border-radius: 20px;
+    font-size: 0.875rem;
   }
 
   .page-actions {
@@ -35,41 +45,23 @@
     margin-top: 1rem;
   }
 
-  .section-header {
+  .results-count {
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);
+    border-radius: 10px;
+    font-size: 0.875rem;
+    color: #6B7280;
+    box-shadow: 0 2px 8px rgba(13, 95, 92, 0.08);
+    border: 1px solid rgba(13, 95, 92, 0.1);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.25rem;
-    padding-bottom: 0.625rem;
-    border-bottom: 2px solid #E5E7EB;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
   }
 
-  .section-title {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #0D5F5C;
-    margin: 0;
-  }
-
-  .section-count {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    color: white;
-  }
-
-  .count-likes {
-    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-  }
-
-  .count-wishlist {
-    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-  }
-
-  .pets-section {
-    margin-bottom: 2.5rem;
+  .results-count::before {
+    content: '⭐';
+    font-size: 1rem;
   }
 
   .pets-grid {
@@ -190,23 +182,30 @@
     margin-top: auto;
   }
 
-  .empty-section {
+  .empty-state {
     background: white;
-    border-radius: 16px;
-    padding: 2rem 1.5rem;
+    border-radius: 24px;
+    padding: 4rem 2rem;
     text-align: center;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   }
 
-  .empty-section-icon {
-    font-size: 2.5rem;
+  .empty-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1F2937;
     margin-bottom: 0.75rem;
   }
 
-  .empty-section-text {
-    font-size: 0.9375rem;
+  .empty-text {
+    font-size: 1.125rem;
     color: #6B7280;
-    margin-bottom: 0.75rem;
+    margin-bottom: 2rem;
   }
 
   @media (max-width: 768px) {
@@ -217,54 +216,31 @@
 
 <div class="browse-pets-container">
   <header class="page-header">
-    <h1 class="page-title">📋 My Saved Pets</h1>
-    <p class="page-subtitle">All pets you've liked and wishlisted in one place.</p>
+    <h1 class="page-title">⭐ My Wishlist</h1>
+    <p class="page-subtitle">Pets you've saved to adopt later — don't wait too long!</p>
+    <span class="page-count-badge"><%= @wishlisted_pets.count %> <%= @wishlisted_pets.count == 1 ? 'Pet' : 'Pets' %> Saved</span>
     <div class="page-actions">
       <%= link_to '🐾 Browse All Pets', pets_path, style: 'display: inline-block; padding: 0.75rem 1.75rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s; font-size: 0.875rem;' %>
+      <%= link_to '❤️ My Likes', my_likes_path, style: 'display: inline-block; padding: 0.75rem 1.75rem; background: white; border: 2px solid #0D5F5C; color: #0D5F5C; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(13, 95, 92, 0.1); transition: all 0.3s; font-size: 0.875rem;' %>
     </div>
   </header>
 
-  <!-- Wishlisted Pets Section -->
-  <section class="pets-section">
-    <div class="section-header">
-      <h2 class="section-title">⭐ Wishlist</h2>
-      <span class="section-count count-wishlist"><%= @wishlisted_pets.count %></span>
+  <% if @wishlisted_pets.any? %>
+    <div class="results-count">
+      Showing <strong style="color: #0D5F5C; font-weight: 700;"><%= @wishlisted_pets.count %></strong> wishlisted <%= @wishlisted_pets.count == 1 ? 'pet' : 'pets' %>
     </div>
 
-    <% if @wishlisted_pets.any? %>
-      <div class="pets-grid">
-        <% @wishlisted_pets.each do |pet| %>
-          <%= render 'interactions/pet_card', pet: pet, badge_type: :wishlisted, action_type: :remove_wishlist %>
-        <% end %>
-      </div>
-    <% else %>
-      <div class="empty-section">
-        <div class="empty-section-icon">📋</div>
-        <p class="empty-section-text">You haven't added any pets to your wishlist yet.</p>
-        <%= link_to 'Browse Pets', pets_path, style: 'display: inline-block; padding: 0.625rem 1.5rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); font-size: 0.875rem;' %>
-      </div>
-    <% end %>
-  </section>
-
-  <!-- Liked Pets Section -->
-  <section class="pets-section">
-    <div class="section-header">
-      <h2 class="section-title">❤️ Liked Pets</h2>
-      <span class="section-count count-likes"><%= @liked_pets.count %></span>
+    <div class="pets-grid">
+      <% @wishlisted_pets.each do |pet| %>
+        <%= render 'interactions/pet_card', pet: pet, badge_type: :wishlisted, action_type: :remove_wishlist %>
+      <% end %>
     </div>
-
-    <% if @liked_pets.any? %>
-      <div class="pets-grid">
-        <% @liked_pets.each do |pet| %>
-          <%= render 'interactions/pet_card', pet: pet, badge_type: :liked, action_type: :unlike %>
-        <% end %>
-      </div>
-    <% else %>
-      <div class="empty-section">
-        <div class="empty-section-icon">💔</div>
-        <p class="empty-section-text">You haven't liked any pets yet.</p>
-        <%= link_to 'Browse Pets', pets_path, style: 'display: inline-block; padding: 0.625rem 1.5rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); font-size: 0.875rem;' %>
-      </div>
-    <% end %>
-  </section>
+  <% else %>
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h3 class="empty-title">Your Wishlist is Empty</h3>
+      <p class="empty-text">Start adding pets to your wishlist so you can come back and adopt them later!</p>
+      <%= link_to 'Browse Pets', pets_path, style: 'display: inline-block; padding: 1rem 2.5rem; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3);' %>
+    </div>
+  <% end %>
 </div>

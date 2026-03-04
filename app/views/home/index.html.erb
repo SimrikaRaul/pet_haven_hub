@@ -298,6 +298,42 @@
     <% end %>
   </section>
 
+  <!-- Collaborative Recommendations Section (logged-in users only) -->
+  <% if user_signed_in? && @recommended_pets.present? %>
+    <section style="margin-top: 4rem;">
+      <div class="section-header">
+        <h2 class="section-title">🐾 Users Similar To You <span style="color: #0D5F5C;">Also Liked</span></h2>
+        <p class="section-subtitle">
+          Based on what pet lovers with similar tastes have enjoyed, we think you'll love these companions too!
+        </p>
+      </div>
+
+      <div class="pets-grid">
+        <% @recommended_pets.each do |pet| %>
+          <%= link_to pet_path(pet), style: 'text-decoration: none;' do %>
+            <div class="pet-card-home">
+              <% if pet.image.attached? %>
+                <%= image_tag pet.image, alt: pet.name, class: 'pet-card-image' %>
+              <% else %>
+                <div class="pet-card-image" style="background: linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem;">
+                  🐾
+                </div>
+              <% end %>
+
+              <div class="pet-card-content">
+                <h3 class="pet-name"><%= pet.name %></h3>
+                <p class="pet-meta">
+                  <%= pet.pet_type&.titleize %> • <%= pet.breed %> • <%= pet.age %> <%= pet.age == 1 ? 'year' : 'years' %>
+                </p>
+                <span class="pet-status-badge">✓ Available for Adoption</span>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
   <!-- Why Adopt Section -->
   <section class="why-adopt-section" id="why-adopt">
     <div style="text-align: center; max-width: 800px; margin: 0 auto;">

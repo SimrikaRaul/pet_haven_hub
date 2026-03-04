@@ -1,0 +1,49 @@
+<%# Reusable pet card for interactions pages (likes, wishlist, saved pets)
+   Locals:
+     pet          - the Pet ActiveRecord instance (required)
+     badge_type   - :liked or :wishlisted (optional)
+     action_type  - :unlike or :remove_wishlist (optional)
+%>
+<article class="pet-card">
+  <div class="pet-image-wrapper">
+    <%= link_to pet_path(pet) do %>
+      <% if pet.image.attached? %>
+        <%= image_tag pet.image, alt: pet.name, class: 'pet-image' %>
+      <% else %>
+        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 5rem; color: #D1D5DB;">🐾</div>
+      <% end %>
+    <% end %>
+
+    <% if local_assigns[:badge_type] == :liked %>
+      <div class="pet-badge badge-status" style="left: 1rem; right: auto; background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color: white;">❤️ Liked</div>
+    <% elsif local_assigns[:badge_type] == :wishlisted %>
+      <div class="pet-badge badge-status" style="left: 1rem; right: auto; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white;">⭐ Wishlisted</div>
+    <% end %>
+
+    <% if pet.respond_to?(:available) && pet.available %>
+      <div class="pet-badge badge-available">
+        <span class="pulse-dot"></span>
+        AVAILABLE
+      </div>
+    <% end %>
+  </div>
+
+  <div class="pet-details">
+    <h3 class="pet-name"><%= pet.name %></h3>
+    <div class="pet-info">
+      <span class="pet-type-badge"><%= pet.pet_type&.titleize || 'Pet' %></span>
+      <span>•</span>
+      <span><%= pet.breed %></span>
+      <span>•</span>
+      <span><%= pet.age %> <%= pet.age == 1 ? 'year' : 'years' %></span>
+    </div>
+    <div class="pet-actions">
+      <%= link_to 'View Details', pet_path(pet), style: 'flex: 1; padding: 0.875rem; text-align: center; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
+      <% if local_assigns[:action_type] == :unlike %>
+        <%= button_to '❤️ Unlike', like_pet_path(pet), method: :delete, style: 'flex: 1; padding: 0.875rem; background: white; color: #EF4444; font-weight: 700; border: 2px solid #EF4444; border-radius: 12px; cursor: pointer; transition: all 0.3s;' %>
+      <% elsif local_assigns[:action_type] == :remove_wishlist %>
+        <%= button_to '⭐ Remove', wishlist_pet_path(pet), method: :delete, style: 'flex: 1; padding: 0.875rem; background: white; color: #D97706; font-weight: 700; border: 2px solid #D97706; border-radius: 12px; cursor: pointer; transition: all 0.3s;' %>
+      <% end %>
+    </div>
+  </div>
+</article>

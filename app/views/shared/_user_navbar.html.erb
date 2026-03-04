@@ -36,9 +36,11 @@
 
     .navbar-menu {
       display: flex;
-      gap: 30px;
+      gap: 6px;
       align-items: center;
       list-style: none;
+      margin: 0;
+      padding: 0;
     }
 
     .navbar-menu a {
@@ -62,37 +64,7 @@
       align-items: center;
     }
 
-    .navbar-auth .btn {
-      padding: 8px 16px;
-      font-size: 13px;
-      border-radius: 6px;
-    }
-
-    .navbar-auth .btn-outline {
-      background: white;
-      color: #F97316;
-      border: 2px solid #F97316;
-    }
-
-    .navbar-auth .btn-outline:hover {
-      background: #FFE4D6;
-      border-color: #EA580C;
-      color: #EA580C;
-    }
-
-    .navbar-auth .btn-primary {
-      background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
-      color: white;
-      border: none;
-      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
-    }
-
-    .navbar-auth .btn-primary:hover {
-      background: linear-gradient(135deg, #EA580C 0%, #C2410C 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
-    }
-
+    /* ── Sign-in dropdown (logged out) ── */
     .sign-in-dropdown {
       position: relative;
       display: inline-block;
@@ -130,7 +102,7 @@
       transform: rotate(180deg);
     }
 
-    .dropdown-menu {
+    .sign-in-dropdown .dropdown-menu {
       position: absolute;
       top: calc(100% + 8px);
       right: 0;
@@ -142,7 +114,7 @@
       visibility: hidden;
       transform: translateY(-10px);
       transition: all 0.3s ease;
-      z-index: 1000;
+      z-index: 1001;
       overflow: hidden;
     }
 
@@ -152,7 +124,7 @@
       transform: translateY(0);
     }
 
-    .dropdown-item {
+    .sign-in-dropdown .dropdown-item {
       display: block;
       padding: 14px 20px;
       color: #1F2937;
@@ -163,53 +135,184 @@
       border-bottom: 1px solid #F3F4F6;
     }
 
-    .dropdown-item:last-child {
+    .sign-in-dropdown .dropdown-item:last-child {
       border-bottom: none;
     }
 
-    .dropdown-item:hover {
+    .sign-in-dropdown .dropdown-item:hover {
       background: linear-gradient(135deg, #FFE4D6 0%, #FED7AA 100%);
       color: #C2410C;
       padding-left: 24px;
     }
 
-    .dropdown-item.create-account {
+    .sign-in-dropdown .dropdown-item.create-account {
       background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
       color: white;
       font-weight: 600;
     }
 
-    .dropdown-item.create-account:hover {
+    .sign-in-dropdown .dropdown-item.create-account:hover {
       background: linear-gradient(135deg, #EA580C 0%, #C2410C 100%);
       padding-left: 20px;
     }
 
-    .user-menu {
+    /* ── User dropdown (logged in) ── */
+    .user-dropdown {
+      position: relative;
+    }
+
+    .user-dropdown-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 24px;
+      color: #F9FAFB;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .user-dropdown-toggle:hover {
+      background: rgba(16, 185, 129, 0.25);
+      border-color: rgba(16, 185, 129, 0.5);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .user-dropdown-arrow {
+      font-size: 10px;
+      transition: transform 0.3s ease;
+      opacity: 0.7;
+    }
+
+    .user-dropdown.active .user-dropdown-arrow {
+      transform: rotate(180deg);
+    }
+
+    .user-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 16px;
+      min-width: 230px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1001;
+      overflow: hidden;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(16, 185, 129, 0.1);
+    }
+
+    .user-dropdown.active .user-dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .user-dropdown-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .user-menu-item {
+    .user-dropdown-header-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .user-dropdown-header-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-dropdown-header-name {
       color: #F9FAFB;
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: background 0.2s ease;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .user-dropdown-header-email {
+      color: #9CA3AF;
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .user-dropdown-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin: 0;
+    }
+
+    .user-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      color: #D1D5DB;
       text-decoration: none;
-    }
-
-    .user-menu-item:hover {
-      background-color: rgba(16, 185, 129, 0.2);
-      color: #34D399;
-    }
-
-    button.user-menu-item {
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.2s ease;
       border: none;
       background: none;
+      width: 100%;
+      cursor: pointer;
       font-family: inherit;
-      font-size: inherit;
-      font-weight: inherit;
+    }
+
+    .user-dropdown-item:hover {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34D399;
+      padding-left: 24px;
+    }
+
+    .user-dropdown-item .dropdown-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .user-dropdown-item.logout-item {
+      color: #F87171;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .user-dropdown-item.logout-item:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: #FCA5A5;
     }
 
     .mobile-toggle {
@@ -230,9 +333,12 @@
         top: 100%;
         left: 0;
         right: 0;
-        background: #1E40AF;
+        background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
         width: 100%;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(16, 185, 129, 0.2);
+        padding: 8px 0;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        z-index: 999;
       }
 
       .navbar-menu.active {
@@ -240,8 +346,12 @@
       }
 
       .navbar-menu a {
-        padding: 12px 20px;
+        padding: 12px 24px;
         border-radius: 0;
+      }
+
+      .navbar-menu a:hover {
+        background: rgba(16, 185, 129, 0.15);
       }
 
       .mobile-toggle {
@@ -252,16 +362,9 @@
         flex-wrap: wrap;
       }
 
-      .navbar-auth {
-        flex-wrap: wrap;
-        width: 100%;
-        gap: 8px;
-      }
-
-      .navbar-auth .btn {
-        flex: 1;
-        padding: 10px 12px;
-        text-align: center;
+      .user-dropdown-menu {
+        right: -10px;
+        min-width: 210px;
       }
     }
   </style>
@@ -276,22 +379,46 @@
     <ul class="navbar-menu" id="navbar-menu">
       <li><%= link_to 'Home', root_path, data: { turbo_action: 'replace' } %></li>
       <li><%= link_to 'Browse Pets', pets_path, data: { turbo_action: 'replace' } %></li>
-      <% if user_signed_in? %>
-        <li><%= link_to 'My Requests', requests_path, data: { turbo_action: 'replace' } %></li>
-      <% end %>
       <li><%= link_to 'About', about_path %></li>
     </ul>
 
     <div class="navbar-auth">
       <% if user_signed_in? %>
-        <div class="user-menu">
-          <span class="user-menu-item" data-user-id="<%= current_user.id %>" data-user-email="<%= current_user.email %>"><%= current_user.full_name %></span>
-          <%= link_to 'Profile', edit_user_registration_path, class: 'user-menu-item' %>
-          <%= button_to 'Logout', destroy_user_session_path, method: :delete, class: 'user-menu-item', form: { style: 'display: inline;' } %>
+        <div class="user-dropdown" id="userDropdown">
+          <button class="user-dropdown-toggle" onclick="toggleUserDropdown(event)">
+            <span class="user-avatar"><%= current_user.full_name[0].upcase %></span>
+            <span><%= current_user.full_name %></span>
+            <span class="user-dropdown-arrow">▼</span>
+          </button>
+          <div class="user-dropdown-menu">
+            <div class="user-dropdown-header">
+              <span class="user-dropdown-header-avatar"><%= current_user.full_name[0].upcase %></span>
+              <div class="user-dropdown-header-info">
+                <span class="user-dropdown-header-name"><%= current_user.full_name %></span>
+                <span class="user-dropdown-header-email"><%= current_user.email %></span>
+              </div>
+            </div>
+            <%= link_to edit_user_registration_path, class: 'user-dropdown-item' do %>
+              <span class="dropdown-icon">👤</span> My Profile
+            <% end %>
+            <%= link_to my_likes_path, class: 'user-dropdown-item' do %>
+              <span class="dropdown-icon">❤️</span> My Likes
+            <% end %>
+            <%= link_to my_wishlist_path, class: 'user-dropdown-item' do %>
+              <span class="dropdown-icon">⭐</span> My Wishlist
+            <% end %>
+            <%= link_to requests_path, class: 'user-dropdown-item' do %>
+              <span class="dropdown-icon">📋</span> My Requests
+            <% end %>
+            <div class="user-dropdown-divider"></div>
+            <%= button_to destroy_user_session_path, method: :delete, class: 'user-dropdown-item logout-item', form: { style: 'margin: 0;' } do %>
+              <span class="dropdown-icon">🚪</span> Logout
+            <% end %>
+          </div>
         </div>
       <% else %>
         <div class="sign-in-dropdown" id="signInDropdown">
-          <button class="sign-in-button" onclick="toggleSignInDropdown()">
+          <button class="sign-in-button" onclick="toggleSignInDropdown(event)">
             👤 Sign In
           </button>
           <div class="dropdown-menu">
@@ -312,18 +439,35 @@
   function toggleMobileMenu() {
     const menu = document.getElementById('navbar-menu');
     menu.classList.toggle('active');
+    // Close user dropdown when opening mobile menu
+    const userDd = document.getElementById('userDropdown');
+    if (userDd) userDd.classList.remove('active');
   }
 
-  function toggleSignInDropdown() {
+  function toggleUserDropdown(e) {
+    e.stopPropagation();
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.classList.toggle('active');
+    // Close sign-in dropdown if open
+    const signIn = document.getElementById('signInDropdown');
+    if (signIn) signIn.classList.remove('active');
+  }
+
+  function toggleSignInDropdown(e) {
+    e.stopPropagation();
     const dropdown = document.getElementById('signInDropdown');
     dropdown.classList.toggle('active');
   }
 
-  // Close dropdown when clicking outside
+  // Close all dropdowns when clicking outside
   document.addEventListener('click', function(event) {
-    const dropdown = document.getElementById('signInDropdown');
-    if (dropdown && !dropdown.contains(event.target)) {
-      dropdown.classList.remove('active');
+    const userDd = document.getElementById('userDropdown');
+    if (userDd && !userDd.contains(event.target)) {
+      userDd.classList.remove('active');
+    }
+    const signInDd = document.getElementById('signInDropdown');
+    if (signInDd && !signInDd.contains(event.target)) {
+      signInDd.classList.remove('active');
     }
   });
 </script>

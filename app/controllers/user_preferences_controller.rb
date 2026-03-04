@@ -15,7 +15,7 @@ class UserPreferencesController < ApplicationController
     @user_preference = current_user.build_user_preference(user_preference_params)
 
     if @user_preference.save
-      redirect_to recommendations_path, notice: 'Your preferences have been saved! Here are your recommended pets.'
+      redirect_to pets_path, notice: 'Your preferences have been saved! Browse pets matched to your tastes.'
     else
       render :edit
     end
@@ -24,7 +24,7 @@ class UserPreferencesController < ApplicationController
   # PATCH/PUT /user_preferences
   def update
     if @user_preference.update(user_preference_params)
-      redirect_to recommendations_path, notice: 'Your preferences have been updated! Here are your recommended pets.'
+      redirect_to pets_path, notice: 'Your preferences have been updated! Browse pets matched to your tastes.'
     else
       render :edit
     end

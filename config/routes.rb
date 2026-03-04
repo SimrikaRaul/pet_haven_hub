@@ -23,10 +23,11 @@ Rails.application.routes.draw do
   
   # User's saved pets (liked and wishlisted)
   get 'my_pets', to: 'interactions#index', as: :my_pets
+  get 'my_likes', to: 'interactions#likes', as: :my_likes
+  get 'my_wishlist', to: 'interactions#wishlist_list', as: :my_wishlist
   
-  # User preferences and recommendations
+  # User preferences
   resource :user_preferences, only: [:edit, :create, :update]
-  resources :recommendations, only: [:index]
 
   namespace :admin do
     root to: 'dashboard#index'
