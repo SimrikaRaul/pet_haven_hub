@@ -2,25 +2,47 @@
   <h1>Admin Dashboard</h1>
 
   <!-- Quick Stats -->
-  <div class="stats-grid">
-    <div class="stat-card info">
-      <span class="stat-card-label">Total Pets</span>
-      <div class="stat-card-value"><%= @stats[:total_pets] %></div>
-    </div>
-    
-    <div class="stat-card success">
-      <span class="stat-card-label">Available Pets</span>
-      <div class="stat-card-value"><%= @stats[:available_pets] %></div>
-    </div>
-    
+  <div class="stats-grid stats-grid-7">
     <div class="stat-card warning">
       <span class="stat-card-label">Total Users</span>
       <div class="stat-card-value"><%= @stats[:total_users] %></div>
+      <span class="stat-card-icon">👥</span>
     </div>
-    
+
+    <div class="stat-card info">
+      <span class="stat-card-label">Total Pets</span>
+      <div class="stat-card-value"><%= @stats[:total_pets] %></div>
+      <span class="stat-card-icon">🐾</span>
+    </div>
+
+    <div class="stat-card success">
+      <span class="stat-card-label">Available Pets</span>
+      <div class="stat-card-value"><%= @stats[:available_pets] %></div>
+      <span class="stat-card-icon">✅</span>
+    </div>
+
+    <div class="stat-card adopted">
+      <span class="stat-card-label">Adopted Pets</span>
+      <div class="stat-card-value"><%= @stats[:adopted_pets] %></div>
+      <span class="stat-card-icon">🏠</span>
+    </div>
+
+    <div class="stat-card purple">
+      <span class="stat-card-label">Total Interactions</span>
+      <div class="stat-card-value"><%= @stats[:total_interactions] %></div>
+      <span class="stat-card-icon">📊</span>
+    </div>
+
     <div class="stat-card danger">
-      <span class="stat-card-label">Pending Requests</span>
-      <div class="stat-card-value"><%= @stats[:open_requests] %></div>
+      <span class="stat-card-label">Total Likes</span>
+      <div class="stat-card-value"><%= @stats[:total_likes] %></div>
+      <span class="stat-card-icon">❤️</span>
+    </div>
+
+    <div class="stat-card teal">
+      <span class="stat-card-label">Total Wishlist</span>
+      <div class="stat-card-value"><%= @stats[:total_wishlist] %></div>
+      <span class="stat-card-icon">⭐</span>
     </div>
   </div>
 
@@ -89,6 +111,152 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Pet Popularity Analytics -->
+  <section class="dashboard-section">
+    <div class="stats-details-grid stats-details-grid-2">
+      <div class="dashboard-card">
+        <h3>❤️ Most Liked Pets</h3>
+        <% if @most_liked_pets.any? %>
+          <table class="dashboard-table popularity-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Pet</th>
+                <th>Breed</th>
+                <th>Likes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @most_liked_pets.each_with_index do |pet, i| %>
+                <tr>
+                  <td>
+                    <span class="rank-badge rank-<%= i + 1 %>"><%= i + 1 %></span>
+                  </td>
+                  <td>
+                    <div class="popularity-pet-name">
+                      <%= link_to pet.name, admin_pet_path(pet), class: 'popularity-link' %>
+                      <span class="badge badge-primary" style="margin-left: 4px;"><%= pet.pet_type&.capitalize %></span>
+                    </div>
+                  </td>
+                  <td class="popularity-breed"><%= pet.breed %></td>
+                  <td>
+                    <span class="interaction-count likes-count">❤️ <%= pet.likes_count %></span>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p class="empty-state">No likes recorded yet.</p>
+        <% end %>
+      </div>
+
+      <div class="dashboard-card">
+        <h3>⭐ Most Wishlisted Pets</h3>
+        <% if @most_wishlisted_pets.any? %>
+          <table class="dashboard-table popularity-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Pet</th>
+                <th>Breed</th>
+                <th>Wishlists</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @most_wishlisted_pets.each_with_index do |pet, i| %>
+                <tr>
+                  <td>
+                    <span class="rank-badge rank-<%= i + 1 %>"><%= i + 1 %></span>
+                  </td>
+                  <td>
+                    <div class="popularity-pet-name">
+                      <%= link_to pet.name, admin_pet_path(pet), class: 'popularity-link' %>
+                      <span class="badge badge-primary" style="margin-left: 4px;"><%= pet.pet_type&.capitalize %></span>
+                    </div>
+                  </td>
+                  <td class="popularity-breed"><%= pet.breed %></td>
+                  <td>
+                    <span class="interaction-count wishlist-count">⭐ <%= pet.wishlists_count %></span>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p class="empty-state">No wishlists recorded yet.</p>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recommendation Insights -->
+  <section class="dashboard-section">
+    <div class="dashboard-card">
+      <h2>🎯 Recommendation Insights</h2>
+      <p class="insights-subtitle">Analytics derived from user engagement with recommended pets</p>
+
+      <div class="insights-stats-row">
+        <div class="insight-stat">
+          <span class="insight-stat-value purple"><%= @recommendation_insights[:total_recommendations] %></span>
+          <span class="insight-stat-label">Total Recommendations</span>
+        </div>
+        <div class="insight-stat">
+          <span class="insight-stat-value indigo"><%= @recommendation_insights[:users_with_recommendations] %></span>
+          <span class="insight-stat-label">Users Engaged</span>
+        </div>
+        <div class="insight-stat">
+          <span class="insight-stat-value teal"><%= @recommendation_insights[:users_with_preferences] %></span>
+          <span class="insight-stat-label">Users With Preferences</span>
+        </div>
+        <div class="insight-stat">
+          <span class="insight-stat-value orange"><%= @recommendation_insights[:avg_interactions_per_user] %></span>
+          <span class="insight-stat-label">Avg. per User</span>
+        </div>
+      </div>
+
+      <% if @most_recommended_pets.any? %>
+        <h3 style="margin-top: var(--space-2xl);">🏆 Most Frequently Recommended Pets</h3>
+        <table class="dashboard-table popularity-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Pet</th>
+              <th>Breed</th>
+              <th>Interactions</th>
+              <th>Engagement</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @most_recommended_pets.each_with_index do |pet, i| %>
+              <tr>
+                <td>
+                  <span class="rank-badge rank-<%= i + 1 %>"><%= i + 1 %></span>
+                </td>
+                <td>
+                  <div class="popularity-pet-name">
+                    <%= link_to pet.name, admin_pet_path(pet), class: 'popularity-link' %>
+                    <span class="badge badge-primary" style="margin-left: 4px;"><%= pet.pet_type&.capitalize %></span>
+                  </div>
+                </td>
+                <td class="popularity-breed"><%= pet.breed %></td>
+                <td><span class="interaction-count" style="background: rgba(102, 126, 234, 0.1); color: var(--color-indigo);">📊 <%= pet.interaction_count %></span></td>
+                <td>
+                  <div class="engagement-bar-wrapper">
+                    <div class="engagement-bar" style="width: <%= [(pet.engagement_score.to_f / (@most_recommended_pets.first.engagement_score.nonzero? || 1) * 100), 100].min.round %>%;"></div>
+                    <span class="engagement-bar-label"><%= pet.engagement_score.to_i %> pts</span>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="empty-state">No recommendation data available yet.</p>
+      <% end %>
     </div>
   </section>
 

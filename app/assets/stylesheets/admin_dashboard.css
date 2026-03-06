@@ -104,6 +104,189 @@
   color: var(--color-red);
 }
 
+.stat-card.adopted .stat-card-value {
+  color: #38A169;
+}
+
+.stat-card.purple .stat-card-value {
+  color: #805AD5;
+}
+
+.stat-card.teal .stat-card-value {
+  color: #319795;
+}
+
+/* Stat card icon */
+.stat-card {
+  position: relative;
+}
+
+.stat-card-icon {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
+  font-size: 24px;
+  opacity: 0.5;
+}
+
+/* 7-column stats grid */
+.stats-grid.stats-grid-7 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* 2-column details grid */
+.stats-details-grid.stats-details-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Popularity table styles */
+.popularity-table th:first-child,
+.popularity-table td:first-child {
+  width: 40px;
+  text-align: center;
+}
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--color-gray-light);
+  color: var(--color-gray-muted);
+}
+
+.rank-badge.rank-1 {
+  background: linear-gradient(135deg, #FBBF24, #F59E0B);
+  color: #ffffff;
+}
+
+.rank-badge.rank-2 {
+  background: linear-gradient(135deg, #94A3B8, #64748B);
+  color: #ffffff;
+}
+
+.rank-badge.rank-3 {
+  background: linear-gradient(135deg, #D97706, #B45309);
+  color: #ffffff;
+}
+
+.popularity-pet-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.popularity-link {
+  font-weight: 600;
+  color: var(--color-indigo);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.popularity-link:hover {
+  color: #4C63D2;
+  text-decoration: underline;
+}
+
+.popularity-breed {
+  color: var(--color-gray-muted);
+  font-size: 13px;
+}
+
+.interaction-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.likes-count {
+  background: rgba(245, 101, 101, 0.1);
+  color: var(--color-red);
+}
+
+.wishlist-count {
+  background: rgba(49, 151, 149, 0.1);
+  color: #319795;
+}
+
+/* Recommendation Insights */
+.insights-subtitle {
+  font-size: 13px;
+  color: var(--color-gray-muted);
+  margin: -4px 0 var(--space-xl) 0;
+}
+
+.insights-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+}
+
+.insight-stat {
+  background: var(--color-gray-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl) var(--space-lg);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.insight-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.insight-stat-value {
+  display: block;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: var(--space-sm);
+}
+
+.insight-stat-value.purple { color: #805AD5; }
+.insight-stat-value.indigo { color: var(--color-indigo); }
+.insight-stat-value.teal { color: #319795; }
+.insight-stat-value.orange { color: var(--color-orange); }
+
+.insight-stat-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-gray-muted);
+}
+
+.engagement-bar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 120px;
+}
+
+.engagement-bar {
+  height: 8px;
+  background: linear-gradient(135deg, #667EEA, #805AD5);
+  border-radius: 4px;
+  min-width: 8px;
+  transition: width 0.4s ease;
+}
+
+.engagement-bar-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-gray-muted);
+  white-space: nowrap;
+}
+
 /* Cards */
 .dashboard-card {
   background: #ffffff;
@@ -350,12 +533,24 @@
     padding: var(--space-lg);
   }
 
+  .stats-grid.stats-grid-7 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   .stats-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-details-grid.stats-details-grid-2 {
     grid-template-columns: 1fr;
   }
 
   .quick-actions-grid {
     grid-template-columns: 1fr;
+  }
+
+  .insights-stats-row {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -368,6 +563,14 @@
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-md);
+  }
+
+  .stats-grid.stats-grid-7 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .insights-stats-row {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .stat-card {

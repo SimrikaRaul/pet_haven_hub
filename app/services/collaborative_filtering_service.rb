@@ -18,9 +18,10 @@ class CollaborativeFilteringService
   def call
     return [] if @user.nil?
 
-    recommendations = collaborative_recommendations
-    recommendations = popularity_fallback if recommendations.empty?
-    recommendations.first(@limit)
+    scored_pets = collaborative_recommendations
+    scored_pets = popularity_fallback if scored_pets.empty?
+
+    enrich_with_compatibility(scored_pets).first(@limit)
   end
 
   private
@@ -68,9 +69,11 @@ class CollaborativeFilteringService
     return [] if pet_scores.empty?
 
     # Step 4: Fetch top-scored available pets, preserving rank order
-    top_pet_ids = pet_scores.sort_by { |_, score| -score }
-                            .first(@limit)
-                            .map(&:first)
+    ranked = pet_scores.sort_by { |_, score| -score }
+                       .first(@limit)
+
+    top_pet_ids = ranked.map(&:first)
+    score_lookup = ranked.to_h
 
     excluded_ids = @user.pets.pluck(:id) # exclude user's own donated pets
     pets_by_id = Pet.where(id: top_pet_ids, available: true)
@@ -78,7 +81,14 @@ class CollaborativeFilteringService
                     .where.not(status: :adopted)
                     .index_by(&:id)
 
-    top_pet_ids.filter_map { |id| pets_by_id[id] }
+    top_pet_ids.filter_map do |id|
+      next unless pets_by_id[id]
+
+      {
+        pet: pets_by_id[id],
+        collaborative_score: score_lookup[id]&.round(4) || 0
+      }
+    end
   end
 
   # ── Popularity fallback ──────────────────────────────────────────────
@@ -87,14 +97,29 @@ class CollaborativeFilteringService
     excluded_ids = @user.pets.pluck(:id)
     interacted_ids = @user.interactions.pluck(:pet_id).uniq
 
-    Pet.where(available: true)
-       .where.not(status: :adopted)
-       .where.not(id: excluded_ids + interacted_ids)
-       .left_joins(:interactions)
-       .group("pets.id")
-       .order("COUNT(interactions.id) DESC")
-       .limit(@limit)
-       .to_a
+    pets = Pet.where(available: true)
+              .where.not(status: :adopted)
+              .where.not(id: excluded_ids + interacted_ids)
+              .left_joins(:interactions)
+              .group("pets.id")
+              .order("COUNT(interactions.id) DESC")
+              .limit(@limit)
+              .to_a
+
+    pets.map { |pet| { pet: pet, collaborative_score: 0 } }
+  end
+
+  # ── Compatibility enrichment ─────────────────────────────────────────
+
+  def enrich_with_compatibility(scored_pets)
+    scored_pets.map do |entry|
+      svc = CompatibilityScoringService.new(@user, entry[:pet])
+
+      entry.merge(
+        compatibility_score: svc.calculate_score,
+        explanation: svc.generate_explanation
+      )
+    end
   end
 
   # ── Similarity calculation ───────────────────────────────────────────
