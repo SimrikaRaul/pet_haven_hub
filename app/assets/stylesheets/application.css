@@ -4,10 +4,10 @@
   --primary-dark: #EA580C;
   --primary-light: #FED7AA;
   --primary-gradient: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
-  --peach: #FFE4D6;
-  --beige: #F5E6D3;
-  --cream: #FFF5EB;
-  --warm-bg: linear-gradient(135deg, #FFE4D6 0%, #F5E6D3 50%, #FFF5EB 100%);
+  --peach: #E5CABC;
+  --beige: #DBCCB9;
+  --cream: #E5DBD1;
+  --warm-bg: linear-gradient(135deg, #E5CABC 0%, #DBCCB9 50%, #E5DBD1 100%);
 
   /* Status Colors */
   --success: #10B981;
@@ -23,9 +23,9 @@
   --text: #1F2937;
   --text-muted: #6B7280;
   --background: #FFFFFF;
-  --surface: #FFF5EB;
+  --surface: #E5DBD1;
   --border: #F3D5B5;
-  --border-light: #FFF5EB;
+  --border-light: #E5DBD1;
 
   /* Pet Category Colors */
   --cat-color: #8B5CF6;
@@ -92,7 +92,7 @@
    BASE STYLES ENHANCEMENTS
    ============================================ */
 body {
-  background: linear-gradient(135deg, #FFE4D6 0%, #F5E6D3 50%, #FFF5EB 100%);
+  background: linear-gradient(135deg, #E5CABC 0%, #DBCCB9 50%, #E5DBD1 100%);
   min-height: 100vh;
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
