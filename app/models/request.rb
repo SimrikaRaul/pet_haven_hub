@@ -7,8 +7,11 @@ class Request < ApplicationRecord
   has_one_attached :citizenship_photo
 
   # Enums
-  enum :status, { open: 'open', approved: 'approved', rejected: 'rejected', scheduled: 'scheduled', completed: 'completed' }
+  enum :status, { open: 'open', pending: 'pending', under_review: 'under_review', approved: 'approved', rejected: 'rejected', scheduled: 'scheduled', completed: 'completed' }
   enum :request_type, { adopt: 'adopt', donate: 'donate' }
+
+  # Adoption request limit constants
+  MAX_ACTIVE_REQUESTS = 3
 
   # Validations
   validates :user_id, :pet_id, :request_type, :status, presence: true
@@ -35,6 +38,10 @@ class Request < ApplicationRecord
   validates :reason, presence: { message: "is required for adoption requests" }, if: :adopt?
   validates :reason, length: { minimum: 20, maximum: 1000, message: "must be between 20-1000 characters" }, allow_blank: true
   
+  # Adoption request limit validations
+  validate :not_duplicate_request, on: :create
+  validate :within_active_request_limit, on: :create
+
   # Citizenship photo validation
   validate :citizenship_photo_validation, if: :adopt?
 
@@ -49,10 +56,11 @@ class Request < ApplicationRecord
   scope :approved, -> { where(status: 'approved') }
   scope :rejected, -> { where(status: 'rejected') }
   scope :completed, -> { where(status: 'completed') }
+  scope :active, -> { where(status: %w[pending under_review]) }
   scope :for_adoption, -> { where(request_type: 'adopt') }
   scope :for_donation, -> { where(request_type: 'donate') }
   scope :recent, -> { order(created_at: :desc) }
-  scope :pending, -> { where(status: %w[open approved scheduled]) }
+  scope :in_progress, -> { where(status: %w[open pending under_review approved scheduled]) }
   scope :by_user, ->(user_id) { where(user_id: user_id) if user_id.present? }
   scope :by_pet, ->(pet_id) { where(pet_id: pet_id) if pet_id.present? }
   scope :by_date_range, ->(start_date, end_date) do
@@ -83,8 +91,8 @@ class Request < ApplicationRecord
     open? || scheduled?
   end
 
-  def pending?
-    %w[open approved scheduled].include?(status)
+  def in_progress?
+    %w[open pending under_review approved scheduled].include?(status)
   end
 
   def days_pending
@@ -108,6 +116,23 @@ class Request < ApplicationRecord
       end
     else
       errors.add(:citizenship_photo, 'is required for adoption requests')
+    end
+  end
+
+  def not_duplicate_request
+    return unless user_id.present? && pet_id.present?
+
+    if Request.where(user_id: user_id, pet_id: pet_id).exists?
+      errors.add(:base, 'You have already requested adoption for this pet.')
+    end
+  end
+
+  def within_active_request_limit
+    return unless user_id.present?
+
+    active_count = Request.active.where(user_id: user_id).count
+    if active_count >= MAX_ACTIVE_REQUESTS
+      errors.add(:base, 'You already have 3 active adoption requests. Please wait until one request is approved or rejected.')
     end
   end
 

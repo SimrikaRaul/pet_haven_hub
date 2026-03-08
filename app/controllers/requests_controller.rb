@@ -4,6 +4,7 @@ class RequestsController < ApplicationController
   before_action :set_request, only: [:show, :update]
   before_action :check_pet_availability, only: [:new, :create]
   before_action :check_duplicate_request, only: [:new, :create]
+  before_action :check_active_request_limit, only: [:new, :create]
 
   def index
     if current_user&.admin?
@@ -27,7 +28,7 @@ class RequestsController < ApplicationController
   def create
     @request = current_user.requests.build(request_params)
     @request.pet = @pet
-    @request.status = 'open'
+    @request.status = 'pending'
     
     if @request.save
       RecommendationRefreshJob.perform_later(current_user.id)
@@ -70,8 +71,15 @@ class RequestsController < ApplicationController
   end
   
   def check_duplicate_request
-    if current_user.requests.where(pet_id: @pet.id, status: ['open', 'approved', 'scheduled']).exists?
-      redirect_to pet_path(@pet), alert: 'You have already submitted a request for this pet.', status: :see_other
+    if current_user.requests.where(pet_id: @pet.id).exists?
+      redirect_to pet_path(@pet), alert: 'You have already requested adoption for this pet.', status: :see_other
+    end
+  end
+
+  def check_active_request_limit
+    active_count = current_user.requests.active.count
+    if active_count >= Request::MAX_ACTIVE_REQUESTS
+      redirect_to pet_path(@pet), alert: 'You already have 3 active adoption requests. Please wait until one request is approved or rejected.', status: :see_other
     end
   end
 end
