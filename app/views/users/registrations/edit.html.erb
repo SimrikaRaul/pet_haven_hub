@@ -255,7 +255,7 @@
 
           <div class="form-field">
             <%= f.label :email, 'Email Address', class: 'form-label' %>
-            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-input' %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", required: true, class: 'form-input' %>
           </div>
 
           <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
@@ -275,7 +275,11 @@
 
           <div class="form-field">
             <%= f.label :password, 'New Password', class: 'form-label' %>
-            <%= f.password_field :password, autocomplete: "new-password", class: 'form-input', placeholder: 'Enter new password' %>
+            <div style="position: relative;">
+              <%= f.password_field :password, autocomplete: "new-password", class: 'form-input', placeholder: 'Enter new password', style: 'padding-right: 3rem;' %>
+              <button type="button" class="_eye-toggle" onclick="togglePwVis(this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.2rem;color:#6B7280;padding:4px;line-height:1;" title="Show password">👁️</button>
+            </div>
+            <div id="pw-strength" style="margin-top:0.5rem;"></div>
             <p class="form-hint">
               Leave blank if you don't want to change it
               <% if @minimum_password_length %>
@@ -286,7 +290,10 @@
 
           <div class="form-field">
             <%= f.label :password_confirmation, 'Confirm New Password', class: 'form-label' %>
-            <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-input', placeholder: 'Confirm new password' %>
+            <div style="position: relative;">
+              <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-input', placeholder: 'Confirm new password', style: 'padding-right: 3rem;' %>
+              <button type="button" class="_eye-toggle" onclick="togglePwVis(this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.2rem;color:#6B7280;padding:4px;line-height:1;" title="Show password">👁️</button>
+            </div>
           </div>
         </div>
 
@@ -298,7 +305,10 @@
 
           <div class="form-field">
             <%= f.label :current_password, 'Current Password', class: 'form-label' %>
-            <%= f.password_field :current_password, autocomplete: "current-password", class: 'form-input', placeholder: 'Enter your current password' %>
+            <div style="position: relative;">
+              <%= f.password_field :current_password, autocomplete: "current-password", required: true, class: 'form-input', placeholder: 'Enter your current password', style: 'padding-right: 3rem;' %>
+              <button type="button" class="_eye-toggle" onclick="togglePwVis(this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.2rem;color:#6B7280;padding:4px;line-height:1;" title="Show password">👁️</button>
+            </div>
             <p class="form-hint">We need your current password to confirm your changes</p>
           </div>
         </div>
@@ -306,6 +316,92 @@
         <!-- Submit Button -->
         <%= f.submit "Update Profile", class: 'submit-button' %>
       <% end %>
+
+      <script>
+      function togglePwVis(btn) {
+        var inp = btn.parentElement.querySelector('input');
+        if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; btn.title = 'Hide password'; }
+        else { inp.type = 'password'; btn.textContent = '👁️'; btn.title = 'Show password'; }
+      }
+      function showPwStrength(val) {
+        var el = document.getElementById('pw-strength');
+        if (!el) return;
+        if (!val) { el.innerHTML = ''; return; }
+        var score = 0;
+        if (val.length >= 8) score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/[a-z]/.test(val)) score++;
+        if (/\d/.test(val)) score++;
+        if (/[^A-Za-z0-9]/.test(val)) score++;
+        var labels = ['Very Weak','Weak','Fair','Strong','Very Strong'];
+        var colors = ['#EF4444','#F97316','#F59E0B','#10B981','#059669'];
+        var pct = [20,40,60,80,100];
+        var i = Math.max(0, score - 1);
+        el.innerHTML = '<div style="display:flex;align-items:center;gap:0.5rem;"><div style="flex:1;height:6px;background:#E5E7EB;border-radius:3px;overflow:hidden;"><div style="width:'+pct[i]+'%;height:100%;background:'+colors[i]+';border-radius:3px;transition:all 0.3s;"></div></div><span style="font-size:0.75rem;font-weight:700;color:'+colors[i]+';white-space:nowrap;">'+labels[i]+'</span></div>';
+      }
+      (function() {
+        var eEl   = document.getElementById('user_email');
+        var pEl   = document.getElementById('user_password');
+        var cpEl  = document.getElementById('user_password_confirmation');
+        var curEl = document.getElementById('user_current_password');
+        if (!eEl || !pEl || !cpEl || !curEl) return;
+        var form = eEl.closest('form');
+        form.setAttribute('novalidate', '');
+        var emailRx = /^[a-zA-Z][a-zA-Z0-9._%+\-]*@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+        var minLen = 8;
+        function ferr(el, msg) {
+          fclr(el);
+          el.style.borderColor = '#EF4444'; el.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.12)';
+          var s = document.createElement('span');
+          s.className = '_fve';
+          s.style.cssText = 'display:block;color:#DC2626;font-size:0.8rem;font-weight:600;margin-top:0.4rem;padding-left:0.5rem;';
+          s.textContent = '\u26a0 ' + msg;
+          el.parentNode.appendChild(s);
+        }
+        function fclr(el) {
+          var xs = el.parentNode.querySelectorAll('._fve'); xs.forEach(function(x){x.remove();});
+          el.style.borderColor = ''; el.style.boxShadow = '';
+        }
+        function fok(el) { fclr(el); el.style.borderColor = '#10B981'; el.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.1)'; }
+        function vEmail() {
+          var v = eEl.value.trim();
+          if (!v) { ferr(eEl, 'Email is required'); return false; }
+          if (/^\d/.test(v)) { ferr(eEl, 'Email cannot start with a number'); return false; }
+          if (!emailRx.test(v)) { ferr(eEl, 'Enter a valid email address'); return false; }
+          fok(eEl); return true;
+        }
+        function vPw() {
+          var v = pEl.value;
+          showPwStrength(v);
+          if (!v) { fclr(pEl); return true; }
+          if (v.length < minLen) { ferr(pEl, 'Password must be at least ' + minLen + ' characters'); return false; }
+          if (!/[A-Z]/.test(v)) { ferr(pEl, 'Must include at least one uppercase letter'); return false; }
+          if (!/[a-z]/.test(v)) { ferr(pEl, 'Must include at least one lowercase letter'); return false; }
+          if (!/\d/.test(v)) { ferr(pEl, 'Must include at least one number'); return false; }
+          fok(pEl); if (cpEl.value) vCpw(); return true;
+        }
+        function vCpw() {
+          if (!pEl.value) { fclr(cpEl); return true; }
+          var v = cpEl.value;
+          if (!v) { ferr(cpEl, 'Please confirm your new password'); return false; }
+          if (v !== pEl.value) { ferr(cpEl, 'Passwords do not match'); return false; }
+          fok(cpEl); return true;
+        }
+        function vCurPw() {
+          if (!curEl.value) { ferr(curEl, 'Current password is required to save changes'); return false; }
+          fok(curEl); return true;
+        }
+        [[eEl,vEmail],[pEl,vPw],[cpEl,vCpw],[curEl,vCurPw]].forEach(function(pair) {
+          pair[0].addEventListener('blur', pair[1]);
+          pair[0].addEventListener('input', function() { if (pair[0].parentNode.querySelector('._fve')) pair[1](); });
+        });
+        pEl.addEventListener('input', function() { showPwStrength(pEl.value); });
+        form.addEventListener('submit', function(ev) {
+          var ok = vEmail() & vPw() & vCpw() & vCurPw();
+          if (!ok) { ev.preventDefault(); var f = form.querySelector('._fve'); if (f) { var inp = f.parentNode.querySelector('input'); if (inp) inp.focus(); } }
+        });
+      })();
+      </script>
 
       <!-- Danger Zone -->
       <div class="danger-zone">

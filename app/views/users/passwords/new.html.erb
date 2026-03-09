@@ -164,6 +164,7 @@
         <%= f.email_field :email,
             autofocus: true,
             autocomplete: "email",
+            required: true,
             placeholder: "you@example.com",
             class: 'forgot-pw-input' %>
       </div>
@@ -183,6 +184,40 @@
     </div>
   </div>
 </div>
+
+<script>
+(function() {
+  var eEl = document.getElementById('user_email');
+  if (!eEl) return;
+  var form = eEl.closest('form');
+  form.setAttribute('novalidate', '');
+  var emailRx = /^[a-zA-Z][a-zA-Z0-9._%+\-]*@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+  function ferr(el, msg) {
+    fclr(el);
+    el.style.borderColor = '#EF4444'; el.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.12)';
+    var s = document.createElement('span');
+    s.className = '_fve';
+    s.style.cssText = 'display:block;color:#DC2626;font-size:0.8rem;font-weight:600;margin-top:0.4rem;padding-left:0.75rem;';
+    s.textContent = '\u26a0 ' + msg;
+    el.parentNode.appendChild(s);
+  }
+  function fclr(el) {
+    var xs = el.parentNode.querySelectorAll('._fve'); xs.forEach(function(x){x.remove();});
+    el.style.borderColor = ''; el.style.boxShadow = '';
+  }
+  function fok(el) { fclr(el); el.style.borderColor = '#10B981'; el.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.1)'; }
+  function vEmail() {
+    var v = eEl.value.trim();
+    if (!v) { ferr(eEl, 'Email is required'); return false; }
+    if (/^\d/.test(v)) { ferr(eEl, 'Email cannot start with a number'); return false; }
+    if (!emailRx.test(v)) { ferr(eEl, 'Enter a valid email (e.g. user@example.com)'); return false; }
+    fok(eEl); return true;
+  }
+  eEl.addEventListener('blur', vEmail);
+  eEl.addEventListener('input', function() { if (eEl.parentNode.querySelector('._fve')) vEmail(); });
+  form.addEventListener('submit', function(ev) { if (!vEmail()) ev.preventDefault(); });
+})();
+</script>
 
 
 

@@ -39,12 +39,15 @@
       <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
         <div style="margin-bottom: 1.5rem;">
           <%= f.label :email, "Email", style: 'display: block; font-size: 0.875rem; font-weight: 700; color: #0D5F5C; margin-bottom: 0.5rem;' %>
-          <%= f.email_field :email, autofocus: true, autocomplete: "email", style: 'width: 100%; padding: 1rem 1.25rem; border: 2px solid #B5D6D8; border-radius: 25px; background: #F9FAFB; font-size: 1rem; outline: none; transition: all 0.2s;' %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", required: true, style: 'width: 100%; padding: 1rem 1.25rem; border: 2px solid #B5D6D8; border-radius: 25px; background: #F9FAFB; font-size: 1rem; outline: none; transition: all 0.2s;' %>
         </div>
 
-        <div style="margin-bottom: 1.5rem;">
+        <div style="margin-bottom: 1.5rem; position: relative;">
           <%= f.label :password, "Password", style: 'display: block; font-size: 0.875rem; font-weight: 700; color: #0D5F5C; margin-bottom: 0.5rem;' %>
-          <%= f.password_field :password, autocomplete: "current-password", style: 'width: 100%; padding: 1rem 1.25rem; border: 2px solid #B5D6D8; border-radius: 25px; background: #F9FAFB; font-size: 1rem; outline: none; transition: all 0.2s;' %>
+          <div style="position: relative;">
+            <%= f.password_field :password, autocomplete: "current-password", required: true, style: 'width: 100%; padding: 1rem 3rem 1rem 1.25rem; border: 2px solid #B5D6D8; border-radius: 25px; background: #F9FAFB; font-size: 1rem; outline: none; transition: all 0.2s;' %>
+            <button type="button" class="_eye-toggle" onclick="togglePwVis(this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.2rem;color:#6B7280;padding:4px;line-height:1;" title="Show password">👁️</button>
+          </div>
         </div>
 
         <div style="margin-bottom: 1.5rem;">
@@ -58,3 +61,54 @@
     </div>
   </div>
 </div>
+
+<script>
+function togglePwVis(btn) {
+  var inp = btn.parentElement.querySelector('input');
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; btn.title = 'Hide password'; }
+  else { inp.type = 'password'; btn.textContent = '👁️'; btn.title = 'Show password'; }
+}
+(function() {
+  var eEl = document.getElementById('user_email');
+  var pEl = document.getElementById('user_password');
+  if (!eEl || !pEl) return;
+  var form = eEl.closest('form');
+  form.setAttribute('novalidate', '');
+  var emailRx = /^[a-zA-Z][a-zA-Z0-9._%+\-]*@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+  function ferr(el, msg) {
+    fclr(el);
+    var t = el.closest('div[style]') || el.parentNode;
+    t.style.position = 'relative';
+    el.style.borderColor = '#EF4444'; el.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.12)';
+    var s = document.createElement('span');
+    s.className = '_fve';
+    s.style.cssText = 'display:block;color:#DC2626;font-size:0.8rem;font-weight:600;margin-top:0.4rem;padding-left:0.75rem;';
+    s.textContent = '\u26a0 ' + msg;
+    el.parentNode.appendChild(s);
+  }
+  function fclr(el) {
+    var xs = el.parentNode.querySelectorAll('._fve'); xs.forEach(function(x){x.remove();});
+    el.style.borderColor = ''; el.style.boxShadow = '';
+  }
+  function fok(el) { fclr(el); el.style.borderColor = '#10B981'; el.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.1)'; }
+  function vEmail() {
+    var v = eEl.value.trim();
+    if (!v) { ferr(eEl, 'Email is required'); return false; }
+    if (/^\d/.test(v)) { ferr(eEl, 'Email cannot start with a number'); return false; }
+    if (!emailRx.test(v)) { ferr(eEl, 'Enter a valid email address (e.g. user@example.com)'); return false; }
+    fok(eEl); return true;
+  }
+  function vPw() {
+    if (!pEl.value) { ferr(pEl, 'Password is required'); return false; }
+    fok(pEl); return true;
+  }
+  eEl.addEventListener('blur', vEmail);
+  pEl.addEventListener('blur', vPw);
+  eEl.addEventListener('input', function() { if (eEl.parentNode.querySelector('._fve')) vEmail(); });
+  pEl.addEventListener('input', function() { if (pEl.parentNode.querySelector('._fve')) vPw(); });
+  form.addEventListener('submit', function(ev) {
+    var ok = vEmail() & vPw();
+    if (!ok) { ev.preventDefault(); var f = form.querySelector('._fve'); if (f) { var inp = f.parentNode.querySelector('input'); if (inp) inp.focus(); } }
+  });
+})();
+</script>
