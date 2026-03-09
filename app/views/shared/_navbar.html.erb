@@ -417,7 +417,7 @@
               <span class="dropdown-icon">📋</span> My Requests
             <% end %>
             <div class="user-dropdown-divider"></div>
-            <%= button_to destroy_user_session_path, method: :delete, class: 'user-dropdown-item logout-item', form: { style: 'margin: 0;' } do %>
+            <%= button_to destroy_user_session_path, method: :delete, class: 'user-dropdown-item logout-item', form: { style: 'margin: 0;' }, data: { logout_confirm: true } do %>
               <span class="dropdown-icon">🚪</span> Logout
             <% end %>
           </div>

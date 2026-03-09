@@ -1,65 +1,184 @@
-<div class="min-h-screen flex items-center justify-center px-4 py-12" style="background: #FFFFFF;">
-  <div class="max-w-xl w-full">
-    <!-- Card Container -->
-    <div class="bg-white rounded-3xl shadow-lg p-10 md:p-12 text-center">
-      
-      <!-- Pet Image Circle -->
-      <div class="flex justify-center mb-8">
-        <div class="w-40 h-40 rounded-full overflow-hidden border-4 border-orange-300 shadow-lg">
-          <%= image_tag "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=400&fit=crop", 
-              alt: "Pet", 
-              class: "w-full h-full object-cover",
-              onerror: "this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22%3E%3Crect fill=%22%23FED7AA%22 width=%22160%22 height=%22160%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2260%22 text-anchor=%22middle%22 dy=%22.3em%22%3E🐕%3C/text%3E%3C/svg%3E';" %>
-        </div>
+<style>
+  .forgot-pw-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 2rem 1rem;
+  }
+
+  .decorative-shape {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.55;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .shape-1 { width: 280px; height: 280px; background: #B5D6D8; top: 5%;    left: 4%;  }
+  .shape-2 { width: 350px; height: 350px; background: #F4B5C8; bottom: 5%; right: 4%; }
+
+  .forgot-pw-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 460px;
+    background: white;
+    border-radius: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    padding: 3rem 2.5rem;
+  }
+
+  .forgot-pw-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.25rem;
+    margin: 0 auto 1.75rem;
+    box-shadow: 0 6px 20px rgba(13, 95, 92, 0.15);
+  }
+
+  .forgot-pw-title {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: #0D5F5C;
+    letter-spacing: -0.5px;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    line-height: 1.15;
+  }
+
+  .forgot-pw-subtitle {
+    font-size: 0.9375rem;
+    color: #6B7280;
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .forgot-pw-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0D5F5C;
+    margin-bottom: 0.5rem;
+  }
+
+  .forgot-pw-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #B5D6D8;
+    border-radius: 25px;
+    background: #F9FAFB;
+    font-size: 1rem;
+    color: #1F2937;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    box-sizing: border-box;
+  }
+
+  .forgot-pw-input:focus {
+    border-color: #0D5F5C;
+    background: white;
+  }
+
+  .forgot-pw-submit {
+    width: 100%;
+    padding: 1.1rem;
+    background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
+    color: white;
+    font-weight: 900;
+    font-size: 1.0625rem;
+    letter-spacing: 0.4px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(13, 95, 92, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 1.5rem;
+  }
+
+  .forgot-pw-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(13, 95, 92, 0.4);
+  }
+
+  .forgot-pw-links {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 2px solid #F4E9E3;
+    margin-top: 1.5rem;
+  }
+
+  .forgot-pw-links a {
+    color: #6B7280;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .forgot-pw-links a:hover { color: #0D5F5C; }
+
+  .forgot-pw-signup {
+    font-size: 0.875rem;
+    color: #6B7280;
+    margin-top: 0.75rem;
+  }
+
+  .forgot-pw-signup a {
+    color: #0D5F5C;
+    font-weight: 700;
+  }
+
+  @media (max-width: 768px) {
+    .forgot-pw-card  { padding: 2.25rem 1.5rem; }
+    .forgot-pw-title { font-size: 1.875rem; }
+    .shape-1 { width: 160px; height: 160px; top: 10px; left: -40px; }
+    .shape-2 { width: 200px; height: 200px; bottom: 10px; right: -50px; }
+  }
+</style>
+
+<div class="forgot-pw-container">
+  <div class="decorative-shape shape-1"></div>
+  <div class="decorative-shape shape-2"></div>
+
+  <div class="forgot-pw-card">
+    <div class="forgot-pw-icon">🔑</div>
+
+    <h2 class="forgot-pw-title">Forgot Password?</h2>
+    <p class="forgot-pw-subtitle">
+      Enter the email address associated with your account.<br>
+      We'll send you a link to reset your password.
+    </p>
+
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+      <%= render "users/shared/error_messages", resource: resource %>
+
+      <div style="margin-bottom: 0.25rem;">
+        <%= f.label :email, "Email Address", class: 'forgot-pw-label' %>
+        <%= f.email_field :email,
+            autofocus: true,
+            autocomplete: "email",
+            placeholder: "you@example.com",
+            class: 'forgot-pw-input' %>
       </div>
-      
-      <!-- Header -->
-      <div class="mb-6">
-        <h2 class="text-4xl font-extrabold mb-4 text-gray-800">
-          Forgot Password?
-        </h2>
-        <p class="text-gray-600 text-base mb-2 leading-relaxed">
-          Enter the email address<br>
-          associated with your account.
-        </p>
-        <p class="text-gray-500 text-sm">
-          We will email you a link to reset your password.
-        </p>
-      </div>
 
-      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-        <%= render "users/shared/error_messages", resource: resource %>
+      <%= f.submit "Send Reset Instructions", class: 'forgot-pw-submit' %>
+    <% end %>
 
-        <!-- Email Input -->
-        <div class="mb-6">
-          <%= f.email_field :email, 
-              autofocus: true, 
-              autocomplete: "email", 
-              placeholder: 'Enter Email Address',
-              class: 'w-full px-6 py-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-800 text-center placeholder-gray-400 focus:border-orange-400 focus:bg-white focus:outline-none transition-all duration-200 text-lg' %>
-        </div>
+    <div class="forgot-pw-links">
+      <%= link_to "← Back to Login", new_session_path(resource_name) %>
 
-        <!-- Submit Button -->
-        <div class="mb-4">
-          <%= f.submit "Send", 
-              class: 'w-full md:w-64 mx-auto block py-4 px-8 rounded-full font-bold text-white text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer',
-              style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);' %>
-        </div>
-      <% end %>
-
-    </div>
-
-    <!-- Bottom Links -->
-    <div class="text-center mt-8 space-y-3">
-      <%= link_to new_session_path(resource_name), class: 'block text-gray-600 hover:text-orange-600 font-medium text-sm transition-colors duration-200' do %>
-        <span>← Back to Login</span>
-      <% end %>
-      
       <% if devise_mapping.registerable? %>
-        <div class="text-gray-600 text-sm">
+        <p class="forgot-pw-signup">
           Don't have an account?
-          <%= link_to "Sign up", new_registration_path(resource_name), class: 'text-orange-600 hover:text-orange-700 font-semibold ml-1' %>
-        </div>
+          <%= link_to "Sign up", new_registration_path(resource_name) %>
+        </p>
       <% end %>
     </div>
   </div>

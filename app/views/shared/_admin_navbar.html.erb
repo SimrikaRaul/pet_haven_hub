@@ -185,7 +185,7 @@
       <div class="sidebar-user-name"><%= current_user.full_name %></div>
       <div class="sidebar-user-role">Administrator</div>
     </div>
-    <%= button_to 'Logout', destroy_user_session_path, method: :delete, class: 'sidebar-logout', form: { style: 'display: inline;' } %>
+    <%= button_to 'Logout', destroy_user_session_path, method: :delete, class: 'sidebar-logout', form: { style: 'display: inline;' }, data: { logout_confirm: true } %>
   </div>
 </aside>
 

@@ -46,9 +46,8 @@
     }
     
     .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
+      width: 100%;
+      padding: 0 24px;
     }
     
   
@@ -218,5 +217,66 @@
   </main>
 
   <%= render 'shared/footer' %>
+
+  <!-- Logout Confirmation Modal -->
+  <div id="logout-modal" style="display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center;">
+    <div id="logout-modal-backdrop" style="position:absolute; inset:0; background:rgba(0,0,0,0.45); backdrop-filter:blur(3px);"></div>
+    <div style="position:relative; background:white; border-radius:20px; padding:2.5rem 2rem; width:100%; max-width:400px; margin:1rem; box-shadow:0 20px 60px rgba(0,0,0,0.25); text-align:center; animation:modalSlideIn 0.2s ease-out;">
+      <div style="font-size:3rem; margin-bottom:1rem;">🚪</div>
+      <h3 style="font-size:1.5rem; font-weight:800; color:#1F2937; margin-bottom:0.5rem;">Log Out?</h3>
+      <p style="color:#6B7280; font-size:0.9375rem; margin-bottom:2rem; line-height:1.6;">Are you sure you want to logout?</p>
+      <div style="display:flex; gap:0.75rem; justify-content:center;">
+        <button id="logout-cancel-btn" style="padding:0.75rem 1.75rem; border-radius:10px; border:2px solid #E5E7EB; background:white; color:#374151; font-weight:700; font-size:0.9375rem; cursor:pointer; transition:all 0.2s;">Cancel</button>
+        <button id="logout-confirm-btn" style="padding:0.75rem 1.75rem; border-radius:10px; border:none; background:linear-gradient(135deg,#EF4444,#DC2626); color:white; font-weight:700; font-size:0.9375rem; cursor:pointer; transition:all 0.2s;">Yes, Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes modalSlideIn {
+      from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0)   scale(1);    }
+    }
+  </style>
+
+  <script>
+    (function() {
+      var modal = document.getElementById('logout-modal');
+      var confirmBtn = document.getElementById('logout-confirm-btn');
+      var cancelBtn  = document.getElementById('logout-cancel-btn');
+      var backdrop   = document.getElementById('logout-modal-backdrop');
+      var pendingForm = null;
+
+      function showModal(form) {
+        pendingForm = form;
+        modal.style.display = 'flex';
+      }
+
+      function hideModal() {
+        modal.style.display = 'none';
+        pendingForm = null;
+      }
+
+      document.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-logout-confirm]');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        showModal(btn.closest('form'));
+      });
+
+      confirmBtn.addEventListener('click', function() {
+        if (pendingForm) pendingForm.submit();
+        hideModal();
+      });
+
+      cancelBtn.addEventListener('click', hideModal);
+      backdrop.addEventListener('click', hideModal);
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') hideModal();
+      });
+    })();
+  </script>
 </body>
 </html>

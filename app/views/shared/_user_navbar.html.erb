@@ -12,9 +12,8 @@
     }
 
     .navbar-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
+      width: 100%;
+      padding: 0 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -360,6 +359,7 @@
 
       .navbar-container {
         flex-wrap: wrap;
+        padding: 0 16px;
       }
 
       .user-dropdown-menu {
@@ -411,7 +411,7 @@
               <span class="dropdown-icon">📋</span> My Requests
             <% end %>
             <div class="user-dropdown-divider"></div>
-            <%= button_to destroy_user_session_path, method: :delete, class: 'user-dropdown-item logout-item', form: { style: 'margin: 0;' } do %>
+            <%= button_to destroy_user_session_path, method: :delete, class: 'user-dropdown-item logout-item', form: { style: 'margin: 0;' }, data: { logout_confirm: true } do %>
               <span class="dropdown-icon">🚪</span> Logout
             <% end %>
           </div>
