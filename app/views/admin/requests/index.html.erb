@@ -149,6 +149,7 @@
   }
   
   .status-open { background: #FEF3C7; color: #92400E; }
+  .status-pending { background: #FEF3C7; color: #92400E; }
   .status-approved { background: #D1FAE5; color: #065F46; }
   .status-rejected { background: #FEE2E2; color: #991B1B; }
   .status-completed { background: #E0F2F1; color: #0D5F5C; }
@@ -160,6 +161,7 @@
   }
   
   .status-open .status-dot { background: #F59E0B; }
+  .status-pending .status-dot { background: #F59E0B; }
   .status-approved .status-dot { background: #10B981; }
   .status-rejected .status-dot { background: #EF4444; }
   .status-completed .status-dot { background: #0D5F5C; }
@@ -264,7 +266,7 @@
   <div class="stats-grid">
     <div class="stat-card open">
       <div class="stat-label">⏳ Open</div>
-      <div class="stat-number"><%= Request.where(status: 'open').count %></div>
+      <div class="stat-number"><%= Request.where(status: ['open', 'pending']).count %></div>
     </div>
     <div class="stat-card approved">
       <div class="stat-label">✓ Approved</div>
@@ -318,7 +320,7 @@
               <td>
                 <div class="actions-cell">
                   <%= link_to 'View', admin_request_path(request), class: 'action-btn btn-view' %>
-                  <% if request.open? %>
+                  <% if request.open? || request.pending? %>
                     <%= link_to 'Approve', admin_request_path(request, status: 'approved'), method: :patch, data: { confirm: 'Approve this request?' }, class: 'action-btn btn-approve' %>
                     <%= link_to 'Reject', admin_request_path(request, status: 'rejected'), method: :patch, data: { confirm: 'Reject this request?' }, class: 'action-btn btn-reject' %>
                   <% end %>

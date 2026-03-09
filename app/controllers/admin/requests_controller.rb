@@ -9,7 +9,7 @@ module Admin
       
       @stats = {
         total: Request.count,
-        open: Request.where(status: 'open').count,
+        open: Request.where(status: ['open', 'pending']).count,
         approved: Request.where(status: 'approved').count,
         rejected: Request.where(status: 'rejected').count,
         completed: Request.where(status: 'completed').count

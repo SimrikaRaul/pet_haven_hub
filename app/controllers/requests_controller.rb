@@ -28,7 +28,7 @@ class RequestsController < ApplicationController
   def create
     @request = current_user.requests.build(request_params)
     @request.pet = @pet
-    @request.status = 'pending'
+    @request.status = 'open'
     
     if @request.save
       RecommendationRefreshJob.perform_later(current_user.id)

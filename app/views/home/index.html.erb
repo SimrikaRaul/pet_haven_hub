@@ -326,7 +326,7 @@
     <% if @featured_pets.any? %>
       <div class="pets-grid">
         <% @featured_pets.each do |pet| %>
-          <%= link_to pet_path(pet), style: 'text-decoration: none;' do %>
+          <%= link_to pet_path(pet, source: 'home'), style: 'text-decoration: none;' do %>
             <div class="pet-card-home">
               <% if pet.image.attached? %>
                 <%= image_tag pet.image, alt: pet.name, class: 'pet-card-image' %>
@@ -375,7 +375,7 @@
           <% pet = item[:pet] %>
           <% score = item[:compatibility_score] || 0 %>
           <% explanations = item[:explanation] || [] %>
-          <%= link_to pet_path(pet), style: 'text-decoration: none;' do %>
+          <%= link_to pet_path(pet, source: 'home'), style: 'text-decoration: none;' do %>
             <div class="pet-card-home">
               <% if pet.image.attached? %>
                 <%= image_tag pet.image, alt: pet.name, class: 'pet-card-image' %>

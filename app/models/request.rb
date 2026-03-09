@@ -84,11 +84,11 @@ class Request < ApplicationRecord
   end
 
   def can_be_approved?
-    open? && pet.available?
+    (open? || pending?) && pet.available?
   end
 
   def can_be_rejected?
-    open? || scheduled?
+    open? || pending? || scheduled?
   end
 
   def in_progress?

@@ -371,8 +371,10 @@
 </style>
 
 <div class="pet-show-container">
-  <%= link_to pets_path, class: 'back-link-pet' do %>
-    <span>←</span> Back to Browse Pets
+  <% back_path = params[:source] == 'home' ? root_path : pets_path %>
+  <% back_label = params[:source] == 'home' ? 'Back to Home' : 'Back to Browse Pets' %>
+  <%= link_to back_path, class: 'back-link-pet' do %>
+    <span>←</span> <%= back_label %>
   <% end %>
   
   <div class="pet-detail-card">

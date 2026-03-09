@@ -905,7 +905,7 @@
             <article class="pet-card">
               <!-- Pet Image -->
               <div class="pet-image-wrapper">
-                <%= link_to pet_path(pet) do %>
+                <%= link_to pet_path(pet, source: 'browse') do %>
                   <% if pet.image.attached? %>
                     <%= image_tag pet.image, alt: pet.name, class: 'pet-image' %>
                   <% else %>
@@ -959,7 +959,7 @@
 
                 <!-- Action Buttons -->
                 <div class="pet-actions">
-                  <%= link_to 'View Details', pet_path(pet), style: 'flex: 1; padding: 0.875rem; text-align: center; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
+                  <%= link_to 'View Details', pet_path(pet, source: 'browse'), style: 'flex: 1; padding: 0.875rem; text-align: center; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
                   
                   <% if user_signed_in? %>
                     <%= button_to '❤️ Adopt', pet_requests_path(pet), method: :post, params: { request: { request_type: 'adopt' } }, style: 'flex: 1; padding: 0.875rem; background: white; color: #F97316; font-weight: 700; border: 2px solid #F97316; border-radius: 12px; cursor: pointer; transition: all 0.3s;' %>

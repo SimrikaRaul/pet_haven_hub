@@ -74,6 +74,7 @@
   }
   
   .status-badge-detail.open { background: #FEF3C7; color: #92400E; }
+  .status-badge-detail.pending { background: #FEF3C7; color: #92400E; }
   .status-badge-detail.approved { background: #D1FAE5; color: #065F46; }
   .status-badge-detail.rejected { background: #FEE2E2; color: #991B1B; }
   .status-badge-detail.completed { background: #E0F2F1; color: #0D5F5C; }
@@ -207,7 +208,7 @@
           </div>
         </div>
         
-        <% if @request.open? %>
+        <% if @request.open? || @request.pending? %>
           <div class="action-buttons">
             <%= link_to admin_request_path(@request, status: 'approved'), method: :patch, data: { confirm: 'Are you sure you want to approve this request?' }, class: 'btn-action btn-approve-action' do %>
               ✓ Approve Request
@@ -239,6 +240,10 @@
             </div>
           </div>
           <div class="info-row" style="margin-bottom: 0;">
+            <div class="info-label">Phone Number</div>
+            <div class="info-value"><%= @request.phone_number.present? ? @request.phone_number : '—' %></div>
+          </div>
+          <div class="info-row" style="margin-bottom: 0;">
             <div class="info-label">Member Since</div>
             <div class="info-value"><%= @request.user.created_at.strftime('%B %-d, %Y') %></div>
           </div>
@@ -249,11 +254,97 @@
         </div>
       </div>
 
+      <!-- Adoption Details -->
+      <div class="detail-card">
+        <h3 class="card-title">
+          <span>📋</span> Adoption Details
+        </h3>
+        <div class="info-grid">
+          <div class="info-row" style="margin-bottom: 0;">
+            <div class="info-label">Citizenship Number</div>
+            <div class="info-value"><%= @request.citizenship_number.present? ? @request.citizenship_number : '—' %></div>
+          </div>
+          <div class="info-row" style="margin-bottom: 0;">
+            <div class="info-label">House Type</div>
+            <div class="info-value"><%= @request.house_type.present? ? @request.house_type.titleize : '—' %></div>
+          </div>
+          <div class="info-row" style="margin-bottom: 0;">
+            <div class="info-label">Has Other Pets</div>
+            <div class="info-value">
+              <% if @request.has_other_pets.nil? %>
+                —
+              <% elsif @request.has_other_pets %>
+                <span style="color: #059669; font-weight: 700;">✓ Yes</span>
+              <% else %>
+                <span style="color: #6B7280; font-weight: 700;">✗ No</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-label">Address</div>
+          <div class="description-box">
+            <p class="description-text"><%= @request.address.present? ? @request.address : 'No address provided.' %></p>
+          </div>
+        </div>
+
+        <% if @request.citizenship_photo.attached? %>
+          <div class="info-row">
+            <div class="info-label">Citizenship Photo</div>
+            <div style="margin-top: 0.5rem;">
+              <%= image_tag @request.citizenship_photo, style: 'max-width: 320px; border-radius: 12px; border: 2px solid #E5E7EB; box-shadow: 0 2px 8px rgba(0,0,0,0.08);' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Reason for Adoption -->
+      <div class="detail-card">
+        <h3 class="card-title">
+          <span>💬</span> Reason for Adoption
+        </h3>
+        <div class="description-box">
+          <p class="description-text">
+            <%= @request.reason.present? ? @request.reason : 'No reason provided by the applicant.' %>
+          </p>
+        </div>
+      </div>
+
+      <% if @request.experience.present? %>
+        <!-- Pet Care Experience -->
+        <div class="detail-card">
+          <h3 class="card-title">
+            <span>🏅</span> Pet Care Experience
+          </h3>
+          <div class="description-box">
+            <p class="description-text"><%= @request.experience %></p>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @request.notes.present? %>
+        <!-- Additional Notes -->
+        <div class="detail-card">
+          <h3 class="card-title">
+            <span>📝</span> Additional Notes
+          </h3>
+          <div class="description-box">
+            <p class="description-text"><%= @request.notes %></p>
+          </div>
+        </div>
+      <% end %>
+
       <!-- Pet Information -->
       <div class="detail-card">
         <h3 class="card-title">
           <span>🐾</span> Pet Information
         </h3>
+        <% if @request.pet.image.attached? %>
+          <div style="margin-bottom: 1.5rem;">
+            <%= image_tag @request.pet.image, style: 'width: 100%; max-height: 300px; object-fit: cover; border-radius: 16px;' %>
+          </div>
+        <% end %>
         <div class="info-grid">
           <div class="info-row" style="margin-bottom: 0;">
             <div class="info-label">Pet Name</div>
@@ -281,18 +372,6 @@
             </div>
           </div>
         <% end %>
-      </div>
-
-      <!-- Applicant Notes -->
-      <div class="detail-card">
-        <h3 class="card-title">
-          <span>📝</span> Applicant Notes
-        </h3>
-        <div class="description-box">
-          <p class="description-text">
-            <%= @request.notes.present? ? @request.notes : 'No additional notes provided by the applicant.' %>
-          </p>
-        </div>
       </div>
     </div>
   </div>
