@@ -76,15 +76,19 @@ class RequestsController < ApplicationController
   end
   
   def check_duplicate_request
-    if current_user.requests.where(pet_id: @pet.id).exists?
-      redirect_to pet_path(@pet), alert: 'You have already requested adoption for this pet.', status: :see_other
+    # Only block if there's an existing request still pending decision
+    # Allow re-request if previous request was rejected or completed
+    if current_user.requests.pending_decision.where(pet_id: @pet.id).exists?
+      redirect_to pet_path(@pet), alert: 'You have already submitted a request for this pet.', status: :see_other
     end
   end
 
   def check_active_request_limit
-    active_count = current_user.requests.active.count
-    if active_count >= Request::MAX_ACTIVE_REQUESTS
-      redirect_to pet_path(@pet), alert: 'You already have 3 active adoption requests. Please wait until one request is approved or rejected.', status: :see_other
+    # Count requests that are still pending decision (open, pending, under_review)
+    pending_count = current_user.requests.pending_decision.count
+
+    if pending_count >= Request::MAX_ACTIVE_REQUESTS
+      redirect_to pet_path(@pet), alert: "You can only request up to #{Request::MAX_ACTIVE_REQUESTS} pets at a time. Please wait until a request is approved or rejected.", status: :see_other
     end
   end
 end

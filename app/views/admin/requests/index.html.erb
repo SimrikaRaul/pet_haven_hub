@@ -170,8 +170,14 @@
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+    align-items: center;
   }
-  
+
+  .actions-cell form {
+    display: inline;
+    margin: 0;
+  }
+
   .action-btn {
     padding: 0.5rem 1rem;
     border-radius: 8px;
@@ -180,6 +186,8 @@
     text-decoration: none;
     transition: all 0.2s;
     display: inline-block;
+    cursor: pointer;
+    border: none;
   }
   
   .btn-view {
@@ -321,8 +329,8 @@
                 <div class="actions-cell">
                   <%= link_to 'View', admin_request_path(request), class: 'action-btn btn-view' %>
                   <% if request.open? || request.pending? %>
-                    <%= link_to 'Approve', admin_request_path(request, status: 'approved'), method: :patch, data: { confirm: 'Approve this request?' }, class: 'action-btn btn-approve' %>
-                    <%= link_to 'Reject', admin_request_path(request, status: 'rejected'), method: :patch, data: { confirm: 'Reject this request?' }, class: 'action-btn btn-reject' %>
+                    <%= button_to 'Approve', approve_admin_request_path(request), method: :post, data: { turbo_confirm: 'Approve this request?' }, class: 'action-btn btn-approve' %>
+                    <%= button_to 'Reject', reject_admin_request_path(request), method: :post, data: { turbo_confirm: 'Reject this request?' }, class: 'action-btn btn-reject' %>
                   <% end %>
                 </div>
               </td>

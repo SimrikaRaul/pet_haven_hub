@@ -57,6 +57,7 @@ class Request < ApplicationRecord
   scope :rejected, -> { where(status: 'rejected') }
   scope :completed, -> { where(status: 'completed') }
   scope :active, -> { where(status: %w[pending under_review]) }
+  scope :pending_decision, -> { where(status: %w[open pending under_review]) }
   scope :for_adoption, -> { where(request_type: 'adopt') }
   scope :for_donation, -> { where(request_type: 'donate') }
   scope :recent, -> { order(created_at: :desc) }
@@ -118,17 +119,23 @@ class Request < ApplicationRecord
   def not_duplicate_request
     return unless user_id.present? && pet_id.present?
 
-    if Request.where(user_id: user_id, pet_id: pet_id).exists?
-      errors.add(:base, 'You have already requested adoption for this pet.')
+    # Only block if there's an existing request that is still pending decision
+    # Allow re-request if previous request was rejected or completed
+    existing_pending = Request.pending_decision.where(user_id: user_id, pet_id: pet_id).exists?
+
+    if existing_pending
+      errors.add(:base, 'You have already submitted a request for this pet.')
     end
   end
 
   def within_active_request_limit
     return unless user_id.present?
 
-    active_count = Request.active.where(user_id: user_id).count
-    if active_count >= MAX_ACTIVE_REQUESTS
-      errors.add(:base, 'You already have 3 active adoption requests. Please wait until one request is approved or rejected.')
+    # Count requests that are still pending decision (open, pending, under_review)
+    pending_count = Request.pending_decision.where(user_id: user_id).count
+
+    if pending_count >= MAX_ACTIVE_REQUESTS
+      errors.add(:base, "You can only request up to #{MAX_ACTIVE_REQUESTS} pets at a time. Please wait until a request is approved or rejected.")
     end
   end
 

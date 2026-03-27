@@ -3,15 +3,25 @@ function dismissToast(toast) {
   toast.addEventListener('transitionend', function handler() {
     toast.removeEventListener('transitionend', handler);
     toast.remove();
+
+    // Remove container if empty
+    var container = document.querySelector('.toast-container');
+    if (container && container.children.length === 0) {
+      container.remove();
+    }
   });
 }
 
 function initFlashMessages() {
   document.querySelectorAll('.toast-message').forEach(function (toast) {
-    // Auto-dismiss after 5 seconds
+    // Skip if already initialized
+    if (toast.dataset.initialized) return;
+    toast.dataset.initialized = 'true';
+
+    // Auto-dismiss after 10 seconds
     var timer = setTimeout(function () {
       dismissToast(toast);
-    }, 5000);
+    }, 10000);
 
     // Manual close button
     var closeBtn = toast.querySelector('.toast-close');

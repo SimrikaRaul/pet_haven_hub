@@ -87,7 +87,12 @@
     padding-top: 2rem;
     border-top: 2px solid #E5E7EB;
   }
-  
+
+  .action-buttons form {
+    width: 100%;
+    margin: 0;
+  }
+
   .btn-action {
     width: 100%;
     padding: 1rem;
@@ -98,6 +103,8 @@
     text-align: center;
     transition: all 0.3s;
     display: block;
+    cursor: pointer;
+    border: none;
   }
   
   .btn-approve-action {
@@ -210,10 +217,10 @@
         
         <% if @request.open? || @request.pending? %>
           <div class="action-buttons">
-            <%= link_to admin_request_path(@request, status: 'approved'), method: :patch, data: { confirm: 'Are you sure you want to approve this request?' }, class: 'btn-action btn-approve-action' do %>
+            <%= button_to approve_admin_request_path(@request), method: :post, data: { turbo_confirm: 'Are you sure you want to approve this request?' }, class: 'btn-action btn-approve-action' do %>
               ✓ Approve Request
             <% end %>
-            <%= link_to admin_request_path(@request, status: 'rejected'), method: :patch, data: { confirm: 'Are you sure you want to reject this request?' }, class: 'btn-action btn-reject-action' do %>
+            <%= button_to reject_admin_request_path(@request), method: :post, data: { turbo_confirm: 'Are you sure you want to reject this request?' }, class: 'btn-action btn-reject-action' do %>
               ✗ Reject Request
             <% end %>
           </div>
