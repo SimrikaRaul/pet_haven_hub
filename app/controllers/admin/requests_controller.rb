@@ -33,6 +33,8 @@ module Admin
     def approve
       if @request.can_be_approved?
         @request.approve!
+
+        AdoptionMailer.notify_user(@request).deliver_later
         redirect_to admin_requests_path, notice: 'Request approved successfully.'
       else
         redirect_to admin_requests_path, alert: 'Cannot approve this request. Pet may not be available.'
@@ -42,6 +44,8 @@ module Admin
     def reject
       if @request.can_be_rejected?
         @request.reject!(params[:reason])
+      
+        AdoptionMailer.notify_user(@request).deliver_later
         redirect_to admin_requests_path, notice: 'Request rejected successfully.'
       else
         redirect_to admin_requests_path, alert: 'Cannot reject this request.'

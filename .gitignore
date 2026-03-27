@@ -17,3 +17,16 @@
 /yarn-error.log
 
 .byebug_history
+/storage/*
+!/storage/.keep
+
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Credentials - should be managed securely
+/config/master.key
+/config/credentials/*.key

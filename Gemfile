@@ -52,11 +52,15 @@ gem "groupdate"
 group :development, :test do
   gem "debug"
   gem "rspec-rails"
+  # Environment variable management
+  gem "dotenv-rails"
 end
 
 group :development do
   gem "web-console"
   gem "listen"
+  # Preview emails in browser instead of sending
+  gem "letter_opener_web", "~> 3.0"
 end
 
 group :test do

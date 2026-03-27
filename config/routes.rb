@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  # Letter Opener Web - Preview emails in development at /letter_opener
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
+
   devise_for :users, controllers: {
     registrations: 'users/registrations',
     sessions: 'users/sessions',

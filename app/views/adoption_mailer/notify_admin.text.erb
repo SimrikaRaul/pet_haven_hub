@@ -1,0 +1,42 @@
+Pet Haven Hub - New Adoption Request
+=====================================
+
+NEW REQUEST REQUIRES REVIEW
+
+A new adoption request has been submitted and requires your review.
+
+PET INFORMATION
+---------------
+Name: <%= @pet&.name || 'Unknown Pet' %>
+Type: <%= @pet&.pet_type&.capitalize || 'Unknown' %>
+<% if @pet&.breed.present? %>Breed: <%= @pet.breed %><% end %>
+<% if @pet&.age.present? %>Age: <%= @pet.age %> years old<% end %>
+
+REQUESTER DETAILS
+-----------------
+Name: <%= @user&.name || 'Unknown User' %>
+Email: <%= @user&.email || 'No email provided' %>
+<% if @request&.phone_number.present? %>Phone: <%= @request.phone_number %><% end %>
+
+REQUEST DETAILS
+---------------
+Request Type: <%= @request&.request_type&.capitalize || 'Adoption' %>
+Submitted: <%= @request&.created_at&.strftime('%B %d, %Y at %I:%M %p') || 'Unknown' %>
+<% if @request&.house_type.present? %>Housing Type: <%= @request.house_type.humanize %><% end %>
+Status: <%= @request&.status&.humanize || 'Open' %>
+
+<% if @request&.reason.present? %>
+REASON FOR ADOPTION
+-------------------
+<%= @request.reason %>
+<% end %>
+
+ACTION REQUIRED
+---------------
+Review this request in the admin dashboard:
+<%= @admin_dashboard_url %>
+
+---
+This request requires your review before the adoption process can proceed.
+
+(c) <%= Date.current.year %> Pet Haven Hub

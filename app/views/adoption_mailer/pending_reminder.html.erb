@@ -1,0 +1,80 @@
+<% # Pending reminder email for users %>
+
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+  <!-- Status Badge -->
+  <tr>
+    <td style="padding-bottom: 24px;">
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td style="background-color: #dbeafe; color: #1e40af; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+            Request Under Review
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Greeting -->
+  <tr>
+    <td style="padding-bottom: 20px;">
+      <h2 style="margin: 0; font-size: 22px; font-weight: 600; color: #1f2937;">
+        Hello, <%= @user&.name || 'Valued Member' %>!
+      </h2>
+    </td>
+  </tr>
+
+  <!-- Message -->
+  <tr>
+    <td style="padding-bottom: 24px;">
+      <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #4b5563;">
+        We wanted to let you know that your adoption request for <strong><%= @pet&.name || 'the pet' %></strong>
+        is still being reviewed. It has been <%= @days_pending || 0 %> <%= @days_pending == 1 ? 'day' : 'days' %> since you submitted your request.
+      </p>
+    </td>
+  </tr>
+
+  <!-- Info Card -->
+  <tr>
+    <td style="padding-bottom: 24px;">
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
+        <tr>
+          <td style="padding: 20px;">
+            <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4b5563;">
+              Our team carefully reviews each adoption request to ensure the best match between pets and their new families.
+              We appreciate your patience during this process.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- CTA -->
+  <tr>
+    <td style="padding-bottom: 24px;">
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td style="border-radius: 6px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <a href="<%= @requests_url %>" target="_blank" style="display: inline-block; padding: 14px 28px; font-size: 15px; font-weight: 600; color: #ffffff; text-decoration: none;">
+              View My Requests
+            </a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Closing -->
+  <tr>
+    <td>
+      <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4b5563;">
+        You'll receive an email notification as soon as there's an update on your request.
+        Thank you for your interest in giving a pet a loving home!
+      </p>
+      <p style="margin: 16px 0 0; font-size: 14px; color: #4b5563;">
+        Warm regards,<br>
+        <strong style="color: #1f2937;">The Pet Haven Hub Team</strong>
+      </p>
+    </td>
+  </tr>
+</table>

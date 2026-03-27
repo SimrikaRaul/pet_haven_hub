@@ -67,20 +67,18 @@ class Request < ApplicationRecord
     where('created_at >= ? AND created_at <= ?', start_date, end_date) if start_date.present? && end_date.present?
   end
 
-  # Instance Methods
+
   def approve!
     update(status: 'approved')
-    send_approval_notification
   end
 
   def reject!(reason = nil)
     update(status: 'rejected', rejection_reason: reason)
-    send_rejection_notification
   end
 
   def mark_as_completed
     update(status: 'completed', completed_at: Time.current)
-    send_completion_notification
+    AdoptionMailer.notify_user(self).deliver_later
   end
 
   def can_be_approved?
@@ -105,12 +103,10 @@ class Request < ApplicationRecord
     return unless adopt?
     
     if citizenship_photo.attached?
-      # Check file size (max 5MB)
       if citizenship_photo.blob.byte_size > 5.megabytes
         errors.add(:citizenship_photo, 'must be less than 5MB')
       end
       
-      # Check content type
       unless citizenship_photo.content_type.in?(%w[image/jpeg image/jpg image/png image/gif])
         errors.add(:citizenship_photo, 'must be a JPEG, PNG, or GIF image')
       end
@@ -142,12 +138,10 @@ class Request < ApplicationRecord
 
   def handle_status_change
     case status
-    when 'approved'
-      send_approval_notification
-    when 'rejected'
-      send_rejection_notification
     when 'completed'
-      send_completion_notification
+      nil
+    when 'scheduled'
+      AdoptionMailer.notify_user(self).deliver_later
     end
   end
 
@@ -163,14 +157,14 @@ class Request < ApplicationRecord
     RequestMailer.request_completed(self).deliver_later
   end
 
-  # Check if the request just became a completed adoption
+
   def became_completed_adoption?
     saved_change_to_status? && 
     status == 'completed' && 
     adopt?
   end
 
-  # Record a strong interaction (weight=5) when adoption is completed
+
   def record_adoption_interaction
     Interaction.record_adoption(user, pet)
   end

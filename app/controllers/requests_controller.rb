@@ -29,9 +29,14 @@ class RequestsController < ApplicationController
     @request = current_user.requests.build(request_params)
     @request.pet = @pet
     @request.status = 'open'
-    
+
     if @request.save
+  
+      AdoptionMailer.notify_admin(@request).deliver_later
+
+
       RecommendationRefreshJob.perform_later(current_user.id)
+
       redirect_to pet_path(@pet), notice: 'Your adoption request has been sent to admin. Please wait for approval.', status: :see_other
     else
       render :new, status: :unprocessable_entity
