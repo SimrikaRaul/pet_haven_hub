@@ -1,6 +1,6 @@
 <%= paginator.render do %>
-  <nav aria-label="Pagination" class="my-8">
-    <div class="flex items-center justify-center gap-4">
+  <nav aria-label="Pagination" style="margin: 3rem 0;">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
       <%= prev_page_tag unless current_page.first? %>
       <%= next_page_tag unless current_page.last? %>
     </div>

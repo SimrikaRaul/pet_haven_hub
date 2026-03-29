@@ -1,14 +1,14 @@
 <% if current_page.last? %>
-  <span class="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
+  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.875rem 1.75rem; font-size: 0.95rem; font-weight: 700; color: #D1D5DB; background: #F3F4F6; border-radius: 12px; cursor: not-allowed; opacity: 0.6;">
     <span>Next</span>
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
     </svg>
   </span>
 <% else %>
-  <%= link_to url, rel: 'next', remote: remote, class: 'inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-orange-400 to-orange-500 rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105' do %>
+  <%= link_to url, rel: 'next', remote: remote, style: 'display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.875rem 1.75rem; font-size: 0.95rem; font-weight: 700; color: white; background: linear-gradient(135deg, #FA6A6A 0%, #E85555 100%); border-radius: 12px; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(250, 106, 106, 0.3);' do %>
     <span>Next</span>
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
     </svg>
   <% end %>
