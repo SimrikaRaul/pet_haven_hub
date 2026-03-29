@@ -13,9 +13,33 @@ Rails.application.configure do
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
   config.silence_healthcheck_path = "/up"
   config.active_support.report_deprecations = false
-  config.action_mailer.default_url_options = { host: "example.com" }
+
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch('APP_HOST', 'pethavenhub.com'),
+    protocol: 'https'
+  }
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_caching = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: 'smtp.sendgrid.net',
+    port: 587,
+    domain: ENV.fetch('SENDGRID_DOMAIN', 'pethavenhub.com'),
+    user_name: 'apikey',
+    password: ENV.fetch('SENDGRID_API_KEY'),
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
+
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.deliver_later_queue_name = 'mailers'
+
+ 
   config.after_initialize do
-    ActiveStorage::Current.url_options = { host: "example.com" }
+    ActiveStorage::Current.url_options = {
+      host: ENV.fetch('APP_HOST', 'pethavenhub.com'),
+      protocol: 'https'
+    }
   end
   config.i18n.fallbacks = true
   config.active_record.dump_schema_after_migration = false
