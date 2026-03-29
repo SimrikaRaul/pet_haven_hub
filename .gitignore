@@ -30,3 +30,9 @@
 # Credentials - should be managed securely
 /config/master.key
 /config/credentials/*.key
+
+# Database and configuration files (SENSITIVE - DO NOT COMMIT)
+/config/database.yml
+/config/environments/production.rb
+/config/storage.yml
+/db/schema.rb
