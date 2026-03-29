@@ -12,6 +12,7 @@ class Request < ApplicationRecord
 
   # Adoption request limit constants
   MAX_ACTIVE_REQUESTS = 3
+  MAX_ADOPTION_SLOTS_PER_DATE = 5
 
   # Validations
   validates :user_id, :pet_id, :request_type, :status, presence: true
@@ -19,6 +20,12 @@ class Request < ApplicationRecord
   validates :status, inclusion: { in: statuses.keys }
   validates :notes, length: { maximum: 1000 }, allow_blank: true
   validates :scheduled_date, presence: true, if: proc { scheduled? }
+  
+  # Adoption date and admin note validations
+  validates :adoption_date, presence: true, if: proc { approved? && adopt? }
+  validates :adoption_date, inclusion: { in: proc { [Date.tomorrow..99.years.from_now] }, message: "must be a future date" }, if: proc { adoption_date.present? && approved? && adopt? }
+  validates :admin_note, length: { maximum: 2000 }, allow_blank: true
+  validate :adoption_date_slot_availability, if: proc { adoption_date.present? && approved? && adopt? }
   
   # Adoption request validations
   validates :citizenship_number, presence: { message: "is required for adoption requests" }, if: :adopt?
@@ -67,6 +74,11 @@ class Request < ApplicationRecord
   scope :by_date_range, ->(start_date, end_date) do
     where('created_at >= ? AND created_at <= ?', start_date, end_date) if start_date.present? && end_date.present?
   end
+  scope :by_adoption_date, ->(date) { where(adoption_date: date) if date.present? }
+  scope :approved_for_adoption, ->(date) { approved.for_adoption.by_adoption_date(date) }
+  scope :available_for_date, ->(date) do
+    where(adoption_date: date, status: 'approved', request_type: 'adopt')
+  end
 
 
   def approve!
@@ -98,7 +110,64 @@ class Request < ApplicationRecord
     ((Time.current - created_at) / 1.day).round
   end
 
+  # Check if a given date has available slots for approval
+  def self.slots_available_for_date?(date)
+    return false if date.blank? || date <= Date.today
+    
+    approved_count = available_for_date(date).count
+    approved_count < MAX_ADOPTION_SLOTS_PER_DATE
+  end
+
+  # Get the count of approved adoptions for a given date
+  def self.approved_count_for_date(date)
+    return 0 if date.blank?
+    
+    available_for_date(date).count
+  end
+
+  # Get available dates for adoption scheduling (next 90 days with available slots)
+  def self.available_dates_for_scheduling
+    available_dates = []
+    start_date = Date.tomorrow
+    end_date = 90.days.from_now.to_date
+    
+    (start_date..end_date).each do |date|
+      available_dates << date if slots_available_for_date?(date)
+    end
+    
+    available_dates
+  end
+
+  # Get a list of fully booked dates (for disabling in date picker)
+  def self.fully_booked_dates(start_date = Date.tomorrow, end_date = 90.days.from_now.to_date)
+    booked_dates = []
+    
+    (start_date..end_date).each do |date|
+      booked_dates << date unless slots_available_for_date?(date)
+    end
+    
+    booked_dates
+  end
+
+  # Check if this request's adoption date has available slots (useful after validation)
+  def adoption_date_has_slots?
+    return true if adoption_date.blank?
+    
+    # When updating an existing approved request, exclude the current record from count
+    count = self.class.available_for_date(adoption_date).where.not(id: id).count
+    count < self.class::MAX_ADOPTION_SLOTS_PER_DATE
+  end
+
   private
+
+  def adoption_date_slot_availability
+    return if adoption_date.blank?
+    
+    # Check if this is a new adoption request or updating adoption_date
+    unless adoption_date_has_slots?
+      errors.add(:adoption_date, "is fully booked. Maximum #{self.class::MAX_ADOPTION_SLOTS_PER_DATE} adoptions per day allowed.")
+    end
+  end
 
   def citizenship_photo_validation
     return unless adopt?

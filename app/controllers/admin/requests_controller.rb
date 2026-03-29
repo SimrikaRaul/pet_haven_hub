@@ -17,6 +17,8 @@ module Admin
     end
 
     def show
+      @available_dates = Request.available_dates_for_scheduling
+      @booked_dates = Request.fully_booked_dates
     end
 
     def update
@@ -31,13 +33,42 @@ module Admin
     end
 
     def approve
-      if @request.can_be_approved?
-        @request.approve!
-
-        AdoptionMailer.notify_user(@request).deliver_later
-        redirect_to admin_requests_path, notice: 'Request approved successfully.'
+      # Handle adoption requests with date scheduling
+      if @request.adopt? && @request.can_be_approved?
+        if request.post? && params[:request].present?
+          # Process approval with adoption_date and admin_note
+          approval_params = params.require(:request).permit(:adoption_date, :admin_note)
+          
+          if @request.update(approval_params.merge(status: 'approved'))
+            AdoptionMailer.request_approved(@request).deliver_later
+            
+            redirect_to admin_requests_path, 
+                       notice: "Request approved successfully for #{@request.adoption_date.strftime('%B %-d, %Y')}.",
+                       status: :see_other
+          else
+            @available_dates = Request.available_dates_for_scheduling
+            @booked_dates = Request.fully_booked_dates
+            render :show, status: :unprocessable_entity
+          end
+        else
+          # Show the approval form (via modal or show view)
+          @available_dates = Request.available_dates_for_scheduling
+          @booked_dates = Request.fully_booked_dates
+          # The approval form will be shown in the show.html.erb view
+          render :show
+        end
+      elsif @request.can_be_approved?
+        # For non-adoption requests, approve directly
+        @request.update(status: 'approved')
+        AdoptionMailer.request_approved(@request).deliver_later
+        
+        redirect_to admin_requests_path, 
+                   notice: 'Request approved successfully.',
+                   status: :see_other
       else
-        redirect_to admin_requests_path, alert: 'Cannot approve this request. Pet may not be available.'
+        redirect_to admin_requests_path, 
+                   alert: 'Cannot approve this request. Pet may not be available.',
+                   status: :see_other
       end
     end
 
@@ -45,10 +76,10 @@ module Admin
       if @request.can_be_rejected?
         @request.reject!(params[:reason])
       
-        AdoptionMailer.notify_user(@request).deliver_later
-        redirect_to admin_requests_path, notice: 'Request rejected successfully.'
+        AdoptionMailer.request_rejected(@request).deliver_later
+        redirect_to admin_requests_path, notice: 'Request rejected successfully.', status: :see_other
       else
-        redirect_to admin_requests_path, alert: 'Cannot reject this request.'
+        redirect_to admin_requests_path, alert: 'Cannot reject this request.', status: :see_other
       end
     end
 
@@ -59,7 +90,7 @@ module Admin
     end
 
     def request_params
-      params.fetch(:request, ActionController::Parameters.new).permit(:status, :notes)
+      params.fetch(:request, ActionController::Parameters.new).permit(:status, :notes, :adoption_date, :admin_note)
     end
   end
 end

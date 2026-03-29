@@ -23,6 +23,8 @@
               <p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
                 We're thrilled to inform you that your adoption request for <strong style="color: #059669;"><%= @pet&.name %></strong> has been <strong>APPROVED</strong>! 🎉
               </p>
+              
+              <!-- Pet Details Card -->
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f0fdf4; border-radius: 6px; border-left: 4px solid #059669; margin-bottom: 30px;">
                 <tr>
                   <td style="padding: 20px;">
@@ -33,23 +35,78 @@
                   </td>
                 </tr>
               </table>
-              <p style="margin: 0 0 16px; color: #1f2937; font-size: 16px; font-weight: 600;">Next Steps</p>
-              <ol style="margin: 0 0 24px; padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.8;">
-                <li style="margin-bottom: 10px;">We'll contact you to schedule a meeting with <%= @pet&.name %></li>
-                <li style="margin-bottom: 10px;">Complete any final paperwork required</li>
-                <li style="margin-bottom: 10px;">Finalize the adoption agreement</li>
-                <li>Welcome your new family member home!</li>
-              </ol>
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #fef3c7; border-radius: 6px; border-left: 4px solid #d97706; margin-bottom: 30px;">
+
+              <% if @adoption_date.present? %>
+                <!-- Adoption Date Card -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #eff6ff; border-radius: 6px; border-left: 4px solid #0284c7; margin-bottom: 30px;">
+                  <tr>
+                    <td style="padding: 20px;">
+                      <p style="margin: 0 0 8px; color: #0c4a6e; font-size: 14px; font-weight: 600;">📅 Scheduled Adoption Pickup Date</p>
+                      <p style="margin: 0; color: #0c4a6e; font-size: 18px; font-weight: 700;">
+                        <%= @adoption_date.strftime('%A, %B %-d, %Y') %>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              <% end %>
+
+              <% if @admin_note.present? %>
+                <!-- Admin Instructions Card -->
+                <div style="background-color: #fef8ee; border-radius: 6px; border-left: 4px solid #d97706; margin-bottom: 30px;">
+                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tr>
+                      <td style="padding: 20px;">
+                        <p style="margin: 0 0 12px; color: #92400e; font-size: 14px; font-weight: 600;">📝 Important Instructions from Our Team</p>
+                        <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">
+                          <%= @admin_note %>
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              <% end %>
+
+              <!-- Adoption Center Location Card -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #eff6ff; border-radius: 6px; border-left: 4px solid #0284c7; margin-bottom: 30px;">
                 <tr>
                   <td style="padding: 20px;">
-                    <p style="margin: 0 0 8px; color: #92400e; font-size: 14px; font-weight: 600;">⏰ Expected Timeline</p>
-                    <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.6;">
-                      We'll reach out within 24-48 hours. The adoption process typically takes 1-2 weeks.
+                    <p style="margin: 0 0 12px; color: #0c4a6e; font-size: 14px; font-weight: 600;">📍 Adoption Center Location</p>
+                    <p style="margin: 0; color: #0c4a6e; font-size: 14px; line-height: 1.8;">
+                      <strong style="font-size: 15px;"><%= @adoption_center_name %></strong><br>
+                      <%= @adoption_center_location %>
                     </p>
                   </td>
                 </tr>
               </table>
+
+              <p style="margin: 0 0 16px; color: #1f2937; font-size: 16px; font-weight: 600;">Next Steps</p>
+              <ol style="margin: 0 0 24px; padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.8;">
+                <% if @adoption_date.present? %>
+                  <li style="margin-bottom: 10px;">Mark your calendar for <%= @adoption_date.strftime('%B %-d, %Y') %></li>
+                  <li style="margin-bottom: 10px;">Review the instructions above and prepare needed items</li>
+                  <li style="margin-bottom: 10px;">Arrive a few minutes early for your pickup appointment</li>
+                  <li>Complete final paperwork and welcome <%= @pet&.name %> home!</li>
+                <% else %>
+                  <li style="margin-bottom: 10px;">We'll contact you to schedule a meeting with <%= @pet&.name %></li>
+                  <li style="margin-bottom: 10px;">Complete any final paperwork required</li>
+                  <li style="margin-bottom: 10px;">Finalize the adoption agreement</li>
+                  <li>Welcome your new family member home!</li>
+                <% end %>
+              </ol>
+
+              <% unless @adoption_date.present? %>
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #fef3c7; border-radius: 6px; border-left: 4px solid #d97706; margin-bottom: 30px;">
+                  <tr>
+                    <td style="padding: 20px;">
+                      <p style="margin: 0 0 8px; color: #92400e; font-size: 14px; font-weight: 600;">⏰ Expected Timeline</p>
+                      <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.6;">
+                        We'll reach out within 24-48 hours. The adoption process typically takes 1-2 weeks.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              <% end %>
+
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 30px;">
                 <tr>
                   <td style="text-align: center;">
@@ -69,6 +126,9 @@
               </p>
               <p style="margin: 0 0 12px; color: #6b7280; font-size: 12px;">
                 © <%= Time.current.year %> Pet Haven Hub. All rights reserved.
+              </p>
+              <p style="margin: 0; color: #6b7280; font-size: 12px;">
+                Questions? Contact us at support@petuheaven.com
               </p>
             </td>
           </tr>

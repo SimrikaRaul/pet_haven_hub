@@ -23,6 +23,10 @@ class AdoptionMailer < ApplicationMailer
     @user    = adoption_request.user
     @pet     = adoption_request.pet
     @pet_url = pet_url(@pet) if @pet.present?
+    @adoption_date = adoption_request.adoption_date
+    @admin_note = adoption_request.admin_note
+    @adoption_center_location = "Panauti, Kathmandu, Nepal"
+    @adoption_center_name = "Pet Haven Hub"
 
     return if @user&.email.blank?
 

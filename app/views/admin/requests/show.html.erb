@@ -217,11 +217,34 @@
         
         <% if @request.open? || @request.pending? %>
           <div class="action-buttons">
-            <%= button_to approve_admin_request_path(@request), method: :post, data: { turbo_confirm: 'Are you sure you want to approve this request?' }, class: 'btn-action btn-approve-action' do %>
-              ✓ Approve Request
+            <% if @request.adopt? %>
+              <button type="button" class="btn-action btn-approve-action" onclick="openApprovalModal()">
+                ✓ Approve Request
+              </button>
+            <% else %>
+              <%= button_to approve_admin_request_path(@request), method: :post, data: { turbo_confirm: 'Are you sure you want to approve this request?' }, class: 'btn-action btn-approve-action' do %>
+                ✓ Approve Request
+              <% end %>
             <% end %>
             <%= button_to reject_admin_request_path(@request), method: :post, data: { turbo_confirm: 'Are you sure you want to reject this request?' }, class: 'btn-action btn-reject-action' do %>
               ✗ Reject Request
+            <% end %>
+          </div>
+        <% end %>
+        
+        <% if @request.adoption_date.present? && @request.approved? %>
+          <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #E5E7EB;">
+            <div class="info-row">
+              <div class="info-label">Scheduled Adoption Date</div>
+              <div class="info-value" style="color: #059669;">📅 <%= @request.adoption_date.strftime('%A, %B %-d, %Y') %></div>
+            </div>
+            <% if @request.admin_note.present? %>
+              <div class="info-row">
+                <div class="info-label">Admin Instructions</div>
+                <div class="description-box" style="border-left-color: #059669;">
+                  <p class="description-text"><%= @request.admin_note %></p>
+                </div>
+              </div>
             <% end %>
           </div>
         <% end %>
@@ -383,3 +406,442 @@
     </div>
   </div>
 </div>
+
+<!-- Approval Modal -->
+<% if @request.adopt? && (@request.open? || @request.pending?) %>
+  <div id="approval-modal" class="approval-modal" style="display: none;">
+    <div class="approval-modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Schedule Adoption Pickup</h2>
+        <button type="button" class="modal-close" onclick="closeApprovalModal()">✕</button>
+      </div>
+
+      <%= form_with(model: @request, local: true, url: approve_admin_request_path(@request), method: :post) do |form| %>
+        <div class="modal-body">
+          <% if @request.errors.any? %>
+            <div class="error-alert">
+              <h3><%= pluralize(@request.errors.count, "error") %> prohibited this request from being approved:</h3>
+              <ul>
+                <% @request.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="form-group">
+            <label for="request_adoption_date" class="form-label">
+              <strong>📅 Adoption Pickup Date</strong>
+              <span class="required">*</span>
+            </label>
+            <p class="field-hint">Select a date at least one day in the future. Maximum 5 adoptions per day.</p>
+            
+            <div class="date-picker-wrapper">
+              <%= form.date_field(:adoption_date, 
+                                 id: "request_adoption_date",
+                                 class: "form-control date-input",
+                                 min: Date.tomorrow.to_s,
+                                 required: true,
+                                 data: { booked_dates: @booked_dates.map(&:to_s).to_json }) %>
+              <p class="slots-info" id="slots-info" style="display: none; margin-top: 0.5rem; font-size: 0.875rem; color: #6B7280;"></p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="request_admin_note" class="form-label">
+              <strong>📝 Admin Instructions (Optional)</strong>
+            </label>
+            <p class="field-hint">Add any special instructions for the user (e.g., opening hours, documents to bring, parking info).</p>
+            
+            <%= form.text_area(:admin_note,
+                              id: "request_admin_note",
+                              class: "form-control textarea-input",
+                              rows: 5,
+                              placeholder: "e.g., Please bring ID and proof of residence. Parking available in lot B.",
+                              maxlength: 2000) %>
+            <p class="char-count" id="char-count" style="font-size: 0.75rem; color: #9CA3AF; margin-top: 0.25rem;">
+              <span id="char-used">0</span> / 2000 characters
+            </p>
+          </div>
+
+          <div class="capacity-info" id="capacity-info-container" style="display: none;">
+            <h4 style="margin-bottom: 0.75rem; font-size: 0.9375rem;">📊 Adoption Schedule Status</h4>
+            <div class="capacity-grid" id="capacity-info"></div>
+          </div>
+
+          <div class="adoption-center-info" style="background: #f3f4f6; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+            <h4 style="margin: 0 0 0.75rem 0; color: #1f2937; font-size: 0.9375rem; font-weight: 700;">📍 Adoption Center Location</h4>
+            <p style="margin: 0; color: #4b5563; font-size: 0.9375rem; line-height: 1.6;">
+              <strong>Pet Haven Hub</strong><br>
+              Panauti, Kathmandu, Nepal
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeApprovalModal()">Cancel</button>
+          <%= form.submit("Approve & Schedule Adoption", class: "btn-submit") %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Modal Overlay -->
+  <div id="approval-modal-overlay" class="approval-modal-overlay" style="display: none;" onclick="closeApprovalModal()"></div>
+
+  <style>
+    .approval-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    .approval-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      max-width: 600px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from { 
+        opacity: 0;
+        transform: translate(-50%, -45%);
+      }
+      to { 
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem;
+      border-bottom: 2px solid #E5E7EB;
+      background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0D5F5C;
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #6B7280;
+      transition: color 0.3s;
+    }
+
+    .modal-close:hover {
+      color: #1F2937;
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 2rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9375rem;
+      color: #1F2937;
+    }
+
+    .required {
+      color: #EF4444;
+      margin-left: 0.25rem;
+    }
+
+    .field-hint {
+      font-size: 0.8125rem;
+      color: #6B7280;
+      margin-bottom: 0.75rem;
+      margin-top: -0.25rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #E5E7EB;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.3s;
+      background-color: #FFFFFF;
+      color: #1F2937;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #0D5F5C;
+      box-shadow: 0 0 0 3px rgba(13, 95, 92, 0.1);
+    }
+
+    .date-input {
+      padding: 0.75rem;
+      cursor: pointer;
+    }
+
+    .textarea-input {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .char-count {
+      text-align: right;
+    }
+
+    .capacity-info {
+      background: linear-gradient(135deg, #F0FDF4 0%, #F0FDF4 100%);
+      border-left: 4px solid #10B981;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .capacity-grid {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .capacity-item {
+      background: white;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      border: 1px solid #E5E7EB;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .capacity-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #6B7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .capacity-value {
+      font-size: 1.125rem;
+      font-weight: 800;
+      color: #0D5F5C;
+    }
+
+    .capacity-value.available {
+      color: #10B981;
+    }
+
+    .capacity-value.unavailable {
+      color: #EF4444;
+    }
+
+    .error-alert {
+      background: #FEE2E2;
+      border: 2px solid #FCA5A5;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      color: #991B1B;
+    }
+
+    .error-alert h3 {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .error-alert ul {
+      margin: 0;
+      padding-left: 1.5rem;
+    }
+
+    .error-alert li {
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      padding: 2rem;
+      border-top: 2px solid #E5E7EB;
+      background: #F9FAFB;
+    }
+
+    .btn-cancel,
+    .btn-submit {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9375rem;
+      transition: all 0.3s;
+      border: none;
+    }
+
+    .btn-cancel {
+      background: white;
+      color: #6B7280;
+      border: 2px solid #E5E7EB;
+    }
+
+    .btn-cancel:hover {
+      background: #F3F4F6;
+      border-color: #D1D5DB;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    }
+
+    .date-picker-wrapper {
+      position: relative;
+    }
+
+    @media (max-width: 640px) {
+      .approval-modal {
+        width: 95%;
+        max-height: 90vh;
+      }
+
+      .modal-header,
+      .modal-body,
+      .modal-footer {
+        padding: 1.5rem;
+      }
+
+      .capacity-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-footer {
+        flex-direction: column-reverse;
+      }
+
+      .btn-cancel,
+      .btn-submit {
+        width: 100%;
+      }
+    }
+  </style>
+
+  <script>
+    function openApprovalModal() {
+      document.getElementById('approval-modal').style.display = 'block';
+      document.getElementById('approval-modal-overlay').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+      updateCapacityInfo();
+    }
+
+    function closeApprovalModal() {
+      document.getElementById('approval-modal').style.display = 'none';
+      document.getElementById('approval-modal-overlay').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    // Close modal when pressing Escape
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeApprovalModal();
+      }
+    });
+
+    // Handle adoption date change
+    document.getElementById('request_adoption_date').addEventListener('change', function() {
+      updateCapacityInfo();
+      updateSlotsInfo();
+    });
+
+    // Handle admin note character count
+    document.getElementById('request_admin_note').addEventListener('input', function() {
+      const charUsed = this.value.length;
+      document.getElementById('char-used').textContent = charUsed;
+    });
+
+    function updateCapacityInfo() {
+      const selectedDate = document.getElementById('request_adoption_date').value;
+      const capacityInfo = document.getElementById('capacity-info');
+      const capacityContainer = document.getElementById('capacity-info-container');
+      
+      if (!selectedDate) {
+        capacityContainer.style.display = 'none';
+        return;
+      }
+      
+      const bookedDates = document.getElementById('request_adoption_date').dataset.bookedDates;
+      const booked = JSON.parse(bookedDates);
+      const isAvailable = !booked.includes(selectedDate);
+      
+      let html = '<div class="capacity-item">';
+      html += '<div class="capacity-label">Date Status</div>';
+      html += '<div class="capacity-value ' + (isAvailable ? 'available' : 'unavailable') + '">';
+      html += isAvailable ? '✅ Yes' : '❌ No';
+      html += '</div>';
+      html += '</div>';
+      
+      capacityInfo.innerHTML = html;
+      capacityContainer.style.display = 'block';
+    }
+
+    function updateSlotsInfo() {
+      const selectedDate = document.getElementById('request_adoption_date').value;
+      const slotsInfo = document.getElementById('slots-info');
+      
+      if (selectedDate) {
+        const bookedDates = document.getElementById('request_adoption_date').dataset.bookedDates;
+        const booked = JSON.parse(bookedDates);
+        
+        if (booked.includes(selectedDate)) {
+          slotsInfo.textContent = '⚠️ This date is fully booked! Please select another date.';
+          slotsInfo.style.color = '#991B1B';
+          slotsInfo.style.display = 'block';
+        } else {
+          slotsInfo.style.display = 'none';
+        }
+      }
+    }
+  </script>
+<% end %>

@@ -21,6 +21,10 @@ class RequestMailer < ApplicationMailer
     @pet          = request.pet
     @admin_email  = ENV.fetch('ADMIN_EMAIL', SUPPORT_EMAIL)
     @request_type = request.request_type&.capitalize
+    @adoption_date = request.adoption_date
+    @admin_note = request.admin_note
+    @adoption_center_name = "Pet Haven Hub"
+    @adoption_center_location = "Panauti, Kathmandu, Nepal"
 
     mail(
       to:      @user.email,
