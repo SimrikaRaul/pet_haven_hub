@@ -250,19 +250,6 @@
     box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
   }
 
-  .btn-pet {
-    background: white;
-    color: var(--green-primary);
-    border: 2px solid var(--green-primary);
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
-  }
-
-  .btn-pet:hover {
-    background: #F0FFFE;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
-  }
-
   .btn-cancel {
     background: #FEE2E2;
     color: #991B1B;
@@ -543,10 +530,6 @@
   <div class="action-buttons">
     <%= link_to requests_path, class: 'btn-primary btn-back' do %>
       ← Back to My Requests
-    <% end %>
-
-    <%= link_to pet_path(@request.pet), class: 'btn-primary btn-pet' do %>
-      🐾 View Pet Profile
     <% end %>
 
     <% if @request.open? || @request.pending? %>
