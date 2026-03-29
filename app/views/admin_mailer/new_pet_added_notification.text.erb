@@ -1,0 +1,28 @@
+NEW PET ADDED
+
+A new pet has been added to Pet Haven Hub and is awaiting your review:
+
+─────────────────────────────────────────────────────────
+
+PET DETAILS
+
+Name: <%= @pet&.name %>
+Type: <%= @pet&.pet_type&.capitalize %>
+Breed: <%= @pet&.breed %>
+Age: <%= @pet&.age %>
+Status: <%= @pet&.status %>
+
+─────────────────────────────────────────────────────────
+
+ACTION REQUIRED
+
+Review the pet details in the admin dashboard:
+<%= admin_pet_url(@pet) %>
+
+─────────────────────────────────────────────────────────
+
+Pet Haven Hub Admin
+Panauti, Kathmandu, Nepal
+© <%= Time.current.year %> Pet Haven Hub. All rights reserved.
+
+This is an automated message from our adoption system.

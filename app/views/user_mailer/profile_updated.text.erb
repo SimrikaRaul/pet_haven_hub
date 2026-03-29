@@ -1,15 +1,20 @@
-STATUS UPDATED
+PROFILE UPDATED
 
-Pet: <%= @pet.name %>
+Hello, <%= @user.name %>
 
-The status for <%= @pet.name %> has changed:
-
-Previous Status: <%= @previous_status&.titleize %>
-New Status: <%= @new_status&.titleize %>
+This is a confirmation that your Pet Haven Hub profile has been updated
+successfully.
 
 ─────────────────────────────────────────────────────────
 
-View Pet Details: <%= pet_url(@pet) %>
+PROFILE UPDATED - CONFIRMATION
+
+Your account information has been updated. If you did not make these
+changes, please contact us immediately at:
+<%= ENV.fetch('ADMIN_EMAIL', 'support@pethavenhub.com') %>
+
+Your profile is important to us. Keep it up to date so we can provide you
+with the best adoption experience.
 
 ─────────────────────────────────────────────────────────
 

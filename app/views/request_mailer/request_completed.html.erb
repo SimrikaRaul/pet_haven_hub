@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3f4f6;">
+    <tr>
+      <td style="padding: 20px; text-align: center;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); padding: 40px 20px; text-align: center; border-radius: 8px 8px 0 0;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700;">🏡 Adoption Complete!</h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">Welcome Home, <%= @pet.name %>!</p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px 30px;">
+
+              <!-- Greeting -->
+              <h2 style="margin: 0 0 20px; color: #1f2937; font-size: 24px; font-weight: 600;">
+                Congratulations, <%= @user.name %>!
+              </h2>
+
+              <!-- Message -->
+              <p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+                The adoption process for <strong style="color: #059669;"><%= @pet.name %></strong> is now complete!
+                We're so happy that <%= @pet.name %> has found a loving forever home with you! 🎉
+              </p>
+
+              <!-- Pet Details Card -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f0fdf4; border-radius: 6px; border-left: 4px solid #059669; margin-bottom: 30px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td style="padding-bottom: 12px;">
+                          <p style="margin: 0; color: #6b7280; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Your New Pet</p>
+                          <p style="margin: 6px 0 0; color: #1f2937; font-size: 18px; font-weight: 600;"><%= @pet.name %></p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding-bottom: 12px;">
+                          <p style="margin: 0; color: #6b7280; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Type & Breed</p>
+                          <p style="margin: 6px 0 0; color: #4b5563; font-size: 14px;">
+                            <%= @pet.pet_type&.capitalize %><% if @pet.breed.present? %> • <%= @pet.breed %><% end %>
+                          </p>
+                        </td>
+                      </tr>
+                      <% if @completed_at.present? %>
+                        <tr>
+                          <td>
+                            <p style="margin: 0; color: #6b7280; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Adoption Date</p>
+                            <p style="margin: 6px 0 0; color: #4b5563; font-size: 14px;"><%= @completed_at.strftime('%B %d, %Y') %></p>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- First Week Tips -->
+              <p style="margin: 0 0 16px; color: #1f2937; font-size: 16px; font-weight: 600;">Tips for Your First Week</p>
+              <ul style="margin: 0 0 24px; padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.8;">
+                <li style="margin-bottom: 10px;">Give <%= @pet.name %> time to adjust to the new environment</li>
+                <li style="margin-bottom: 10px;">Keep a consistent routine for feeding and walks</li>
+                <li style="margin-bottom: 10px;">Schedule a vet check-up within the first week</li>
+                <li style="margin-bottom: 10px;">Introduce family members and other pets gradually</li>
+                <li>Be patient and provide lots of love and affection</li>
+              </ul>
+
+              <!-- Support -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #fef3c7; border-radius: 6px; border-left: 4px solid #d97706; margin-bottom: 30px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 8px; color: #92400e; font-size: 14px; font-weight: 600;">🤝 We're Here for You</p>
+                    <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.6;">
+                      If you have any questions or need advice about caring for <%= @pet.name %>,
+                      don't hesitate to reach out. We're always happy to help!
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- CTA Button -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 30px;">
+                <tr>
+                  <td style="text-align: center;">
+                    <a href="<%= requests_url %>" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
+                      View Your Requests
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Contact -->
+              <p style="margin: 0 0 8px; color: #1f2937; font-size: 14px; font-weight: 600;">Questions or Help Needed?</p>
+              <p style="margin: 0; color: #4b5563; font-size: 14px;">
+                Contact us at <a href="mailto:<%= ENV.fetch('ADMIN_EMAIL', 'support@pethavenhub.com') %>" style="color: #059669; text-decoration: none;"><%= ENV.fetch('ADMIN_EMAIL', 'support@pethavenhub.com') %></a>
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0 0 12px; color: #6b7280; font-size: 14px; line-height: 1.6;">
+                <strong style="color: #1f2937;">Pet Haven Hub</strong><br>
+                Panauti, Kathmandu, Nepal
+              </p>
+              <p style="margin: 0 0 12px; color: #6b7280; font-size: 12px;">
+                © <%= Time.current.year %> Pet Haven Hub. All rights reserved.
+              </p>
+              <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                This is an automated message from our adoption system. Please do not reply directly to this email.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -4,37 +4,26 @@ A new adoption request has been submitted for <%= @pet&.name %> by <%= @user&.na
 
 ─────────────────────────────────────────────────────────
 
-PET INFORMATION
+PET
 
 Name: <%= @pet&.name %>
-Type: <%= @pet&.pet_type&.capitalize %><% if @pet&.breed.present? %>
-Breed: <%= @pet.breed %><% end %><% if @pet&.age.present? %>
-Age: <%= @pet.age %> years<% end %>
+Type: <%= @pet&.pet_type&.capitalize %>
 
-REQUESTER DETAILS
+REQUESTER
 
 Name: <%= @user&.name %>
-Email: <%= @user&.email %><% if @request&.phone_number.present? %>
-Phone: <%= @request.phone_number %><% end %>
+Email: <%= @user&.email %>
 
-<% if @request&.reason.present? %>
-─────────────────────────────────────────────────────────
-
-REASON FOR ADOPTION
-
-<%= @request.reason %>
-
-<% end %>
 ─────────────────────────────────────────────────────────
 
 ACTION REQUIRED
 
-Please review this request in the admin dashboard:
-<%= admin_requests_url %>
+Review the request in the admin dashboard:
+<%= admin_request_url(@request) %>
 
 ─────────────────────────────────────────────────────────
 
-Pet Haven Hub
+Pet Haven Hub Admin
 Panauti, Kathmandu, Nepal
 © <%= Time.current.year %> Pet Haven Hub. All rights reserved.
 

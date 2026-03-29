@@ -1,36 +1,31 @@
-NEW ADOPTION REQUEST
+HELLO, <%= @user.name %>
 
-A new adoption request has been submitted for <%= @pet&.name %> by <%= @user&.name %>.
+UPDATE ON YOUR ADOPTION REQUEST FOR <%= @pet&.name %>
+
+We've reviewed your adoption request and unfortunately cannot approve it at this time.
 
 ─────────────────────────────────────────────────────────
 
-PET INFORMATION
+PET
 
 Name: <%= @pet&.name %>
-Type: <%= @pet&.pet_type&.capitalize %><% if @pet&.breed.present? %>
-Breed: <%= @pet.breed %><% end %><% if @pet&.age.present? %>
-Age: <%= @pet.age %> years<% end %>
 
-REQUESTER DETAILS
-
-Name: <%= @user&.name %>
-Email: <%= @user&.email %><% if @request&.phone_number.present? %>
-Phone: <%= @request.phone_number %><% end %>
-
-<% if @request&.reason.present? %>
+<% if @rejection_reason.present? %>
 ─────────────────────────────────────────────────────────
 
-REASON FOR ADOPTION
+REASON FOR DECISION
 
-<%= @request.reason %>
+<%= @rejection_reason %>
 
 <% end %>
 ─────────────────────────────────────────────────────────
 
-ACTION REQUIRED
+DON'T BE DISCOURAGED!
 
-Please review this request in the admin dashboard:
-<%= admin_requests_url %>
+There are many wonderful pets looking for loving homes.
+We encourage you to browse and find your perfect match.
+
+Browse available pets: <%= pets_url %>
 
 ─────────────────────────────────────────────────────────
 

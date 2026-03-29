@@ -1,37 +1,39 @@
-WELCOME, <%= @user.name %>!
+Thank You, <%= @user.name %>!
 
-Thank you for joining Pet Haven Hub! We're excited to help you find your
-perfect furry companion. Start exploring our collection of wonderful pets
-ready for their forever homes.
+Your <%= @request_type %> request for <%= @pet.name %> has been received!
 
 ─────────────────────────────────────────────────────────
 
-HERE'S HOW IT WORKS:
+PET DETAILS
+Name: <%= @pet.name %>
+Type: <%= @pet.pet_type&.capitalize %><% if @pet.breed.present? %>
+Breed: <%= @pet.breed %><% end %><% if @pet.age.present? %>
+Age: <%= @pet.age %> years<% end %>
 
-1. BROWSE PETS
-   Explore our available pets and find one that matches your lifestyle
-
-2. SUBMIT REQUEST
-   Submit an adoption request for your favorite pet
-
-3. REVIEW PROCESS
-   Our team will review your application carefully
-
-4. ADOPT!
-   Once approved, finalize the adoption and welcome your new family member
+Request Type: <%= @request_type %>
 
 ─────────────────────────────────────────────────────────
 
-START BROWSING PETS
+WHAT HAPPENS NEXT?
 
-<%= @url %>
+Our team will carefully review your request to ensure the best match
+between you and <%= @pet.name %>. We'll contact you within 48 hours
+with an update on your application.
+
+Timeline:
+1. Application Review - Our team reviews your details
+2. Home Check - If needed, we may conduct a home check
+3. Decision - We'll notify you of approval/rejection
+4. Next Steps - Finalize adoption if approved
 
 ─────────────────────────────────────────────────────────
 
-NEED HELP?
+HAVE QUESTIONS?
 
 Contact our support team at:
 <%= ENV.fetch('ADMIN_EMAIL', 'support@pethavenhub.com') %>
+
+View your requests: <%= requests_url %>
 
 ─────────────────────────────────────────────────────────
 

@@ -1,0 +1,48 @@
+CONGRATULATIONS, <%= @user.name %>!
+
+Your <%= @request_type %> Request Has Been Approved
+
+Your <%= @request_type %> request for <%= @pet.name %> has been APPROVED!
+
+We're thrilled to inform you that we've approved your request.
+
+─────────────────────────────────────────────────────────
+
+PET DETAILS
+
+Name: <%= @pet.name %>
+Type: <%= @pet.pet_type&.capitalize %><% if @pet.breed.present? %>
+Breed: <%= @pet.breed %><% end %><% if @pet.age.present? %>
+Age: <%= @pet.age %> years<% end %>
+
+─────────────────────────────────────────────────────────
+
+NEXT STEPS
+
+1. We'll contact you to schedule a meeting with <%= @pet.name %>
+2. Complete any final paperwork required
+3. Finalize the adoption agreement
+4. Welcome your new family member home!
+
+EXPECTED TIMELINE
+
+We'll reach out to you within the next 24-48 hours to arrange the
+next steps. The complete adoption process typically takes 1-2 weeks.
+
+─────────────────────────────────────────────────────────
+
+HAVE QUESTIONS?
+
+Contact us at:
+<%= ENV.fetch('ADMIN_EMAIL', 'support@pethavenhub.com') %>
+
+View your request details: <%= requests_url %>
+
+─────────────────────────────────────────────────────────
+
+Pet Haven Hub
+Panauti, Kathmandu, Nepal
+© <%= Time.current.year %> Pet Haven Hub. All rights reserved.
+
+This is an automated message from our adoption system.
+Please do not reply directly to this email.

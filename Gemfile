@@ -29,6 +29,9 @@ gem "kaminari"
 # Authorization
 gem "pundit"
 
+# SendGrid email delivery
+gem "sendgrid-actionmailer"
+
 # Background jobs
 gem "sidekiq"
 
@@ -37,16 +40,6 @@ gem "redis"
 
 # MessagePack for Rails cache
 gem "msgpack", ">= 1.7.0"
-
-# File uploads with ActiveStorage (no image processing on Windows to avoid vips/ffi issues)
-# gem "image_processing", ">= 1.2"  # Disabled: causes ffi/vips issues on Windows
-# gem "mini_magick", ">= 4.9.5"
-# gem "ffi", ">= 1.15.0"
-
-# File uploads (legacy - switching to ActiveStorage)
-# gem "carrierwave"
-
-# Grouping by date
 gem "groupdate"
 
 group :development, :test do
@@ -59,7 +52,6 @@ end
 group :development do
   gem "web-console"
   gem "listen"
-  # Preview emails in browser instead of sending
   gem "letter_opener_web", "~> 3.0"
 end
 
@@ -68,5 +60,5 @@ group :test do
   gem "selenium-webdriver"
 end
 
-# Windows timezone support
+
 gem "tzinfo-data", platforms: %i[windows]

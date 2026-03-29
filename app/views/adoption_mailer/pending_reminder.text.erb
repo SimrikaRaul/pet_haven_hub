@@ -1,36 +1,33 @@
-NEW ADOPTION REQUEST
+HELLO, <%= @user.name %>!
 
-A new adoption request has been submitted for <%= @pet&.name %> by <%= @user&.name %>.
+REQUEST UPDATE
+
+Your adoption request for <%= @pet&.name %> is still being reviewed.
+
+It has been <%= @days_pending %> <%= @days_pending == 1 ? 'day' : 'days' %> since you submitted your request.
 
 ─────────────────────────────────────────────────────────
 
-PET INFORMATION
+PET UNDER REVIEW
 
 Name: <%= @pet&.name %>
 Type: <%= @pet&.pet_type&.capitalize %><% if @pet&.breed.present? %>
-Breed: <%= @pet.breed %><% end %><% if @pet&.age.present? %>
-Age: <%= @pet.age %> years<% end %>
+Breed: <%= @pet.breed %><% end %>
 
-REQUESTER DETAILS
-
-Name: <%= @user&.name %>
-Email: <%= @user&.email %><% if @request&.phone_number.present? %>
-Phone: <%= @request.phone_number %><% end %>
-
-<% if @request&.reason.present? %>
 ─────────────────────────────────────────────────────────
 
-REASON FOR ADOPTION
+WHY THIS TAKES TIME
 
-<%= @request.reason %>
+Our team carefully reviews each adoption request to ensure the best match
+between pets and their new families. We appreciate your patience during
+this process. Most decisions are made within 5-7 business days.
 
-<% end %>
-─────────────────────────────────────────────────────────
+WHAT'S NEXT?
 
-ACTION REQUIRED
+You'll receive an email notification as soon as there's an update on your
+request. If you have any questions, feel free to reach out to us.
 
-Please review this request in the admin dashboard:
-<%= admin_requests_url %>
+Check your request status: <%= @requests_url %>
 
 ─────────────────────────────────────────────────────────
 

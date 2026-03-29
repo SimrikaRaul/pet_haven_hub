@@ -1,0 +1,47 @@
+HELLO, <%= @user.name %>!
+
+REQUEST UPDATE
+
+Your <%= @request_type %> request for <%= @pet.name %> is still being reviewed.
+
+It has been <%= @days %> <%= @days == 1 ? 'day' : 'days' %> since you submitted your request.
+
+─────────────────────────────────────────────────────────
+
+PET UNDER REVIEW
+
+Name: <%= @pet.name %>
+Type: <%= @pet.pet_type&.capitalize %><% if @pet.breed.present? %>
+Breed: <%= @pet.breed %><% end %>
+
+─────────────────────────────────────────────────────────
+
+WHY THIS TAKES TIME
+
+Our team carefully reviews each adoption request to ensure the best
+match between pets and their new families. We appreciate your patience
+during this process. Most decisions are made within 5-7 business days.
+
+WHAT'S NEXT?
+
+You'll receive an email notification as soon as there's an update on
+your request. If you have any questions in the meantime, feel free to
+reach out to us.
+
+Check your request status: <%= requests_url %>
+
+─────────────────────────────────────────────────────────
+
+HAVE QUESTIONS?
+
+Contact us at:
+<%= ENV.fetch('ADMIN_EMAIL', 'support@pethavenhub.com') %>
+
+─────────────────────────────────────────────────────────
+
+Pet Haven Hub
+Panauti, Kathmandu, Nepal
+© <%= Time.current.year %> Pet Haven Hub. All rights reserved.
+
+This is an automated message from our adoption system.
+Please do not reply directly to this email.

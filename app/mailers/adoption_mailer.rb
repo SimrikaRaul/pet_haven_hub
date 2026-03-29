@@ -1,77 +1,87 @@
+# app/mailers/adoption_mailer.rb
 class AdoptionMailer < ApplicationMailer
-  default from: -> { ENV.fetch('MAIL_FROM_ADDRESS', 'noreply@pethavenhub.com') }
 
-
+  # → Sent to ALL ADMINS when a user submits an adoption request
   def notify_admin(adoption_request)
-    @request = adoption_request
-    @user = @request.user
-    @pet = @request.pet
+    @request             = adoption_request
+    @user                = adoption_request.user
+    @pet                 = adoption_request.pet
     @admin_dashboard_url = admin_requests_url
 
-  
     admin_emails = fetch_admin_emails
     return if admin_emails.blank?
 
     mail(
-      to: admin_emails,
-      subject: "New Adoption Request: #{@pet&.name || 'Unknown Pet'} - Action Required"
+      to:      admin_emails,
+      subject: "🐾 New Adoption Request: #{@pet&.name} — Action Required | #{APP_NAME}"
     )
   end
 
-  def notify_user(adoption_request)
+  # → Sent to USER when admin approves adoption request
+  def request_approved(adoption_request)
     @request = adoption_request
-    @user = @request.user
-    @pet = @request.pet
-    @status = @request.status
-    @rejection_reason = @request.rejection_reason
+    @user    = adoption_request.user
+    @pet     = adoption_request.pet
     @pet_url = pet_url(@pet) if @pet.present?
 
     return if @user&.email.blank?
 
-    subject = case @status
-              when 'approved'
-                "Great News! Your adoption request for #{@pet&.name} has been approved!"
-              when 'rejected'
-                "Update on your adoption request for #{@pet&.name}"
-              when 'completed'
-                "Congratulations! Your adoption of #{@pet&.name} is complete!"
-              else
-                "Update on your adoption request for #{@pet&.name}"
-              end
-
     mail(
-      to: @user.email,
-      subject: subject
+      to:      @user.email,
+      subject: "🎉 Your Adoption Request for #{@pet&.name} has been Approved!"
     )
   end
 
- 
-  def pending_reminder(adoption_request)
+  # → Sent to USER when admin rejects adoption request
+  def request_rejected(adoption_request)
+    @request          = adoption_request
+    @user             = adoption_request.user
+    @pet              = adoption_request.pet
+    @rejection_reason = adoption_request.rejection_reason
+
+    return if @user&.email.blank?
+
+    mail(
+      to:      @user.email,
+      subject: "Update on Your Adoption Request for #{@pet&.name}"
+    )
+  end
+
+  # → Sent to USER when adoption is marked complete
+  def request_completed(adoption_request)
     @request = adoption_request
-    @user = @request.user
-    @pet = @request.pet
-    @days_pending = @request.days_pending
+    @user    = adoption_request.user
+    @pet     = adoption_request.pet
+    @pet_url = pet_url(@pet) if @pet.present?
+
+    return if @user&.email.blank?
+
+    mail(
+      to:      @user.email,
+      subject: "🏡 Congratulations! Your Adoption of #{@pet&.name} is Complete!"
+    )
+  end
+
+  # → Reminder to USER while adoption request is still pending
+  def pending_reminder(adoption_request)
+    @request      = adoption_request
+    @user         = adoption_request.user
+    @pet          = adoption_request.pet
+    @days_pending = (Date.today - adoption_request.created_at.to_date).to_i
     @requests_url = requests_url
 
     return if @user&.email.blank?
 
     mail(
-      to: @user.email,
-      subject: "Reminder: Your adoption request for #{@pet&.name} is being reviewed"
+      to:      @user.email,
+      subject: "⏳ Reminder: Your Adoption Request for #{@pet&.name} is Being Reviewed"
     )
   end
 
   private
 
   def fetch_admin_emails
-
-    admin_emails = User.where(role: 'admin').pluck(:email).compact
-
-
-    if admin_emails.blank? && ENV['ADMIN_EMAIL'].present?
-      admin_emails = [ENV['ADMIN_EMAIL']]
-    end
-
-    admin_emails
+    emails = User.where(role: 'admin').pluck(:email).compact
+    emails.presence || [ENV['ADMIN_EMAIL']].compact
   end
 end

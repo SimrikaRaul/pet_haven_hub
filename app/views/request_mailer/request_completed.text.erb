@@ -1,0 +1,44 @@
+CONGRATULATIONS, <%= @user.name %>!
+
+ADOPTION COMPLETE
+
+The adoption process for <%= @pet.name %> is now complete!
+We're so happy that <%= @pet.name %> has found a loving forever home with you!
+
+─────────────────────────────────────────────────────────
+
+YOUR NEW PET
+
+Name: <%= @pet.name %>
+Type: <%= @pet.pet_type&.capitalize %><% if @pet.breed.present? %>
+Breed: <%= @pet.breed %><% end %><% if @completed_at.present? %>
+Adoption Date: <%= @completed_at.strftime('%B %d, %Y') %><% end %>
+
+─────────────────────────────────────────────────────────
+
+TIPS FOR YOUR FIRST WEEK
+
+1. Give <%= @pet.name %> time to adjust to the new environment
+2. Keep a consistent routine for feeding and walks
+3. Schedule a vet check-up within the first week
+4. Introduce family members and other pets gradually
+5. Be patient and provide lots of love and affection
+
+─────────────────────────────────────────────────────────
+
+WE'RE HERE FOR YOU
+
+If you have any questions or need advice about caring for <%= @pet.name %>,
+don't hesitate to reach out. We're always happy to help!
+
+Contact us at:
+<%= ENV.fetch('ADMIN_EMAIL', 'support@pethavenhub.com') %>
+
+─────────────────────────────────────────────────────────
+
+Pet Haven Hub
+Panauti, Kathmandu, Nepal
+© <%= Time.current.year %> Pet Haven Hub. All rights reserved.
+
+This is an automated message from our adoption system.
+Please do not reply directly to this email.
