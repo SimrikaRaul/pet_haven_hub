@@ -25,7 +25,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :requests, only: [:index]
+  resources :requests, only: [:index, :show]
   
   # User's saved pets (liked and wishlisted)
   get 'my_pets', to: 'interactions#index', as: :my_pets

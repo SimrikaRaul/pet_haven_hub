@@ -1,0 +1,558 @@
+<style>
+  .request-show-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .request-show-header {
+    margin-bottom: 2rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--green-primary);
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    transition: all 0.3s;
+  }
+
+  .back-link:hover {
+    gap: 0.75rem;
+  }
+
+  .request-hero {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--warm-peach) 0%, var(--warm-cream) 100%);
+    height: 400px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);
+  }
+
+  .request-hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .status-badge-hero {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    padding: 10px 18px;
+    border-radius: 24px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .status-badge-hero.open {
+    color: #92400E;
+    border: 2px solid #F59E0B;
+  }
+
+  .status-badge-hero.approved {
+    color: #065F46;
+    border: 2px solid #10B981;
+  }
+
+  .status-badge-hero.rejected {
+    color: #991B1B;
+    border: 2px solid #EF4444;
+  }
+
+  .status-badge-hero.completed {
+    color: #065F46;
+    border: 2px solid #10B981;
+  }
+
+  .status-badge-hero.pending,
+  .status-badge-hero.under_review,
+  .status-badge-hero.scheduled {
+    color: #92400E;
+    border: 2px solid #F59E0B;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .detail-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #F0F9FF;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1F2937;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .info-row {
+    margin-bottom: 1.25rem;
+  }
+
+  .info-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .info-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .info-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1F2937;
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .timeline-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--green-primary);
+    margin-top: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .timeline-content {
+    flex: 1;
+  }
+
+  .timeline-date {
+    font-size: 0.85rem;
+    color: #6B7280;
+    font-weight: 500;
+  }
+
+  .timeline-status {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1F2937;
+  }
+
+  .full-width-card {
+    grid-column: 1 / -1;
+  }
+
+  .description-box {
+    background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid #E5E7EB;
+  }
+
+  .description-text {
+    color: #4B5563;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .pet-info-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .citizenship-photo {
+    max-width: 100%;
+    max-height: 350px;
+    border-radius: 16px;
+    border: 2px solid #E5E7EB;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-top: 0.5rem;
+  }
+
+  .pet-description {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #E5E7EB;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #E5E7EB;
+  }
+
+  .btn-primary {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .btn-back {
+    background: var(--green-gradient);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+  }
+
+  .btn-back:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+  }
+
+  .btn-pet {
+    background: white;
+    color: var(--green-primary);
+    border: 2px solid var(--green-primary);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+  }
+
+  .btn-pet:hover {
+    background: #F0FFFE;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+  }
+
+  .btn-cancel {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 2px solid #EF4444;
+  }
+
+  .btn-cancel:hover {
+    background: #FEF2F2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+  }
+
+  .empty-state {
+    color: #9CA3AF;
+    font-style: italic;
+  }
+
+  .days-pending {
+    font-size: 0.9rem;
+    color: #6B7280;
+    margin-top: 0.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .request-show-container {
+      padding: 1.5rem 1rem;
+    }
+
+    .content-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .request-hero {
+      height: 300px;
+      margin-bottom: 1.5rem;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .btn-primary {
+      width: 100%;
+    }
+
+    .pet-info-section {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="request-show-container">
+  <!-- Back Link -->
+  <%= link_to requests_path, class: 'back-link' do %>
+    <span>←</span> Back to My Requests
+  <% end %>
+
+  <!-- Pet Image Hero -->
+  <div class="request-hero">
+    <% if @request.pet.image.attached? %>
+      <%= image_tag @request.pet.image, class: 'request-hero-image' %>
+    <% else %>
+      <div class="request-hero-image" style="display: flex; align-items: center; justify-content: center; font-size: 5rem;">
+        🐾
+      </div>
+    <% end %>
+
+    <!-- Status Badge -->
+    <div class="status-badge-hero <%= @request.status %>">
+      <% case @request.status
+         when 'open' then '⏳'
+         when 'approved' then '✓'
+         when 'rejected' then '✗'
+         when 'completed' then '★'
+         when 'under_review' then '👀'
+         when 'scheduled' then '📅'
+         else '➡️'
+         end %>
+      <%= @request.status.upcase %>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="content-grid">
+    <!-- Pet Information Card -->
+    <div class="detail-card">
+      <h3 class="card-title">
+        <span>🐾</span> Pet Information
+      </h3>
+
+      <div class="pet-info-section">
+        <div class="info-item">
+          <span class="info-label">Pet Name</span>
+          <span class="info-value"><%= @request.pet.name %></span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Species</span>
+          <span class="info-value"><%= @request.pet.pet_type&.titleize || 'Unknown' %></span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Breed</span>
+          <span class="info-value"><%= @request.pet.breed %></span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Age</span>
+          <span class="info-value"><%= @request.pet.age %> <%= @request.pet.age == 1 ? 'year' : 'years' %></span>
+        </div>
+      </div>
+
+      <% if @request.pet.description.present? %>
+        <div class="pet-description">
+          <span class="info-label">About</span>
+          <div class="description-box">
+            <p class="description-text"><%= @request.pet.description %></p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Request Status Card -->
+    <div class="detail-card">
+      <h3 class="card-title">
+        <span>📄</span> Request Status
+      </h3>
+
+      <div class="info-row">
+        <span class="info-label">Current Status</span>
+        <span class="info-value">
+          <% case @request.status
+             when 'open' then '⏳ Awaiting Review'
+             when 'pending' then '⏳ Under Review'
+             when 'under_review' then '👀 Under Review'
+             when 'approved' then '✓ Approved'
+             when 'rejected' then '✗ Rejected'
+             when 'scheduled' then '📅 Scheduled'
+             when 'completed' then '★ Completed'
+             else '➡️ ' + @request.status.titleize
+             end %>
+        </span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Request Type</span>
+        <span class="info-value"><%= @request.request_type.titleize %></span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Submitted On</span>
+        <span class="info-value"><%= @request.created_at.strftime('%B %-d, %Y') %></span>
+        <span class="days-pending"><%= distance_of_time_in_words(@request.created_at, Time.current) %> ago</span>
+      </div>
+
+      <% if @request.approved? && @request.scheduled_date.present? %>
+        <div class="info-row">
+          <span class="info-label">Scheduled For</span>
+          <span class="info-value"><%= @request.scheduled_date.strftime('%B %-d, %Y') %></span>
+        </div>
+      <% end %>
+
+      <% if @request.completed? && @request.completed_at.present? %>
+        <div class="info-row">
+          <span class="info-label">Completed On</span>
+          <span class="info-value"><%= @request.completed_at.strftime('%B %-d, %Y') %></span>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Your Information Card -->
+    <div class="detail-card">
+      <h3 class="card-title">
+        <span>👤</span> Your Information
+      </h3>
+
+      <div class="info-row">
+        <span class="info-label">Full Name</span>
+        <span class="info-value"><%= current_user.name %></span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value"><%= current_user.email %></span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Phone</span>
+        <span class="info-value"><%= @request.phone_number.present? ? @request.phone_number : '—' %></span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Address</span>
+        <% if @request.address.present? %>
+          <div class="description-box">
+            <p class="description-text"><%= @request.address %></p>
+          </div>
+        <% else %>
+          <span class="info-value">—</span>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Adoption Details Card -->
+    <div class="detail-card">
+      <h3 class="card-title">
+        <span>🏠</span> Adoption Details
+      </h3>
+
+      <div class="info-row">
+        <span class="info-label">Citizenship Number</span>
+        <span class="info-value"><%= @request.citizenship_number.present? ? @request.citizenship_number : '—' %></span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">House Type</span>
+        <span class="info-value"><%= @request.house_type.present? ? @request.house_type.titleize : '—' %></span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Other Pets at Home</span>
+        <span class="info-value">
+          <% if @request.has_other_pets.nil? %>
+            —
+          <% elsif @request.has_other_pets %>
+            <span style="color: #059669; font-weight: 700;">✓ Yes</span>
+          <% else %>
+            <span style="color: #6B7280;">✗ No</span>
+          <% end %>
+        </span>
+      </div>
+    </div>
+
+    <!-- Reason for Adoption Card -->
+    <div class="detail-card full-width-card">
+      <h3 class="card-title">
+        <span>💬</span> Reason for Adoption
+      </h3>
+
+      <% if @request.reason.present? %>
+        <div class="description-box">
+          <p class="description-text"><%= @request.reason %></p>
+        </div>
+      <% else %>
+        <span class="empty-state">No reason provided.</span>
+      <% end %>
+    </div>
+
+    <!-- Pet Care Experience Card (if provided) -->
+    <% if @request.experience.present? %>
+      <div class="detail-card full-width-card">
+        <h3 class="card-title">
+          <span>🏅</span> Pet Care Experience
+        </h3>
+
+        <div class="description-box">
+          <p class="description-text"><%= @request.experience %></p>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Citizenship Photo Card (if uploaded) -->
+    <% if @request.citizenship_photo.attached? %>
+      <div class="detail-card full-width-card">
+        <h3 class="card-title">
+          <span>📷</span> Citizenship Verification
+        </h3>
+
+        <div style="margin-top: 1rem;">
+          <%= image_tag @request.citizenship_photo, class: 'citizenship-photo' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <%= link_to requests_path, class: 'btn-primary btn-back' do %>
+      ← Back to My Requests
+    <% end %>
+
+    <%= link_to pet_path(@request.pet), class: 'btn-primary btn-pet' do %>
+      🐾 View Pet Profile
+    <% end %>
+
+    <% if @request.open? || @request.pending? %>
+      <%= button_to '#', method: :delete, data: { turbo_confirm: 'Are you sure you want to cancel this adoption request? This action cannot be undone.' }, class: 'btn-primary btn-cancel', onclick: 'alert("Cancel request feature coming soon!")' do %>
+        ✗ Cancel Request
+      <% end %>
+    <% end %>
+  </div>
+</div>
