@@ -136,7 +136,7 @@
       <div class="upload-area">
         <div id="image-preview-container" style="margin-bottom: 1.5rem;">
           <% if @pet.image.attached? %>
-            <%= image_tag url_for(@pet.image), id: 'image-preview', alt: @pet.name, style: 'max-width: 100%; max-height: 280px; width: auto; height: auto; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: block; margin: 0 auto; object-fit: contain;' %>
+            <%= image_tag @pet.image, id: 'image-preview', alt: @pet.name, style: 'max-width: 100%; max-height: 280px; width: auto; height: auto; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: block; margin: 0 auto; object-fit: contain;' %>
           <% else %>
             <img id="image-preview" src="" alt="Image preview" style="max-width: 100%; max-height: 280px; width: auto; height: auto; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; margin: 0 auto; object-fit: contain;">
           <% end %>
