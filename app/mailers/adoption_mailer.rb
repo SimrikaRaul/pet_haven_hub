@@ -85,6 +85,42 @@ class AdoptionMailer < ApplicationMailer
     )
   end
 
+  # → Sent to USER when they miss a scheduled adoption (marked no-show)
+  def request_no_show(adoption_request)
+    @request = adoption_request
+    @user    = adoption_request.user
+    @pet     = adoption_request.pet
+    @adoption_date = adoption_request.adoption_date
+    @pet_url = pet_url(@pet) if @pet.present?
+
+    return if @user&.email.blank?
+
+    mail(
+      to:      @user.email,
+      subject: "⚠️ No-Show Recorded for #{@pet&.name} Adoption"
+    )
+  end
+
+  # → Sent to USER when a no-show adoption is rescheduled
+  def request_rescheduled(adoption_request)
+    @request = adoption_request
+    @user    = adoption_request.user
+    @pet     = adoption_request.pet
+    @adoption_date = adoption_request.adoption_date
+    @reschedule_count = adoption_request.reschedule_count
+    @admin_note = adoption_request.admin_note
+    @pet_url = pet_url(@pet) if @pet.present?
+    @adoption_center_location = "Panauti, Kathmandu, Nepal"
+    @adoption_center_name = "Pet Haven Hub"
+
+    return if @user&.email.blank?
+
+    mail(
+      to:      @user.email,
+      subject: "📅 Your Adoption for #{@pet&.name} Has Been Rescheduled"
+    )
+  end
+
   private
 
   def fetch_admin_emails

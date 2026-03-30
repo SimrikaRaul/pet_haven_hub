@@ -76,6 +76,7 @@
   .status-badge-detail.open { background: #FEF3C7; color: #92400E; }
   .status-badge-detail.pending { background: #FEF3C7; color: #92400E; }
   .status-badge-detail.approved { background: #D1FAE5; color: #065F46; }
+  .status-badge-detail.no_show { background: #FED7AA; color: #92400E; }
   .status-badge-detail.rejected { background: #FEE2E2; color: #991B1B; }
   .status-badge-detail.completed { background: #E0F2F1; color: #0D5F5C; }
   
@@ -205,6 +206,7 @@
             <% case @request.status
                when 'open' then '⏳'
                when 'approved' then '✓'
+               when 'no_show' then '⚠️'
                when 'rejected' then '✗'
                when 'completed' then '★'
                end %>
@@ -239,6 +241,27 @@
             <button type="button" class="btn-action btn-reject-action" onclick="openRejectionModal()" id="reject-btn">
               ✗ Reject Request
             </button>
+          </div>
+        <% elsif @request.approved? && @request.adopt? %>
+          <div class="action-buttons">
+            <%= button_to mark_as_completed_admin_request_path(@request), method: :post, data: { turbo_confirm: 'Mark this adoption as completed? All other pending requests for this pet will be rejected.' }, class: 'btn-action', style: 'background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);' do %>
+              ★ Mark as Completed
+            <% end %>
+            <%= button_to mark_as_no_show_admin_request_path(@request), method: :post, data: { turbo_confirm: 'Mark this request as no-show? The user will be notified.' }, class: 'btn-action', style: 'background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); color: white; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);' do %>
+              ⚠️ Mark as No Show
+            <% end %>
+          </div>
+        <% elsif @request.no_show? && @request.adopt? && @request.reschedule_count < 2 %>
+          <div class="action-buttons">
+            <button type="button" class="btn-action" onclick="openRescheduleModal()" style="background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+              🔄 Reschedule Request
+            </button>
+          </div>
+        <% elsif @request.no_show? && @request.adopt? && @request.reschedule_count >= 2 %>
+          <div class="action-buttons">
+            <div style="padding: 1rem; background: #FEE2E2; border-radius: 8px; color: #991B1B; text-align: center; font-weight: 700;">
+              ⚠️ Maximum Reschedule Attempts Reached
+            </div>
           </div>
         <% end %>
         
@@ -594,6 +617,76 @@
   <!-- Rejection Modal Overlay -->
   <div id="rejection-modal-overlay" class="rejection-modal-overlay" style="display: none;" onclick="closeRejectionModal()"></div>
 
+  <!-- Reschedule Modal -->
+  <% if @request.adopt? && @request.no_show? %>
+    <div id="reschedule-modal" class="reschedule-modal" style="display: none;">
+      <div class="reschedule-modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Reschedule Adoption Pickup</h2>
+          <button type="button" class="modal-close" onclick="closeRescheduleModal()">✕</button>
+        </div>
+
+        <%= form_with(model: @request, local: true, url: reschedule_admin_request_path(@request), method: :post) do |form| %>
+          <div class="modal-body">
+            <p style="margin-bottom: 1.5rem; color: #4b5563; font-size: 0.9375rem;">
+              This is reschedule attempt <%= @request.reschedule_count + 1 %> of 2. After the second reschedule, if no-show occurs again, the request will be rejected automatically.
+            </p>
+
+            <div class="form-group">
+              <label for="request_adoption_date_reschedule" class="form-label">
+                <strong>📅 New Adoption Pickup Date</strong>
+                <span class="required">*</span>
+              </label>
+              <p class="field-hint">Select a future date with available slots. Maximum 5 adoptions per day.</p>
+              
+              <div class="date-picker-wrapper">
+                <%= form.date_field(:adoption_date, 
+                                   id: "request_adoption_date_reschedule",
+                                   class: "form-control date-input",
+                                   min: Date.tomorrow.to_s,
+                                   required: true,
+                                   data: { booked_dates: @booked_dates.map(&:to_s).to_json }) %>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="request_admin_note_reschedule" class="form-label">
+                <strong>📝 Additional Instructions (Optional)</strong>
+              </label>
+              <p class="field-hint">Add any notes about the new appointment or reminders for the user.</p>
+              
+              <%= form.text_area(:admin_note,
+                                id: "request_admin_note_reschedule",
+                                class: "form-control textarea-input",
+                                rows: 5,
+                                placeholder: "e.g., Please ensure you can attend this time. This is your final rescheduling opportunity.",
+                                maxlength: 2000) %>
+              <p class="char-count" id="reschedule-char-count" style="font-size: 0.75rem; color: #9CA3AF; margin-top: 0.25rem;">
+                <span id="reschedule-char-used">0</span> / 2000 characters
+              </p>
+            </div>
+
+            <div class="adoption-center-info" style="background: #f3f4f6; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+              <h4 style="margin: 0 0 0.75rem 0; color: #1f2937; font-size: 0.9375rem; font-weight: 700;">📍 Adoption Center Location</h4>
+              <p style="margin: 0; color: #4b5563; font-size: 0.9375rem; line-height: 1.6;">
+                <strong>Pet Haven Hub</strong><br>
+                Panauti, Kathmandu, Nepal
+              </p>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" onclick="closeRescheduleModal()">Cancel</button>
+            <%= form.submit("Reschedule Adoption", class: "btn-submit") %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Reschedule Modal Overlay -->
+    <div id="reschedule-modal-overlay" class="reschedule-modal-overlay" style="display: none;" onclick="closeRescheduleModal()"></div>
+  <% end %>
+
   <style>
     .approval-modal-overlay {
       position: fixed;
@@ -934,6 +1027,40 @@
       cursor: not-allowed;
       transform: none;
     }
+
+    /* Reschedule Modal Styles */
+    .reschedule-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    .reschedule-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      max-width: 600px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .reschedule-modal-content {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
   </style>
 
   <script>
@@ -1072,8 +1199,31 @@
       if (event.key === 'Escape') {
         closeRejectionModal();
         closeApprovalModal();
+        closeRescheduleModal();
       }
     });
+
+    // Reschedule Modal Functions
+    function openRescheduleModal() {
+      document.getElementById('reschedule-modal').style.display = 'block';
+      document.getElementById('reschedule-modal-overlay').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeRescheduleModal() {
+      document.getElementById('reschedule-modal').style.display = 'none';
+      document.getElementById('reschedule-modal-overlay').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    // Handle reschedule message character count
+    const rescheduleMessageField = document.getElementById('request_admin_note_reschedule');
+    if (rescheduleMessageField) {
+      rescheduleMessageField.addEventListener('input', function() {
+        const charUsed = this.value.length;
+        document.getElementById('reschedule-char-used').textContent = charUsed;
+      });
+    }
 
     // Handle rejection message character count
     const rejectionMessageField = document.getElementById('request_admin_message');

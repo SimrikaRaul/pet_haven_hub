@@ -69,6 +69,11 @@
     border: 2px solid #10B981;
   }
 
+  .status-badge-hero.no_show {
+    color: #92400E;
+    border: 2px solid #F97316;
+  }
+
   .status-badge-hero.rejected {
     color: #991B1B;
     border: 2px solid #EF4444;
@@ -387,9 +392,10 @@
              when 'pending' then '⏳ Under Review'
              when 'under_review' then '👀 Under Review'
              when 'approved' then '✓ Approved'
+             when 'no_show' then '⚠️ No Show - Available to Reschedule'
              when 'rejected' then '✗ Rejected'
              when 'scheduled' then '📅 Scheduled'
-             when 'completed' then '★ Completed'
+             when 'completed' then '★ Successfully Completed!'
              else '➡️ ' + @request.status.titleize
              end %>
         </span>
@@ -406,17 +412,28 @@
         <span class="days-pending"><%= distance_of_time_in_words(@request.created_at, Time.current) %> ago</span>
       </div>
 
-      <% if @request.approved? && @request.scheduled_date.present? %>
+      <% if @request.approved? && @request.adoption_date.present? %>
         <div class="info-row">
-          <span class="info-label">Scheduled For</span>
-          <span class="info-value"><%= @request.scheduled_date.strftime('%B %-d, %Y') %></span>
+          <span class="info-label">Adoption Pickup Date</span>
+          <span class="info-value" style="color: #059669; font-weight: 700;">📅 <%= @request.adoption_date.strftime('%A, %B %-d, %Y') %></span>
+        </div>
+      <% end %>
+
+      <% if @request.no_show? %>
+        <div class="info-row">
+          <span class="info-label">Original Pickup Date</span>
+          <span class="info-value" style="color: #f97316;">❌ <%= @request.adoption_date&.strftime('%B %-d, %Y') || '—' %></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Reschedule Count</span>
+          <span class="info-value"><%= "#{@request.reschedule_count}/2 used" %></span>
         </div>
       <% end %>
 
       <% if @request.completed? && @request.completed_at.present? %>
         <div class="info-row">
-          <span class="info-label">Completed On</span>
-          <span class="info-value"><%= @request.completed_at.strftime('%B %-d, %Y') %></span>
+          <span class="info-label">Adoption Completed On</span>
+          <span class="info-value" style="color: #059669; font-weight: 700;">✓ <%= @request.completed_at.strftime('%B %-d, %Y') %></span>
         </div>
       <% end %>
     </div>

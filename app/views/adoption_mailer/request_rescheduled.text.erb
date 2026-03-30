@@ -1,0 +1,43 @@
+Adoption Rescheduled - New Pickup Date
+======================================
+
+Dear <%= @user.name %>,
+
+Great news! Your adoption for <%= @pet&.name %> has been rescheduled to a new date. Please review the details below carefully.
+
+New Adoption Pickup Date
+========================
+<%= @adoption_date.strftime('%A, %B %-d, %Y') %>
+
+Pet Details:
+- Name: <%= @pet&.name %>
+- Type: <%= @pet&.pet_type&.capitalize %>
+<% if @pet&.breed.present? %>- Breed: <%= @pet.breed %>
+<% end %><% if @pet&.age.present? %>- Age: <%= @pet.age %> years
+<% end %>
+
+<% if @reschedule_count == 2 %>
+⚠️ IMPORTANT - Final Rescheduling Opportunity
+===============================================
+This is your FINAL rescheduling opportunity. If you are unable to attend this new appointment, your adoption request will be automatically rejected. Please make sure you can commit to this date.
+<% elsif @reschedule_count == 1 %>
+📝 Important Reminder
+=====================
+You have already used one reschedule opportunity. This is your second and final reschedule. If you cannot make this appointment, your adoption request will be rejected.
+<% end %>
+
+<% if @admin_note.present? %>
+Special Instructions from Our Team:
+------------------------------------
+<%= @admin_note %>
+<% end %>
+
+Adoption Center Location:
+------------------------
+<%= @adoption_center_name %>
+<%= @adoption_center_location %>
+
+We look forward to helping you bring <%= @pet&.name %> home!
+
+Best regards,
+<%= APP_NAME %> Team

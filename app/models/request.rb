@@ -11,7 +11,7 @@ class Request < ApplicationRecord
   attribute :rejection_reason_enum, :string
 
   # Enums
-  enum :status, { open: 'open', pending: 'pending', under_review: 'under_review', approved: 'approved', rejected: 'rejected', scheduled: 'scheduled', completed: 'completed' }
+  enum :status, { open: 'open', pending: 'pending', under_review: 'under_review', approved: 'approved', no_show: 'no_show', rejected: 'rejected', scheduled: 'scheduled', completed: 'completed' }
   enum :request_type, { adopt: 'adopt', donate: 'donate' }
   enum :rejection_reason_enum, {
     already_adopted: 'already_adopted',
@@ -83,7 +83,7 @@ class Request < ApplicationRecord
   scope :for_adoption, -> { where(request_type: 'adopt') }
   scope :for_donation, -> { where(request_type: 'donate') }
   scope :recent, -> { order(created_at: :desc) }
-  scope :in_progress, -> { where(status: %w[open pending under_review approved scheduled]) }
+  scope :in_progress, -> { where(status: %w[open pending under_review approved scheduled no_show]) }
   scope :by_user, ->(user_id) { where(user_id: user_id) if user_id.present? }
   scope :by_pet, ->(pet_id) { where(pet_id: pet_id) if pet_id.present? }
   scope :by_date_range, ->(start_date, end_date) do
@@ -123,9 +123,97 @@ class Request < ApplicationRecord
     end
   end
 
-  def mark_as_completed
-    update(status: 'completed', completed_at: Time.current)
-    AdoptionMailer.notify_user(self).deliver_later
+  def mark_as_completed!
+    # Only allowed for approved requests
+    return false unless approved? && adopt?
+    
+    begin
+      transaction do
+        # Update this request to completed
+        update_columns(
+          status: 'completed',
+          completed_at: Time.current,
+          updated_at: Time.current
+        )
+        
+        # Update pet status to adopted
+        pet.update(status: :adopted)
+        
+        # Reject all other pending requests for the same pet
+        Request.where(pet_id: pet_id)
+               .where.not(id: id)
+               .where(status: ['open', 'pending', 'under_review', 'approved'])
+               .where(request_type: 'adopt')
+               .find_each do |other_request|
+          other_request.reject!('already_adopted', 'This pet has been adopted by another user.')
+          AdoptionMailer.request_rejected(other_request).deliver_later
+        end
+        
+        # Send completion email to the user
+        AdoptionMailer.request_completed(self).deliver_later
+      end
+      true
+    rescue => e
+      Rails.logger.error("Error marking request #{id} as completed: #{e.message}")
+      false
+    end
+  end
+
+  def mark_as_no_show!
+    # Only allowed for approved requests
+    return false unless approved? && adopt?
+    
+    begin
+      update_columns(
+        status: 'no_show',
+        updated_at: Time.current
+      )
+      
+      # Send no show email to the user
+      AdoptionMailer.request_no_show(self).deliver_later
+      true
+    rescue => e
+      Rails.logger.error("Error marking request #{id} as no show: #{e.message}")
+      false
+    end
+  end
+
+  def reschedule!(new_adoption_date, admin_note = nil)
+    # Only allowed for no_show requests
+    return false unless no_show? && adopt?
+    
+    # Validate new date
+    return false if new_adoption_date.blank? || new_adoption_date <= Date.today
+    
+    # Check slot availability
+    unless self.class.slots_available_for_date?(new_adoption_date)
+      return false
+    end
+    
+    # Check if max reschedules exceeded
+    if reschedule_count >= 2
+      # Automatically reject if exceeded
+      reject!('duplicate_request', 'Maximum reschedule attempts reached. Your request has been rejected.')
+      AdoptionMailer.request_rejected(self).deliver_later
+      return false
+    end
+    
+    begin
+      update_columns(
+        adoption_date: new_adoption_date,
+        status: 'approved',
+        reschedule_count: reschedule_count + 1,
+        admin_note: admin_note.present? ? admin_note : self.admin_note,
+        updated_at: Time.current
+      )
+      
+      # Send reschedule email
+      AdoptionMailer.request_rescheduled(self).deliver_later
+      true
+    rescue => e
+      Rails.logger.error("Error rescheduling request #{id}: #{e.message}")
+      false
+    end
   end
 
   def can_be_approved?
@@ -135,9 +223,21 @@ class Request < ApplicationRecord
   def can_be_rejected?
     open? || pending? || scheduled?
   end
+  
+  def can_be_completed?
+    approved? && adoption_date.present? && adoption_date <= Date.today && adopt?
+  end
+  
+  def can_be_marked_no_show?
+    approved? && adoption_date.present? && adoption_date <= Date.today && adopt?
+  end
+  
+  def can_be_rescheduled?
+    no_show? && adopt? && reschedule_count < 2
+  end
 
   def in_progress?
-    %w[open pending under_review approved scheduled].include?(status)
+    %w[open pending under_review approved scheduled no_show].include?(status)
   end
 
   def days_pending

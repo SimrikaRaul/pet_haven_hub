@@ -1,6 +1,6 @@
 module Admin
   class RequestsController < Admin::BaseController
-    before_action :set_request, only: [:show, :update, :approve, :reject]
+    before_action :set_request, only: [:show, :update, :approve, :reject, :mark_as_completed, :mark_as_no_show, :reschedule]
 
     def index
       @requests = Request.recent.page(params[:page]).per(20)
@@ -115,6 +115,73 @@ module Admin
         end
       else
         redirect_to admin_requests_path, alert: 'Cannot reject this request.', status: :see_other
+      end
+    end
+
+    def mark_as_completed
+      if @request.can_be_completed?
+        if @request.mark_as_completed!
+          redirect_to admin_requests_path, 
+                     notice: "Adoption for #{@request.pet.name} marked as completed successfully.",
+                     status: :see_other
+        else
+          redirect_to admin_request_path(@request), alert: 'Failed to mark adoption as completed.', status: :see_other
+        end
+      else
+        redirect_to admin_request_path(@request), alert: 'This request cannot be marked as completed.', status: :see_other
+      end
+    end
+
+    def mark_as_no_show
+      if @request.can_be_marked_no_show?
+        if @request.mark_as_no_show!
+          redirect_to admin_requests_path, 
+                     notice: "Request marked as no-show. User has been notified.",
+                     status: :see_other
+        else
+          redirect_to admin_request_path(@request), alert: 'Failed to mark request as no-show.', status: :see_other
+        end
+      else
+        redirect_to admin_request_path(@request), alert: 'This request cannot be marked as no-show.', status: :see_other
+      end
+    end
+
+    def reschedule
+      if @request.can_be_rescheduled?
+        if request.post? && params[:request].present?
+          new_adoption_date = params.dig(:request, :adoption_date)
+          admin_note = params.dig(:request, :admin_note)
+          
+          if new_adoption_date.blank?
+            @available_dates = Request.available_dates_for_scheduling
+            @booked_dates = Request.fully_booked_dates
+            redirect_to admin_request_path(@request), alert: 'Please select a new adoption date.', status: :see_other
+            return
+          end
+          
+          if @request.reschedule!(new_adoption_date, admin_note)
+            redirect_to admin_requests_path, 
+                       notice: "Request rescheduled successfully for #{new_adoption_date.strftime('%B %-d, %Y')}.",
+                       status: :see_other
+          else
+            @available_dates = Request.available_dates_for_scheduling
+            @booked_dates = Request.fully_booked_dates
+            redirect_to admin_request_path(@request), alert: 'Failed to reschedule request. Please try again.', status: :see_other
+          end
+        else
+          # Show reschedule form
+          @available_dates = Request.available_dates_for_scheduling
+          @booked_dates = Request.fully_booked_dates
+          render :show
+        end
+      else
+        if @request.no_show? && @request.adopt? && @request.reschedule_count >= 2
+          redirect_to admin_request_path(@request), 
+                     alert: 'Maximum reschedule attempts (2) have been reached. Request has been rejected.',
+                     status: :see_other
+        else
+          redirect_to admin_request_path(@request), alert: 'This request cannot be rescheduled.', status: :see_other
+        end
       end
     end
 

@@ -295,6 +295,12 @@
     border: 1px solid #10B981;
   }
 
+  .status-no-show {
+    background: linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%);
+    color: #92400E;
+    border: 1px solid #F97316;
+  }
+
   .status-rejected {
     background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
     color: #991B1B;
@@ -652,12 +658,19 @@
                 <span class="status-badge <%= case req.status
                     when 'open' then 'status-pending'
                     when 'approved' then 'status-approved'
+                    when 'no_show' then 'status-no-show'
                     when 'rejected' then 'status-rejected'
                     when 'scheduled' then 'status-scheduled'
                     when 'completed' then 'status-completed'
                     else 'status-pending'
                     end %>">
-                  <%= req.status == 'open' ? 'PENDING' : req.status.upcase %>
+                  <% if req.open? %>
+                    PENDING
+                  <% elsif req.no_show? %>
+                    NO SHOW
+                  <% else %>
+                    <%= req.status.upcase %>
+                  <% end %>
                 </span>
               </div>
 
@@ -671,10 +684,28 @@
                   <span class="awaiting-text approved">
                     ✓ Approved
                   </span>
+                  <% if req.adoption_date.present? %>
+                    <div style="margin-top: 8px; font-size: 0.875rem; color: #059669; font-weight: 600;">
+                      📅 <%= req.adoption_date.strftime('%b %d, %Y') %>
+                    </div>
+                  <% end %>
+                <% elsif req.no_show? %>
+                  <span class="awaiting-text" style="background: #FED7AA; color: #92400E;">
+                    ⚠️ No Show - Available for Reschedule
+                  </span>
                 <% elsif req.completed? %>
                   <span class="awaiting-text completed">
-                    ✓ Completed
+                    ✓ Successfully Adopted!
                   </span>
+                  <% if req.completed_at.present? %>
+                    <div style="margin-top: 8px; font-size: 0.875rem; color: #059669; font-weight: 600;">
+                      <% if req.adoption_date.present? %>
+                        Completed on <%= req.adoption_date.strftime('%b %d, %Y') %>
+                      <% else %>
+                        <%= "Completed #{time_ago_in_words(req.completed_at)} ago" %>
+                      <% end %>
+                    </div>
+                  <% end %>
                 <% elsif req.rejected? %>
                   <span class="awaiting-text rejected">
                     ✗ Rejected
@@ -717,7 +748,7 @@
               if (filter === 'all') {
                 shouldShow = true;
               } else if (filter === 'in-progress') {
-                shouldShow = ['open', 'approved', 'scheduled', 'rejected'].includes(cardStatus);
+                shouldShow = ['open', 'approved', 'scheduled', 'no_show', 'rejected'].includes(cardStatus);
               } else if (filter === 'completed') {
                 shouldShow = cardStatus === 'completed';
               }

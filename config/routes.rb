@@ -48,6 +48,9 @@ Rails.application.routes.draw do
       member do
         post :approve
         post :reject
+        post :mark_as_completed
+        post :mark_as_no_show
+        post :reschedule
       end
     end
     resources :users do
