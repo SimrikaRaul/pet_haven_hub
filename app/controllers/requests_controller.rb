@@ -66,7 +66,7 @@ class RequestsController < ApplicationController
     params.require(:request).permit(:request_type, :notes, :scheduled_date, 
                                    :citizenship_number, :phone_number, :address, 
                                    :house_type, :has_other_pets, :experience, :reason,
-                                   :citizenship_photo)
+                                   :citizenship_photo_front, :citizenship_photo_back)
   end
   
   def check_pet_availability

@@ -319,11 +319,36 @@
           </div>
         </div>
 
-        <% if @request.citizenship_photo.attached? %>
+        <% if @request.citizenship_photo_front.attached? || @request.citizenship_photo_back.attached? %>
           <div class="info-row">
-            <div class="info-label">Citizenship Photo</div>
-            <div style="margin-top: 0.5rem;">
-              <%= image_tag @request.citizenship_photo, style: 'max-width: 320px; border-radius: 12px; border: 2px solid #E5E7EB; box-shadow: 0 2px 8px rgba(0,0,0,0.08);' %>
+            <div class="info-label">Citizenship Photos</div>
+            <div style="margin-top: 0.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div>
+                <% if @request.citizenship_photo_front.attached? %>
+                  <div style="text-align: center;">
+                    <p style="font-weight: 600; color: #0D5F5C; margin-bottom: 0.75rem; font-size: 0.9375rem;">📄 Front</p>
+                    <%= image_tag @request.citizenship_photo_front, style: 'width: 100%; max-width: 300px; border-radius: 12px; border: 2px solid #E5E7EB; box-shadow: 0 2px 8px rgba(0,0,0,0.08);' %>
+                  </div>
+                <% else %>
+                  <div style="text-align: center; padding: 2rem; background: #F3F4F6; border-radius: 12px; color: #9CA3AF;">
+                    <p style="font-weight: 600; margin-bottom: 0.75rem;">📄 Front</p>
+                    <p style="font-size: 0.875rem;">Not uploaded</p>
+                  </div>
+                <% end %>
+              </div>
+              <div>
+                <% if @request.citizenship_photo_back.attached? %>
+                  <div style="text-align: center;">
+                    <p style="font-weight: 600; color: #0D5F5C; margin-bottom: 0.75rem; font-size: 0.9375rem;">📄 Back</p>
+                    <%= image_tag @request.citizenship_photo_back, style: 'width: 100%; max-width: 300px; border-radius: 12px; border: 2px solid #E5E7EB; box-shadow: 0 2px 8px rgba(0,0,0,0.08);' %>
+                  </div>
+                <% else %>
+                  <div style="text-align: center; padding: 2rem; background: #F3F4F6; border-radius: 12px; color: #9CA3AF;">
+                    <p style="font-weight: 600; margin-bottom: 0.75rem;">📄 Back</p>
+                    <p style="font-size: 0.875rem;">Not uploaded</p>
+                  </div>
+                <% end %>
+              </div>
             </div>
           </div>
         <% end %>

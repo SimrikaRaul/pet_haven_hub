@@ -512,15 +512,40 @@
       </div>
     <% end %>
 
-    <!-- Citizenship Photo Card (if uploaded) -->
-    <% if @request.citizenship_photo.attached? %>
+      <!-- Citizenship Photos Card (if uploaded) -->
+    <% if @request.citizenship_photo_front.attached? || @request.citizenship_photo_back.attached? %>
       <div class="detail-card full-width-card">
         <h3 class="card-title">
           <span>📷</span> Citizenship Verification
         </h3>
 
-        <div style="margin-top: 1rem;">
-          <%= image_tag @request.citizenship_photo, class: 'citizenship-photo' %>
+        <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <div>
+            <% if @request.citizenship_photo_front.attached? %>
+              <div style="text-align: center;">
+                <p style="font-weight: 600; color: #0D5F5C; margin-bottom: 1rem; font-size: 1rem;">📄 Front of Document</p>
+                <%= image_tag @request.citizenship_photo_front, class: 'citizenship-photo' %>
+              </div>
+            <% else %>
+              <div style="text-align: center; padding: 3rem 2rem; background: #F3F4F6; border-radius: 12px; color: #9CA3AF;">
+                <p style="font-weight: 600; margin-bottom: 0.5rem;">📄 Front of Document</p>
+                <p style="font-size: 0.875rem;">Not uploaded</p>
+              </div>
+            <% end %>
+          </div>
+          <div>
+            <% if @request.citizenship_photo_back.attached? %>
+              <div style="text-align: center;">
+                <p style="font-weight: 600; color: #0D5F5C; margin-bottom: 1rem; font-size: 1rem;">📄 Back of Document</p>
+                <%= image_tag @request.citizenship_photo_back, class: 'citizenship-photo' %>
+              </div>
+            <% else %>
+              <div style="text-align: center; padding: 3rem 2rem; background: #F3F4F6; border-radius: 12px; color: #9CA3AF;">
+                <p style="font-weight: 600; margin-bottom: 0.5rem;">📄 Back of Document</p>
+                <p style="font-size: 0.875rem;">Not uploaded</p>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
     <% end %>

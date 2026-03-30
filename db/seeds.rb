@@ -12,6 +12,19 @@ puts "🐾 Starting Pet Haven Hub seeding process..."
 puts "=" * 70
 
 # ============================================================================
+# ADMIN USER CREATION
+# ============================================================================
+
+puts "\n👤 Creating admin user..."
+admin_user = User.find_or_create_by!(email: "raulsimrika@gmail.com") do |user|
+  user.password = "PetHub#Admin27$"
+  user.password_confirmation = "PetHub#Admin27$"
+  user.role = "admin"
+  user.name = "Admin"
+end
+puts "✅ Admin user created: #{admin_user.email}"
+
+# ============================================================================
 # IMAGE LOADING CONFIGURATION
 # ============================================================================
 

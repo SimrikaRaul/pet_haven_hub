@@ -4,7 +4,8 @@ class Request < ApplicationRecord
   belongs_to :pet
   
   # ActiveStorage
-  has_one_attached :citizenship_photo
+  has_one_attached :citizenship_photo_front
+  has_one_attached :citizenship_photo_back
 
   # Enums
   enum :status, { open: 'open', pending: 'pending', under_review: 'under_review', approved: 'approved', rejected: 'rejected', scheduled: 'scheduled', completed: 'completed' }
@@ -172,16 +173,30 @@ class Request < ApplicationRecord
   def citizenship_photo_validation
     return unless adopt?
     
-    if citizenship_photo.attached?
-      if citizenship_photo.blob.byte_size > 5.megabytes
-        errors.add(:citizenship_photo, 'must be less than 5MB')
+    # Validate front photo
+    if citizenship_photo_front.attached?
+      if citizenship_photo_front.blob.byte_size > 5.megabytes
+        errors.add(:citizenship_photo_front, 'must be less than 5MB')
       end
       
-      unless citizenship_photo.content_type.in?(%w[image/jpeg image/jpg image/png image/gif])
-        errors.add(:citizenship_photo, 'must be a JPEG, PNG, or GIF image')
+      unless citizenship_photo_front.content_type.in?(%w[image/jpeg image/jpg image/png image/gif])
+        errors.add(:citizenship_photo_front, 'must be a JPEG, PNG, or GIF image')
       end
     else
-      errors.add(:citizenship_photo, 'is required for adoption requests')
+      errors.add(:citizenship_photo_front, 'is required for adoption requests')
+    end
+    
+    # Validate back photo
+    if citizenship_photo_back.attached?
+      if citizenship_photo_back.blob.byte_size > 5.megabytes
+        errors.add(:citizenship_photo_back, 'must be less than 5MB')
+      end
+      
+      unless citizenship_photo_back.content_type.in?(%w[image/jpeg image/jpg image/png image/gif])
+        errors.add(:citizenship_photo_back, 'must be a JPEG, PNG, or GIF image')
+      end
+    else
+      errors.add(:citizenship_photo_back, 'is required for adoption requests')
     end
   end
 

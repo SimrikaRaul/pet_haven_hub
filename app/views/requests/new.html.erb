@@ -1,32 +1,34 @@
 <style>
   .adoption-form-container {
     width: 100%;
-    padding: 2rem 24px;
+    padding: 1.5rem 12px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .form-card {
     background: white;
-    border-radius: 30px;
+    border-radius: 24px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    padding: 3rem;
-    margin-bottom: 2rem;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 100%;
   }
   
   .form-header {
     text-align: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
     padding-bottom: 1.5rem;
     border-bottom: 2px solid #E5E7EB;
   }
   
   .form-title {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 900;
     color: #0D5F5C;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     line-height: 1.2;
   }
   
@@ -39,22 +41,22 @@
   .pet-info-banner {
     background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
     border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
     border: 2px solid #B5D6D8;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
   }
   
   .pet-info-text {
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 700;
     color: #0D5F5C;
   }
   
   .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
   }
   
   .form-label {
@@ -62,7 +64,7 @@
     font-size: 0.95rem;
     font-weight: 700;
     color: #0D5F5C;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -74,9 +76,9 @@
   
   .form-input, .form-textarea, .form-select {
     width: 100%;
-    padding: 0.875rem 1.125rem;
+    padding: 0.75rem 1rem;
     border: 2px solid #D1D5DB;
-    border-radius: 12px;
+    border-radius: 10px;
     font-size: 1rem;
     color: #1F2937;
     background: #F9FAFB;
@@ -91,18 +93,25 @@
   }
   
   .form-input:invalid:not(:placeholder-shown), .form-textarea:invalid:not(:placeholder-shown) {
-    border-color: #EF4444;
+    border-color: #EF4444 !important;
+    background: #FEF2F2;
   }
   
   .form-input:valid:not(:placeholder-shown), .form-textarea:valid:not(:placeholder-shown) {
     border-color: #10B981;
+    background: #F0FDF4;
+  }
+  
+  .form-input:disabled, .form-textarea:disabled, .form-select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
   
   .form-file-input {
     width: 100%;
-    padding: 0.875rem 1.125rem;
+    padding: 0.75rem 1rem;
     border: 2px dashed #D1D5DB;
-    border-radius: 12px;
+    border-radius: 10px;
     font-size: 1rem;
     color: #1F2937;
     background: #F9FAFB;
@@ -122,8 +131,8 @@
   .file-upload-label {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 1rem;
+    gap: 1rem;
+    padding: 1.25rem;
     border: 2px dashed #0D5F5C;
     border-radius: 12px;
     background: linear-gradient(135deg, #E0F2F1 0%, #F9FAFB 100%);
@@ -134,10 +143,22 @@
   .file-upload-label:hover {
     background: linear-gradient(135deg, #B2DFDB 0%, #E0F2F1 100%);
     border-color: #0A4946;
+    transform: translateY(-2px);
+  }
+  
+  .file-upload-label.error {
+    border-color: #EF4444;
+    background: linear-gradient(135deg, #FEE2E2 0%, #FEF2F2 100%);
+  }
+  
+  .file-upload-label.success {
+    border-color: #10B981;
+    background: linear-gradient(135deg, #DCFCE7 0%, #F0FDF4 100%);
   }
   
   .file-upload-icon {
-    font-size: 2rem;
+    font-size: 2.5rem;
+    flex-shrink: 0;
   }
   
   .file-upload-text {
@@ -148,16 +169,57 @@
     font-weight: 700;
     color: #0D5F5C;
     margin-bottom: 0.25rem;
+    font-size: 1.05rem;
   }
   
   .file-upload-hint {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     color: #6B7280;
   }
   
   .form-textarea {
-    min-height: 100px;
+    min-height: 80px;
     resize: vertical;
+  }
+  
+  .char-count {
+    font-size: 0.8rem;
+    color: #9CA3AF;
+    margin-top: 0.25rem;
+    transition: color 0.2s;
+  }
+  
+  .char-count:hover {
+    color: #6B7280;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .form-row.full-width {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-row.photo-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .form-row.photo-row .form-group {
+    margin-bottom: 0.5rem;
+  }
+  
+  .checkbox-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .form-section {
+    margin-bottom: 0.75rem;
   }
   
   .conditional-field {
@@ -169,9 +231,9 @@
   }
   
   .conditional-field.show {
-    max-height: 500px;
+    max-height: 350px;
     opacity: 1;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
   }
   
   .checkbox-wrapper {
@@ -186,6 +248,7 @@
     border: 2px solid #D1D5DB;
     border-radius: 6px;
     cursor: pointer;
+    flex-shrink: 0;
   }
   
   .form-checkbox:checked {
@@ -200,24 +263,24 @@
   }
   
   .form-help-text {
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     color: #6B7280;
-    margin-top: 0.375rem;
+    margin-top: 0.4rem;
   }
   
   .error-messages {
     background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
     border: 2px solid #EF4444;
-    border-radius: 16px;
-    padding: 1.25rem;
-    margin-bottom: 2rem;
+    border-radius: 14px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
   }
   
   .error-title {
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 800;
     color: #991B1B;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
   }
   
   .error-list {
@@ -229,47 +292,48 @@
   .error-item {
     color: #991B1B;
     font-weight: 600;
-    padding: 0.25rem 0;
+    padding: 0.2rem 0;
+    font-size: 0.9rem;
   }
   
   .button-group {
     display: flex;
     gap: 1rem;
-    margin-top: 2.5rem;
+    margin-top: 1.5rem;
   }
   
   .submit-button {
     flex: 1;
-    padding: 1.25rem 2rem;
+    padding: 1rem 1.5rem;
     background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
     color: white;
     font-weight: 800;
-    font-size: 1.125rem;
+    font-size: 1.05rem;
     border: none;
-    border-radius: 16px;
+    border-radius: 14px;
     cursor: pointer;
     box-shadow: 0 8px 24px rgba(13, 95, 92, 0.3);
     transition: all 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
   
   .submit-button:hover {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
     box-shadow: 0 12px 32px rgba(13, 95, 92, 0.4);
   }
   
   .back-button {
     flex: 0 0 auto;
-    padding: 1.25rem 2rem;
+    padding: 1rem 1.5rem;
     background: linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%);
     color: #4B5563;
     font-weight: 800;
-    font-size: 1.125rem;
+    font-size: 1.05rem;
     border: none;
-    border-radius: 16px;
+    border-radius: 14px;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: all 0.3s;
@@ -280,22 +344,34 @@
   }
   
   .back-button:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     background: linear-gradient(135deg, #D1D5DB 0%, #B5B9BD 100%);
   }
   
   @media (max-width: 768px) {
     .adoption-form-container {
-      padding: 1rem;
+      padding: 0.5rem;
     }
     
     .form-card {
-      padding: 2rem 1.5rem;
-      border-radius: 20px;
+      padding: 1rem;
+      border-radius: 16px;
     }
     
     .form-title {
-      font-size: 2rem;
+      font-size: 1.5rem;
+    }
+    
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+    
+    .form-row.photo-row {
+      grid-template-columns: 1fr;
+    }
+    
+    .checkbox-row {
+      grid-template-columns: 1fr;
     }
     
     .button-group {
@@ -316,7 +392,7 @@
     </div>
     
     <div class="pet-info-banner">
-      <span style="font-size: 2rem;">🐾</span>
+      <span style="font-size: 1.25rem;">🐾</span>
       <span class="pet-info-text">Requesting to adopt: <%= @pet.name %></span>
     </div>
     
@@ -334,162 +410,337 @@
     <%= form_with model: @request, url: pet_requests_path(@pet), method: :post, local: true do |f| %>
       <%= f.hidden_field :request_type, value: 'adopt' %>
       
-      <div class="form-group">
-        <%= f.label :citizenship_number, class: 'form-label' do %>
-          Citizenship Number<span class="required-star">*</span>
-        <% end %>
-        <%= f.text_field :citizenship_number, 
-            class: 'form-input', 
-            placeholder: 'Enter your citizenship number (6-20 digits)', 
-            required: true,
-            pattern: '\d{6,20}',
-            minlength: 6,
-            maxlength: 20,
-            title: 'Must contain only numbers and be 6-20 digits long' %>
-        <p class="form-help-text">Your citizenship number must contain only numbers and be 6-20 digits long</p>
-      </div>
-      
-      <div class="form-group">
-        <%= f.label :citizenship_photo, class: 'form-label' do %>
-          Citizenship Photo<span class="required-star">*</span>
-        <% end %>
-        <div class="file-upload-wrapper">
-          <label class="file-upload-label">
-            <span class="file-upload-icon">📸</span>
-            <div class="file-upload-text">
-              <div class="file-upload-title">Upload Citizenship Document Photo</div>
-              <div class="file-upload-hint">Click to select image (JPEG, PNG, or GIF, max 5MB)</div>
-            </div>
-            <%= f.file_field :citizenship_photo, 
-                class: 'form-file-input', 
+      <!-- Row 1: Citizenship Number & Phone -->
+      <div class="form-row">
+        <div class="form-section">
+          <div class="form-group">
+            <%= f.label :citizenship_number, class: 'form-label' do %>
+              Citizenship Number<span class="required-star">*</span>
+            <% end %>
+            <%= f.text_field :citizenship_number, 
+                class: 'form-input', 
+                placeholder: 'e.g., 123456789012', 
                 required: true,
-                accept: 'image/jpeg,image/jpg,image/png,image/gif',
-                style: 'display: none;',
-                onchange: 'this.parentElement.querySelector(".file-upload-hint").textContent = this.files[0] ? this.files[0].name : "Click to select image (JPEG, PNG, or GIF, max 5MB)"' %>
-          </label>
+                pattern: '^\d{6,20}$',
+                minlength: 6,
+                maxlength: 20,
+                inputmode: 'numeric',
+                title: 'Enter 6-20 digits only' %>
+            <p class="form-help-text">📋 6-20 digits only | No letters or special characters</p>
+          </div>
         </div>
-        <p class="form-help-text">Please upload a clear photo of your citizenship document for verification</p>
-      </div>
-      
-      <div class="form-group">
-        <%= f.label :phone_number, class: 'form-label' do %>
-          Phone Number<span class="required-star">*</span>
-        <% end %>
-        <%= f.text_field :phone_number, 
-            class: 'form-input', 
-            placeholder: 'e.g., +977-9876543210 or 01-5551234', 
-            required: true,
-            minlength: 7,
-            maxlength: 20,
-            pattern: '[\d\s\-\+\(\)]+',
-            title: 'Please enter a valid phone number' %>
-        <p class="form-help-text">Enter your contact number with country code if applicable</p>
-      </div>
-      
-      <div class="form-group">
-        <%= f.label :address, class: 'form-label' do %>
-          Complete Address<span class="required-star">*</span>
-        <% end %>
-        <%= f.text_area :address, 
-            class: 'form-textarea', 
-            placeholder: 'Enter your complete address including city, district, and postal code', 
-            required: true, 
-            rows: 3,
-            minlength: 10,
-            maxlength: 500 %>
-        <p class="form-help-text">Minimum 10 characters - Please provide detailed address information</p>
-      </div>
-      
-      <div class="form-group">
-        <%= f.label :house_type, class: 'form-label' do %>
-          House Type<span class="required-star">*</span>
-        <% end %>
-        <%= f.select :house_type, 
-          [
-            ['Select house type', ''],
-            ['Apartment', 'apartment'],
-            ['House with Yard', 'house_with_yard'],
-            ['Farmhouse', 'farmhouse'],
-            ['Condo', 'condo'],
-            ['Other', 'other']
-          ], 
-          {}, 
-          { class: 'form-select', required: true } %>
-        <p class="form-help-text">Select the type of residence where the pet will live</p>
-      </div>
-      
-      <div class="form-group">
-        <div class="checkbox-wrapper">
-          <%= f.check_box :has_other_pets, class: 'form-checkbox' %>
-          <%= f.label :has_other_pets, 'I have other pets at home', class: 'checkbox-label' %>
+        
+        <div class="form-section">
+          <div class="form-group">
+            <%= f.label :phone_number, class: 'form-label' do %>
+              Phone Number<span class="required-star">*</span>
+            <% end %>
+            <%= f.telephone_field :phone_number, 
+                class: 'form-input', 
+                placeholder: '+977-9876543210', 
+                required: true,
+                minlength: 7,
+                maxlength: 20,
+                pattern: '^[\d\s\-\+\(\)]{7,20}$',
+                title: 'Enter 7-20 characters (numbers, spaces, - + or parentheses)' %>
+            <p class="form-help-text">☎️ 7-20 chars | Include country code if applicable</p>
+          </div>
         </div>
-        <p class="form-help-text">Let us know if you have other pets currently</p>
       </div>
       
-      <div class="form-group">
-        <div class="checkbox-wrapper">
-          <%= check_box_tag 'had_pets_before', '1', false, class: 'form-checkbox', id: 'had_pets_before_checkbox' %>
-          <%= label_tag 'had_pets_before', 'Have you ever kept pets at your house?', class: 'checkbox-label', for: 'had_pets_before_checkbox' %>
+      <!-- Row 2: Photos Side by Side -->
+      <div class="form-row photo-row">
+        <div class="form-section">
+          <div class="form-group">
+            <%= f.label :citizenship_photo_front, class: 'form-label' do %>
+              Citizenship Photo - Front<span class="required-star">*</span>
+            <% end %>
+            <div class="file-upload-wrapper">
+              <label class="file-upload-label front-photo-label">
+                <span class="file-upload-icon">📸</span>
+                <div class="file-upload-text">
+                  <div class="file-upload-title">Upload Front of Document</div>
+                  <div class="file-upload-hint front-photo-hint">Click to select image (JPEG, PNG, or GIF, max 5MB)</div>
+                </div>
+                <%= f.file_field :citizenship_photo_front, 
+                    class: 'form-file-input', 
+                    required: true,
+                    accept: 'image/jpeg,image/jpg,image/png,image/gif',
+                    style: 'display: none;',
+                    onchange: 'updatePhotoLabel(this, "front")' %>
+              </label>
+            </div>
+            <p class="form-help-text">Clear photo of front side</p>
+          </div>
         </div>
-        <p class="form-help-text">Check this if you have previous experience with pets</p>
+        
+        <div class="form-section">
+          <div class="form-group">
+            <%= f.label :citizenship_photo_back, class: 'form-label' do %>
+              Citizenship Photo - Back<span class="required-star">*</span>
+            <% end %>
+            <div class="file-upload-wrapper">
+              <label class="file-upload-label back-photo-label">
+                <span class="file-upload-icon">📸</span>
+                <div class="file-upload-text">
+                  <div class="file-upload-title">Upload Back of Document</div>
+                  <div class="file-upload-hint back-photo-hint">Click to select image (JPEG, PNG, or GIF, max 5MB)</div>
+                </div>
+                <%= f.file_field :citizenship_photo_back, 
+                    class: 'form-file-input', 
+                    required: true,
+                    accept: 'image/jpeg,image/jpg,image/png,image/gif',
+                    style: 'display: none;',
+                    onchange: 'updatePhotoLabel(this, "back")' %>
+              </label>
+            </div>
+            <p class="form-help-text">Clear photo of back side</p>
+          </div>
+        </div>
       </div>
       
-      <div class="form-group conditional-field" id="experience-field">
-        <%= f.label :experience, 'Pet Care Experience', class: 'form-label' %>
-        <%= f.text_area :experience, 
-            class: 'form-textarea', 
-            placeholder: 'Tell us about your experience with pets - what kind of pets did you have, how long, and what did you learn?', 
-            rows: 4,
-            maxlength: 1000,
-            id: 'experience_textarea' %>
-        <p class="form-help-text">Share any previous experience you have with caring for pets</p>
+      <!-- Row 3: Address & House Type -->
+      <div class="form-row">
+        <div class="form-section">
+          <div class="form-group">
+            <%= f.label :address, class: 'form-label' do %>
+              Complete Address<span class="required-star">*</span>
+            <% end %>
+            <%= f.text_area :address, 
+                class: 'form-textarea', 
+                placeholder: 'e.g., 123 Main St, Kathmandu, Bagmati, 44600', 
+                required: true, 
+                rows: 2,
+                minlength: 10,
+                maxlength: 500,
+                title: 'Address must be at least 10 characters' %>
+            <p class="form-help-text">📍 10-500 chars | City, district, postal code</p>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <div class="form-group">
+            <%= f.label :house_type, class: 'form-label' do %>
+              House Type<span class="required-star">*</span>
+            <% end %>
+            <%= f.select :house_type, 
+              [
+                ['--- Select house type ---', ''],
+                ['Apartment', 'apartment'],
+                ['House with Yard', 'house_with_yard'],
+                ['Farmhouse', 'farmhouse'],
+                ['Other', 'other']
+              ], 
+              { prompt: false }, 
+              { class: 'form-select', required: true, title: 'Please select a house type' } %>
+            <p class="form-help-text">🏠 Required | Select your living situation</p>
+          </div>
+        </div>
       </div>
       
-      <div class="form-group">
-        <%= f.label :reason, class: 'form-label' do %>
-          Why do you want to adopt <%= @pet.name %>?<span class="required-star">*</span>
-        <% end %>
-        <%= f.text_area :reason, 
-            class: 'form-textarea', 
-            placeholder: 'Tell us why you want to adopt this pet and how you will care for them', 
-            required: true, 
-            rows: 4,
-            minlength: 20,
-            maxlength: 1000 %>
-        <p class="form-help-text">Minimum 20 characters - Help us understand why you're the perfect match for this pet</p>
+      <!-- Row 4: Checkboxes -->
+      <div class="checkbox-row">
+        <div class="form-section">
+          <div class="form-group">
+            <div class="checkbox-wrapper">
+              <%= f.check_box :has_other_pets, class: 'form-checkbox' %>
+              <%= f.label :has_other_pets, 'Have other pets?', class: 'checkbox-label' %>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <div class="form-group">
+            <div class="checkbox-wrapper">
+              <%= check_box_tag 'had_pets_before', '1', false, class: 'form-checkbox', id: 'had_pets_before_checkbox' %>
+              <%= label_tag 'had_pets_before', 'Previous experience?', class: 'checkbox-label', for: 'had_pets_before_checkbox' %>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Row 5: Experience (conditional, full width) -->
+      <div class="form-row full-width">
+        <div class="form-section">
+          <div class="form-group conditional-field" id="experience-field">
+            <%= f.label :experience, 'Pet Care Experience', class: 'form-label' %>
+            <%= f.text_area :experience, 
+                class: 'form-textarea', 
+                placeholder: 'Tell us about previous pets you\'ve had and your experience...', 
+                rows: 2,
+                maxlength: 1000,
+                id: 'experience_textarea',
+                title: 'Share your pet care experience (up to 1000 characters)' %>
+            <p class="form-help-text">🏅 Up to 1000 chars | Optional but recommended</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Row 6: Reason (full width) -->
+      <div class="form-row full-width">
+        <div class="form-section">
+          <div class="form-group">
+            <%= f.label :reason, class: 'form-label' do %>
+              Why adopt <%= @pet.name %>?<span class="required-star">*</span>
+            <% end %>
+            <%= f.text_area :reason, 
+                class: 'form-textarea', 
+                placeholder: 'Explain why you want to adopt and how you\'ll care for the pet...', 
+                required: true, 
+                rows: 2,
+                minlength: 20,
+                maxlength: 1000,
+                title: 'Please provide at least 20 characters explaining your adoption reason' %>
+            <p class="form-help-text">💡 20-1000 chars | Help us understand your suitability</p>
+          </div>
+        </div>
       </div>
       
       <div class="button-group">
         <%= link_to pet_path(@pet), class: 'back-button' do %>
           ← Back to Pet
         <% end %>
-        <%= f.submit 'Submit Adoption Request ❤️', class: 'submit-button' %>
+        <%= f.submit 'Submit ❤️', class: 'submit-button' %>
       </div>
     <% end %>
   </div>
 </div>
 
 <script>
+  function updatePhotoLabel(input, photoType) {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const fileName = file.name;
+      const fileSize = file.size;
+      const fileType = file.type;
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+      
+      const selectorClass = photoType === 'front' ? '.front-photo-hint' : '.back-photo-hint';
+      const parentLabel = input.closest('.file-upload-label');
+      const hintElement = parentLabel ? parentLabel.querySelector(selectorClass) : document.querySelector(selectorClass);
+      
+      if (hintElement && parentLabel) {
+        const typeLabel = photoType === 'front' ? 'Front' : 'Back';
+        
+        // Validate file size
+        if (fileSize > maxSize) {
+          hintElement.textContent = `❌ ${typeLabel} - File too large (max 5MB)`;
+          hintElement.style.color = '#EF4444';
+          hintElement.style.fontWeight = '600';
+          parentLabel.classList.add('error');
+          parentLabel.classList.remove('success');
+          input.value = ''; // Clear the input
+          return;
+        }
+        
+        // Validate file type
+        if (!allowedTypes.includes(fileType)) {
+          hintElement.textContent = `❌ ${typeLabel} - Invalid file type (JPEG, PNG, GIF only)`;
+          hintElement.style.color = '#EF4444';
+          hintElement.style.fontWeight = '600';
+          parentLabel.classList.add('error');
+          parentLabel.classList.remove('success');
+          input.value = ''; // Clear the input
+          return;
+        }
+        
+        // Valid file
+        hintElement.textContent = `✓ ${typeLabel} - ${fileName}`;
+        hintElement.style.color = '#10B981';
+        hintElement.style.fontWeight = '600';
+        parentLabel.classList.add('success');
+        parentLabel.classList.remove('error');
+      }
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
+    // Real-time validation for citizenship number
+    const citizenshipInput = document.querySelector('input[name="request[citizenship_number]"]');
+    if (citizenshipInput) {
+      citizenshipInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^\d]/g, ''); // Remove non-digits
+      });
+    }
+    
+    // Real-time validation for phone number
+    const phoneInput = document.querySelector('input[type="tel"]');
+    if (phoneInput) {
+      phoneInput.addEventListener('input', function() {
+        // Allow only numbers, spaces, +, -, ()
+        this.value = this.value.replace(/[^\d\s\+\-\(\)]/g, '');
+      });
+    }
+    
+    // Toggle experience field visibility
     const checkbox = document.getElementById('had_pets_before_checkbox');
     const experienceField = document.getElementById('experience-field');
     const experienceTextarea = document.getElementById('experience_textarea');
     
-    // Toggle experience field visibility
-    checkbox.addEventListener('change', function() {
-      if (this.checked) {
+    if (checkbox) {
+      checkbox.addEventListener('change', function() {
+        if (this.checked) {
+          experienceField.classList.add('show');
+          experienceTextarea.focus();
+        } else {
+          experienceField.classList.remove('show');
+          experienceTextarea.value = ''; // Clear the field when unchecked
+        }
+      });
+      
+      // If experience is already filled (on validation error), show the field
+      if (experienceTextarea.value.trim() !== '') {
+        checkbox.checked = true;
         experienceField.classList.add('show');
-        experienceTextarea.focus();
-      } else {
-        experienceField.classList.remove('show');
-        experienceTextarea.value = ''; // Clear the field when unchecked
+      }
+    }
+    
+    // Show character count for textareas
+    const textareas = document.querySelectorAll('.form-textarea');
+    textareas.forEach(textarea => {
+      const maxLength = textarea.getAttribute('maxlength');
+      if (maxLength) {
+        const parent = textarea.parentElement;
+        const charCount = document.createElement('p');
+        charCount.className = 'char-count';
+        charCount.textContent = `${textarea.value.length} / ${maxLength} characters`;
+        
+        parent.appendChild(charCount);
+        
+        textarea.addEventListener('input', function() {
+          const remaining = parseInt(maxLength) - this.value.length;
+          charCount.textContent = `${this.value.length} / ${maxLength} characters`;
+          if (remaining < 100) {
+            charCount.style.color = '#EF4444';
+          } else if (remaining < 300) {
+            charCount.style.color = '#F59E0B';
+          } else {
+            charCount.style.color = '#9CA3AF';
+          }
+        });
       }
     });
     
-    // If experience is already filled (on validation error), show the field
-    if (experienceTextarea.value.trim() !== '') {
-      checkbox.checked = true;
-      experienceField.classList.add('show');
+    // Form submission validation
+    const form = document.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        // Check if file inputs have files
+        const frontPhoto = document.querySelector('input[name="request[citizenship_photo_front]"]');
+        const backPhoto = document.querySelector('input[name="request[citizenship_photo_back]"]');
+        
+        if (frontPhoto && !frontPhoto.files.length) {
+          e.preventDefault();
+          alert('Please upload a front photo of your citizenship document');
+          return false;
+        }
+        if (backPhoto && !backPhoto.files.length) {
+          e.preventDefault();
+          alert('Please upload a back photo of your citizenship document');
+          return false;
+        }
+      });
     }
   });
 </script>
