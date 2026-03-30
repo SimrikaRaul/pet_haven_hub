@@ -236,9 +236,9 @@
                 ✓ Approve Request
               <% end %>
             <% end %>
-            <%= button_to reject_admin_request_path(@request), method: :post, data: { turbo_confirm: 'Are you sure you want to reject this request?' }, class: 'btn-action btn-reject-action', id: 'reject-btn', disabled: false do %>
+            <button type="button" class="btn-action btn-reject-action" onclick="openRejectionModal()" id="reject-btn">
               ✗ Reject Request
-            <% end %>
+            </button>
           </div>
         <% end %>
         
@@ -524,6 +524,76 @@
   <!-- Modal Overlay -->
   <div id="approval-modal-overlay" class="approval-modal-overlay" style="display: none;" onclick="closeApprovalModal()"></div>
 
+  <!-- Rejection Modal -->
+  <div id="rejection-modal" class="rejection-modal" style="display: none;">
+    <div class="rejection-modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Reject Adoption Request</h2>
+        <button type="button" class="modal-close" onclick="closeRejectionModal()">✕</button>
+      </div>
+
+      <%= form_with(model: @request, local: true, url: reject_admin_request_path(@request), method: :post) do |form| %>
+        <div class="modal-body">
+          <p style="margin-bottom: 1.5rem; color: #4b5563; font-size: 0.9375rem;">
+            Please select a rejection reason and optionally add a message to the applicant.
+          </p>
+
+          <div class="form-group">
+            <label for="request_rejection_reason_enum" class="form-label">
+              <strong>Rejection Reason</strong>
+              <span class="required">*</span>
+            </label>
+            <p class="field-hint">Select the primary reason for rejection</p>
+            
+            <%= form.select(:rejection_reason_enum, 
+                           [
+                             ['--- Select a reason ---', ''],
+                             ['Already adopted', 'already_adopted'],
+                             ['Not suitable home environment', 'unsuitable_home'],
+                             ['Incomplete profile', 'incomplete_profile'],
+                             ['Duplicate request', 'duplicate_request'],
+                             ['Pet reserved for another user', 'reserved_for_other'],
+                             ['Other', 'other']
+                           ],
+                           { prompt: false },
+                           { class: 'form-control select-input', required: true, id: 'request_rejection_reason_enum' }) %>
+          </div>
+
+          <div class="form-group">
+            <label for="request_admin_message" class="form-label">
+              <strong>Message to Applicant (Optional)</strong>
+            </label>
+            <p class="field-hint">Add a personalized message to explain the decision or suggest next steps</p>
+            
+            <%= form.text_area(:admin_message,
+                              id: "request_admin_message",
+                              class: "form-control textarea-input",
+                              rows: 5,
+                              placeholder: "e.g., We encourage you to work on completing your profile or provide more details about your pet care experience. Feel free to reapply in the future!",
+                              maxlength: 2000) %>
+            <p class="char-count" id="rejection-char-count" style="font-size: 0.75rem; color: #9CA3AF; margin-top: 0.25rem;">
+              <span id="rejection-char-used">0</span> / 2000 characters
+            </p>
+          </div>
+
+          <div style="background: #f3f4f6; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+            <p style="margin: 0; color: #4b5563; font-size: 0.875rem; line-height: 1.6;">
+              <strong style="color: #1f2937;">Note:</strong> An email notification with the rejection reason and your message will be sent to the applicant.
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeRejectionModal()">Cancel</button>
+          <%= form.submit "Reject Request", class: "btn-reject-confirm", id: "reject-confirm-btn" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Rejection Modal Overlay -->
+  <div id="rejection-modal-overlay" class="rejection-modal-overlay" style="display: none;" onclick="closeRejectionModal()"></div>
+
   <style>
     .approval-modal-overlay {
       position: fixed;
@@ -801,6 +871,69 @@
         width: 100%;
       }
     }
+
+    /* Rejection Modal Styles */
+    .rejection-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    .rejection-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      max-width: 600px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .select-input {
+      padding: 0.75rem;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1.5em 1.5em;
+      padding-right: 2.5rem;
+    }
+
+    .btn-reject-confirm {
+      background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-reject-confirm:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-reject-confirm:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
   </style>
 
   <script>
@@ -916,6 +1049,60 @@
         if (rejectForm) {
           rejectForm.addEventListener('submit', function() {
             disableButton(rejectBtn);
+          });
+        }
+      }
+    });
+
+    // Rejection Modal Functions
+    function openRejectionModal() {
+      document.getElementById('rejection-modal').style.display = 'block';
+      document.getElementById('rejection-modal-overlay').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeRejectionModal() {
+      document.getElementById('rejection-modal').style.display = 'none';
+      document.getElementById('rejection-modal-overlay').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    // Close rejection modal when pressing Escape
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeRejectionModal();
+        closeApprovalModal();
+      }
+    });
+
+    // Handle rejection message character count
+    const rejectionMessageField = document.getElementById('request_admin_message');
+    if (rejectionMessageField) {
+      rejectionMessageField.addEventListener('input', function() {
+        const charUsed = this.value.length;
+        document.getElementById('rejection-char-used').textContent = charUsed;
+      });
+    }
+
+    // Rejection form submission validation
+    document.addEventListener('DOMContentLoaded', function() {
+      const reasonField = document.getElementById('request_rejection_reason_enum');
+      if (reasonField) {
+        const rejectionForm = reasonField.closest('form');
+        if (rejectionForm) {
+          rejectionForm.addEventListener('submit', function(e) {
+            if (!reasonField.value || reasonField.value === '') {
+              e.preventDefault();
+              alert('Please select a rejection reason before submitting.');
+              return false;
+            }
+            
+            // Disable submit button to prevent double submission
+            const submitBtn = document.getElementById('reject-confirm-btn');
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.textContent = '⏳ Processing...';
+            }
           });
         }
       }

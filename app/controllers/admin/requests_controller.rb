@@ -19,6 +19,8 @@ module Admin
     def show
       @available_dates = Request.available_dates_for_scheduling
       @booked_dates = Request.fully_booked_dates
+      # Reload to ensure we have the latest status
+      @request.reload
     end
 
     def update
@@ -37,19 +39,32 @@ module Admin
       if @request.adopt? && @request.can_be_approved?
         if request.post? && params[:request].present?
           # Process approval with adoption_date and admin_note
-          approval_params = params.require(:request).permit(:adoption_date, :admin_note)
+          adoption_date = params.dig(:request, :adoption_date)
+          admin_note = params.dig(:request, :admin_note)
           
-          if @request.update(approval_params.merge(status: 'approved'))
-            AdoptionMailer.request_approved(@request).deliver_later
-            
-            redirect_to admin_requests_path, 
-                       notice: "Request approved successfully for #{@request.adoption_date.strftime('%B %-d, %Y')}.",
-                       status: :see_other
-          else
+          if adoption_date.blank?
             @available_dates = Request.available_dates_for_scheduling
             @booked_dates = Request.fully_booked_dates
-            render :show, status: :unprocessable_entity
+            redirect_to admin_request_path(@request), alert: 'Please select an adoption date.', status: :see_other
+            return
           end
+          
+          # Use update_columns to bypass validations (similar to reject)
+          @request.update_columns(
+            status: 'approved',
+            adoption_date: adoption_date,
+            admin_note: admin_note,
+            updated_at: Time.current
+          )
+          
+          # Reload to ensure status is fresh
+          @request.reload
+          
+          AdoptionMailer.request_approved(@request).deliver_later
+          
+          redirect_to admin_requests_path, 
+                     notice: "Request approved successfully for #{@request.adoption_date.strftime('%B %-d, %Y')}.",
+                     status: :see_other
         else
           # Show the approval form (via modal or show view)
           @available_dates = Request.available_dates_for_scheduling
@@ -58,8 +73,10 @@ module Admin
           render :show
         end
       elsif @request.can_be_approved?
-        # For non-adoption requests, approve directly
-        @request.update(status: 'approved')
+        # For non-adoption requests, approve directly using update_columns
+        @request.update_columns(status: 'approved', updated_at: Time.current)
+        @request.reload
+        
         AdoptionMailer.request_approved(@request).deliver_later
         
         redirect_to admin_requests_path, 
@@ -74,10 +91,28 @@ module Admin
 
     def reject
       if @request.can_be_rejected?
-        @request.reject!(params[:reason])
-      
-        AdoptionMailer.request_rejected(@request).deliver_later
-        redirect_to admin_requests_path, notice: 'Request rejected successfully.', status: :see_other
+        # Extract rejection parameters from the form
+        rejection_reason_enum = params[:request]&.fetch(:rejection_reason_enum, nil)
+        admin_message = params[:request]&.fetch(:admin_message, nil)
+        
+        # Validate that a reason was selected
+        if rejection_reason_enum.blank?
+          redirect_to admin_request_path(@request), alert: 'Please select a rejection reason.', status: :see_other
+          return
+        end
+        
+        # Reject the request with the provided details
+        if @request.reject!(rejection_reason_enum, admin_message)
+          # Send rejection email
+          AdoptionMailer.request_rejected(@request).deliver_later
+          
+          # Reload to ensure status is updated
+          @request.reload
+          
+          redirect_to admin_requests_path, notice: 'Request rejected successfully.', status: :see_other
+        else
+          redirect_to admin_request_path(@request), alert: 'Failed to reject request. Please try again.', status: :see_other
+        end
       else
         redirect_to admin_requests_path, alert: 'Cannot reject this request.', status: :see_other
       end
@@ -90,7 +125,7 @@ module Admin
     end
 
     def request_params
-      params.fetch(:request, ActionController::Parameters.new).permit(:status, :notes, :adoption_date, :admin_note)
+      params.fetch(:request, ActionController::Parameters.new).permit(:status, :notes, :adoption_date, :admin_note, :rejection_reason_enum, :admin_message)
     end
   end
 end

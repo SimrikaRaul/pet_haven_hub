@@ -42,6 +42,9 @@ class AdoptionMailer < ApplicationMailer
     @user             = adoption_request.user
     @pet              = adoption_request.pet
     @rejection_reason = adoption_request.rejection_reason
+    @rejection_reason_enum = adoption_request.rejection_reason_enum
+    @admin_message = adoption_request.admin_message
+    @rejection_reason_text = format_rejection_reason(@rejection_reason_enum)
 
     return if @user&.email.blank?
 
@@ -87,5 +90,24 @@ class AdoptionMailer < ApplicationMailer
   def fetch_admin_emails
     emails = User.where(role: 'admin').pluck(:email).compact
     emails.presence || [ENV['ADMIN_EMAIL']].compact
+  end
+
+  def format_rejection_reason(reason_enum)
+    case reason_enum
+    when 'already_adopted'
+      'The pet has already been adopted'
+    when 'unsuitable_home'
+      'The home environment may not be suitable for this pet'
+    when 'incomplete_profile'
+      'Your profile information is incomplete'
+    when 'duplicate_request'
+      'A duplicate request was detected'
+    when 'reserved_for_other'
+      'The pet has been reserved for another user'
+    when 'other'
+      'Other reason'
+    else
+      'Your request does not meet our adoption criteria'
+    end
   end
 end

@@ -7,9 +7,20 @@ class Request < ApplicationRecord
   has_one_attached :citizenship_photo_front
   has_one_attached :citizenship_photo_back
 
+  # Attribute type declarations (required for Rails 8.1 enums)
+  attribute :rejection_reason_enum, :string
+
   # Enums
   enum :status, { open: 'open', pending: 'pending', under_review: 'under_review', approved: 'approved', rejected: 'rejected', scheduled: 'scheduled', completed: 'completed' }
   enum :request_type, { adopt: 'adopt', donate: 'donate' }
+  enum :rejection_reason_enum, {
+    already_adopted: 'already_adopted',
+    unsuitable_home: 'unsuitable_home',
+    incomplete_profile: 'incomplete_profile',
+    duplicate_request: 'duplicate_request',
+    reserved_for_other: 'reserved_for_other',
+    other: 'other'
+  }
 
   # Adoption request limit constants
   MAX_ACTIVE_REQUESTS = 3
@@ -28,23 +39,26 @@ class Request < ApplicationRecord
   validates :admin_note, length: { maximum: 2000 }, allow_blank: true
   validate :adoption_date_slot_availability, if: proc { adoption_date.present? && approved? && adopt? }
   
-  # Adoption request validations
-  validates :citizenship_number, presence: { message: "is required for adoption requests" }, if: :adopt?
-  validates :citizenship_number, format: { with: /\A\d{6,20}\z/, message: "must contain only numbers and be between 6-20 digits" }, allow_blank: true
-  validates :citizenship_number, length: { minimum: 6, maximum: 20, message: "must be between 6-20 digits" }, allow_blank: true
+  # Adoption request validations - only on create
+  validates :citizenship_number, presence: { message: "is required for adoption requests" }, if: :adopt?, on: :create
+  validates :citizenship_number, format: { with: /\A\d{6,20}\z/, message: "must contain only numbers and be between 6-20 digits" }, allow_blank: true, on: :create
+  validates :citizenship_number, length: { minimum: 6, maximum: 20, message: "must be between 6-20 digits" }, allow_blank: true, on: :create
   
-  validates :phone_number, presence: { message: "is required for adoption requests" }, if: :adopt?
-  validates :phone_number, format: { with: /\A[\d\s\-\+\(\)]+\z/, message: "must be a valid phone number" }, allow_blank: true
-  validates :phone_number, length: { minimum: 7, maximum: 20, message: "must be between 7-20 characters" }, allow_blank: true
+  validates :phone_number, presence: { message: "is required for adoption requests" }, if: :adopt?, on: :create
+  validates :phone_number, format: { with: /\A[\d\s\-\+\(\)]+\z/, message: "must be a valid phone number" }, allow_blank: true, on: :create
+  validates :phone_number, length: { minimum: 7, maximum: 20, message: "must be between 7-20 characters" }, allow_blank: true, on: :create
   
-  validates :address, presence: { message: "is required for adoption requests" }, if: :adopt?
-  validates :address, length: { minimum: 10, maximum: 500, message: "must be between 10-500 characters" }, allow_blank: true
+  validates :address, presence: { message: "is required for adoption requests" }, if: :adopt?, on: :create
+  validates :address, length: { minimum: 10, maximum: 500, message: "must be between 10-500 characters" }, allow_blank: true, on: :create
   
-  validates :house_type, presence: { message: "is required for adoption requests" }, if: :adopt?
-  validates :house_type, inclusion: { in: %w[apartment house_with_yard farmhouse condo other], message: "must be a valid house type" }, allow_blank: true
+  validates :house_type, presence: { message: "is required for adoption requests" }, if: :adopt?, on: :create
+  validates :house_type, inclusion: { in: %w[apartment house_with_yard farmhouse condo other], message: "must be a valid house type" }, allow_blank: true, on: :create
   
-  validates :reason, presence: { message: "is required for adoption requests" }, if: :adopt?
-  validates :reason, length: { minimum: 20, maximum: 1000, message: "must be between 20-1000 characters" }, allow_blank: true
+  validates :reason, presence: { message: "is required for adoption requests" }, if: :adopt?, on: :create
+  validates :reason, length: { minimum: 20, maximum: 1000, message: "must be between 20-1000 characters" }, allow_blank: true, on: :create
+  
+  # Rejection validations
+  validates :admin_message, length: { maximum: 2000, message: "must be 2000 characters or less" }, allow_blank: true
   
   # Adoption request limit validations
   validate :not_duplicate_request, on: :create
@@ -86,8 +100,27 @@ class Request < ApplicationRecord
     update(status: 'approved')
   end
 
-  def reject!(reason = nil)
-    update(status: 'rejected', rejection_reason: reason)
+  def reject!(reason_enum = nil, admin_msg = nil)
+    # Free up the adoption slot if one was assigned
+    if self.adoption_date.present? && self.approved?
+      # This will allow another adoption to take this slot
+      # (no explicit free needed since we're just clearing our date)
+    end
+    
+    # Update with rejection details - bypass validations since we're just changing status
+    begin
+      update_columns(
+        status: 'rejected',
+        rejection_reason_enum: reason_enum,
+        admin_message: admin_msg,
+        adoption_date: nil,  # Clear the adoption date when rejecting
+        updated_at: Time.current
+      )
+      self  # Return self to indicate success
+    rescue => e
+      Rails.logger.error("Error rejecting request #{id}: #{e.message}")
+      false  # Return false if there's an error
+    end
   end
 
   def mark_as_completed
