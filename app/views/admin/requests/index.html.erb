@@ -328,10 +328,6 @@
               <td>
                 <div class="actions-cell">
                   <%= link_to 'View', admin_request_path(request), class: 'action-btn btn-view' %>
-                  <% if request.open? || request.pending? %>
-                    <%= button_to 'Approve', approve_admin_request_path(request), method: :post, data: { turbo_confirm: 'Approve this request?' }, class: 'action-btn btn-approve' %>
-                    <%= button_to 'Reject', reject_admin_request_path(request), method: :post, data: { turbo_confirm: 'Reject this request?' }, class: 'action-btn btn-reject' %>
-                  <% end %>
                 </div>
               </td>
             </tr>

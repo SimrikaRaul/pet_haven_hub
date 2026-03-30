@@ -128,6 +128,16 @@
     background: #EF4444;
     color: white;
   }
+
+  .btn-action:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .btn-action:disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }
   
   .info-grid {
     display: grid;
@@ -218,15 +228,15 @@
         <% if @request.open? || @request.pending? %>
           <div class="action-buttons">
             <% if @request.adopt? %>
-              <button type="button" class="btn-action btn-approve-action" onclick="openApprovalModal()">
+              <button type="button" class="btn-action btn-approve-action" onclick="openApprovalModal()" id="approve-btn">
                 ✓ Approve Request
               </button>
             <% else %>
-              <%= button_to approve_admin_request_path(@request), method: :post, data: { turbo_confirm: 'Are you sure you want to approve this request?' }, class: 'btn-action btn-approve-action' do %>
+              <%= button_to approve_admin_request_path(@request), method: :post, data: { turbo_confirm: 'Are you sure you want to approve this request?' }, class: 'btn-action btn-approve-action', id: 'approve-btn', disabled: false do %>
                 ✓ Approve Request
               <% end %>
             <% end %>
-            <%= button_to reject_admin_request_path(@request), method: :post, data: { turbo_confirm: 'Are you sure you want to reject this request?' }, class: 'btn-action btn-reject-action' do %>
+            <%= button_to reject_admin_request_path(@request), method: :post, data: { turbo_confirm: 'Are you sure you want to reject this request?' }, class: 'btn-action btn-reject-action', id: 'reject-btn', disabled: false do %>
               ✗ Reject Request
             <% end %>
           </div>
@@ -868,5 +878,47 @@
         }
       }
     }
+
+    // Double-submit prevention for action buttons
+    document.addEventListener('DOMContentLoaded', function() {
+      const approveBtn = document.getElementById('approve-btn');
+      const rejectBtn = document.getElementById('reject-btn');
+      
+      // Helper function to disable buttons and show processing state
+      function disableButton(btn) {
+        if (btn && !btn.dataset.submitted) {
+          btn.dataset.submitted = 'true';
+          btn.disabled = true;
+          btn.style.opacity = '0.6';
+          btn.style.cursor = 'not-allowed';
+          btn.textContent = '⏳ Processing...';
+        }
+      }
+      
+      // For approve button with modal (adoption requests)
+      if (approveBtn && approveBtn.onclick === null && approveBtn.getAttribute('onclick')) {
+        // This is a plain button that opens the modal - no form submission here
+        approveBtn.addEventListener('click', function() {
+          if (this.dataset.submitted === 'true') return;
+        });
+      } else if (approveBtn) {
+        // This is a button_to submit button - find and wrap the form submission
+        const approveForm = approveBtn.closest('form');
+        if (approveForm) {
+          approveForm.addEventListener('submit', function() {
+            disableButton(approveBtn);
+          });
+        }
+      }
+      
+      if (rejectBtn) {
+        const rejectForm = rejectBtn.closest('form');
+        if (rejectForm) {
+          rejectForm.addEventListener('submit', function() {
+            disableButton(rejectBtn);
+          });
+        }
+      }
+    });
   </script>
 <% end %>
