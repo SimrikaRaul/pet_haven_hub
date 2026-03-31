@@ -146,11 +146,19 @@ class Request < ApplicationRecord
                .where(request_type: 'adopt')
                .find_each do |other_request|
           other_request.reject!('already_adopted', 'This pet has been adopted by another user.')
-          AdoptionMailer.request_rejected(other_request).deliver_later
+          SendEmailJob.perform_later(
+            other_request.user.email,
+            "Update on Your Adoption Request for #{other_request.pet.name}",
+            "This pet has been adopted by another user. Your request has been automatically rejected."
+          )
         end
         
         # Send completion email to the user
-        AdoptionMailer.request_completed(self).deliver_later
+        SendEmailJob.perform_later(
+          user.email,
+          "Congratulations on Your Adoption of #{pet.name}!",
+          "Welcome #{pet.name} to your family! Thank you for choosing to adopt from Pet Haven Hub."
+        )
       end
       true
     rescue => e
@@ -170,7 +178,11 @@ class Request < ApplicationRecord
       )
       
       # Send no show email to the user
-      AdoptionMailer.request_no_show(self).deliver_later
+      SendEmailJob.perform_later(
+        user.email,
+        "You Did Not Show for Your Adoption Appointment",
+        "You did not show for your scheduled adoption appointment for #{pet.name}. Please contact us to reschedule or discuss what happened."
+      )
       true
     rescue => e
       Rails.logger.error("Error marking request #{id} as no show: #{e.message}")
@@ -194,7 +206,11 @@ class Request < ApplicationRecord
     if reschedule_count >= 2
       # Automatically reject if exceeded
       reject!('duplicate_request', 'Maximum reschedule attempts reached. Your request has been rejected.')
-      AdoptionMailer.request_rejected(self).deliver_later
+      SendEmailJob.perform_later(
+        user.email,
+        "Your Adoption Request for #{pet.name} Has Been Rejected",
+        "You have reached the maximum number of reschedule attempts. Your request has been rejected. Please contact us if you would like to discuss this."
+      )
       return false
     end
     
@@ -208,7 +224,11 @@ class Request < ApplicationRecord
       )
       
       # Send reschedule email
-      AdoptionMailer.request_rescheduled(self).deliver_later
+      SendEmailJob.perform_later(
+        user.email,
+        "Your Adoption Appointment Has Been Rescheduled for #{pet.name}",
+        "Your adoption appointment for #{pet.name} has been rescheduled. Please check your account for the new date and time."
+      )
       true
     rescue => e
       Rails.logger.error("Error rescheduling request #{id}: #{e.message}")
@@ -357,7 +377,11 @@ class Request < ApplicationRecord
   end
 
   def send_request_confirmation
-    RequestMailer.request_confirmation(self).deliver_later
+    SendEmailJob.perform_later(
+      user.email,
+      "Your Adoption Request for #{pet.name} Has Been Received",
+      "Thank you for your interest in adopting #{pet.name}. We have received your request and will review it shortly."
+    )
   end
 
   def handle_status_change
@@ -365,20 +389,36 @@ class Request < ApplicationRecord
     when 'completed'
       nil
     when 'scheduled'
-      AdoptionMailer.notify_user(self).deliver_later
+      SendEmailJob.perform_later(
+        user.email,
+        "Your Adoption is Scheduled for #{pet.name}",
+        "Your adoption appointment for #{pet.name} has been scheduled. Please check your account for details."
+      )
     end
   end
 
   def send_approval_notification
-    RequestMailer.request_approved(self).deliver_later
+    SendEmailJob.perform_later(
+      user.email,
+      "Your Adoption Request for #{pet.name} Has Been Approved!",
+      "Congratulations! Your adoption request for #{pet.name} has been approved. Please log in to your account for next steps."
+    )
   end
 
   def send_rejection_notification
-    RequestMailer.request_rejected(self).deliver_later
+    SendEmailJob.perform_later(
+      user.email,
+      "Update on Your Adoption Request for #{pet.name}",
+      "Unfortunately, your adoption request for #{pet.name} was not approved at this time. You are welcome to submit another request in the future."
+    )
   end
 
   def send_completion_notification
-    RequestMailer.request_completed(self).deliver_later
+    SendEmailJob.perform_later(
+      user.email,
+      "Congratulations on Your Adoption of #{pet.name}!",
+      "Welcome #{pet.name} to your family! Thank you for choosing to adopt from Pet Haven Hub."
+    )
   end
 
 

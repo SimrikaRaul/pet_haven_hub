@@ -29,8 +29,8 @@ gem "kaminari"
 # Authorization
 gem "pundit"
 
-# SendGrid email delivery
-gem "sendgrid-actionmailer"
+# HTTP client for Mailgun API
+gem "httparty"
 
 # Background jobs
 gem "sidekiq"

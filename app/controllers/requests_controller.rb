@@ -31,9 +31,15 @@ class RequestsController < ApplicationController
     @request.status = 'open'
 
     if @request.save
-  
-      AdoptionMailer.notify_admin(@request).deliver_later
-
+      # Notify admins of new adoption request
+      admin_emails = User.where(role: 'admin').pluck(:email)
+      admin_emails.each do |admin_email|
+        SendEmailJob.perform_later(
+          admin_email,
+          "New Adoption Request for #{@pet.name}",
+          "User #{current_user.name} has submitted an adoption request for #{@pet.name}. Please review in the admin panel."
+        )
+      end
 
       RecommendationRefreshJob.perform_later(current_user.id)
 

@@ -13,25 +13,6 @@ Rails.application.configure do
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
   config.silence_healthcheck_path = "/up"
   config.active_support.report_deprecations = false
-
-  # -------------------------------------------------------
-  # Action Mailer — SendGrid API Key (Production)
-  # -------------------------------------------------------
-  config.action_mailer.delivery_method = :sendgrid_actionmailer
-  config.action_mailer.sendgrid_actionmailer_settings = {
-    api_key:               ENV.fetch("SENDGRID_API_KEY", ""),
-    raise_delivery_errors: true
-  }
-  config.action_mailer.perform_deliveries    = true
-  config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.perform_caching       = false
-  config.action_mailer.deliver_later_queue_name = "mailers"
-  config.action_mailer.default_url_options   = {
-    host:     ENV.fetch("APP_HOST", "pethavenhub.com"),
-    protocol: "https"
-  }
-  # -------------------------------------------------------
-
   config.after_initialize do
     ActiveStorage::Current.url_options = {
       host:     ENV.fetch("APP_HOST", "pethavenhub.com"),

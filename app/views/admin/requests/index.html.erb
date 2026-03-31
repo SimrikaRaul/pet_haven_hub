@@ -247,6 +247,119 @@
     font-size: 1.125rem;
     color: #6B7280;
   }
+
+  .filter-container {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .filter-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0D5F5C;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+  }
+
+  .filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    align-items: flex-end;
+  }
+
+  .filter-field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .filter-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #4B5563;
+    margin-bottom: 0.4rem;
+  }
+
+  .filter-input {
+    padding: 0.6rem 0.875rem;
+    border: 1.5px solid #D1E1E0;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .filter-input:focus {
+    outline: none;
+    border-color: #0D5F5C;
+    box-shadow: 0 0 0 3px rgba(13, 95, 92, 0.1);
+  }
+
+  .filter-select {
+    padding: 0.6rem 0.875rem;
+    border: 1.5px solid #D1E1E0;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-family: inherit;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: #0D5F5C;
+    box-shadow: 0 0 0 3px rgba(13, 95, 92, 0.1);
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .btn-filter {
+    padding: 0.6rem 1.25rem;
+    background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .btn-filter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 95, 92, 0.4);
+  }
+
+  .btn-reset {
+    padding: 0.6rem 1.25rem;
+    background: white;
+    color: #6B7280;
+    border: 1.5px solid #D1E1E0;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .btn-reset:hover {
+    background: #F3F4F6;
+    border-color: #9CA3AF;
+  }
   
   @media (max-width: 768px) {
     .requests-title {
@@ -288,6 +401,43 @@
       <div class="stat-label">★ Completed</div>
       <div class="stat-number"><%= Request.where(status: 'completed').count %></div>
     </div>
+  </div>
+
+  <!-- Filter Form -->
+  <div class="filter-container">
+    <div class="filter-title">🔍 Filter Requests</div>
+    <%= form_with url: admin_requests_path, method: :get, class: 'filter-form', local: true do |f| %>
+      <div class="filters-grid">
+        <div class="filter-field">
+          <label class="filter-label">User Name</label>
+          <%= f.text_field :user_name, class: 'filter-input', placeholder: 'Search user...', value: @user_filter %>
+        </div>
+        <div class="filter-field">
+          <label class="filter-label">Pet Name</label>
+          <%= f.text_field :pet_name, class: 'filter-input', placeholder: 'Search pet...', value: @pet_filter %>
+        </div>
+        <div class="filter-field">
+          <label class="filter-label">Status</label>
+          <%= f.select :status, 
+              [
+                ['All Statuses', ''],
+                ['Open', 'open'],
+                ['Pending', 'pending'],
+                ['Approved', 'approved'],
+                ['No Show', 'no_show'],
+                ['Rejected', 'rejected'],
+                ['Completed', 'completed']
+              ],
+              { selected: @status_filter },
+              { class: 'filter-select' }
+          %>
+        </div>
+        <div class="filter-buttons">
+          <%= f.submit 'Search', class: 'btn-filter' %>
+          <%= link_to 'Reset', admin_requests_path, class: 'btn-reset' %>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <!-- Requests Table -->

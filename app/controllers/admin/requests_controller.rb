@@ -3,9 +3,26 @@ module Admin
     before_action :set_request, only: [:show, :update, :approve, :reject, :mark_as_completed, :mark_as_no_show, :reschedule]
 
     def index
-      @requests = Request.recent.page(params[:page]).per(20)
+      @requests = Request.recent
+      
+      # Apply filters
       @status_filter = params[:status]
+      @user_filter = params[:user_name]
+      @pet_filter = params[:pet_name]
+      
       @requests = @requests.where(status: @status_filter) if @status_filter.present?
+      
+      # Filter by user name
+      if @user_filter.present?
+        @requests = @requests.joins(:user).where('users.name ILIKE ?', "%#{@user_filter}%")
+      end
+      
+      # Filter by pet name
+      if @pet_filter.present?
+        @requests = @requests.joins(:pet).where('pets.name ILIKE ?', "%#{@pet_filter}%")
+      end
+      
+      @requests = @requests.page(params[:page]).per(20)
       
       @stats = {
         total: Request.count,
@@ -60,7 +77,12 @@ module Admin
           # Reload to ensure status is fresh
           @request.reload
           
-          AdoptionMailer.request_approved(@request).deliver_later
+          # Notify user of approval
+          SendEmailJob.perform_later(
+            @request.user.email,
+            "Your Adoption Request for #{@request.pet.name} has been Approved!",
+            "Congratulations! Your adoption request for #{@request.pet.name} has been approved. Adoption date: #{@request.adoption_date.strftime('%B %d, %Y')}"
+          )
           
           redirect_to admin_requests_path, 
                      notice: "Request approved successfully for #{@request.adoption_date.strftime('%B %-d, %Y')}.",
@@ -77,7 +99,12 @@ module Admin
         @request.update_columns(status: 'approved', updated_at: Time.current)
         @request.reload
         
-        AdoptionMailer.request_approved(@request).deliver_later
+        # Notify user of approval
+        SendEmailJob.perform_later(
+          @request.user.email,
+          "Your Adoption Request for #{@request.pet.name} has been Approved!",
+          "Your adoption request for #{@request.pet.name} has been approved."
+        )
         
         redirect_to admin_requests_path, 
                    notice: 'Request approved successfully.',
@@ -104,7 +131,11 @@ module Admin
         # Reject the request with the provided details
         if @request.reject!(rejection_reason_enum, admin_message)
           # Send rejection email
-          AdoptionMailer.request_rejected(@request).deliver_later
+          SendEmailJob.perform_later(
+            @request.user.email,
+            "Update on Your Adoption Request for #{@request.pet.name}",
+            "Unfortunately, your adoption request for #{@request.pet.name} was not approved at this time. Reason: #{rejection_reason_enum}. #{admin_message}"
+          )
           
           # Reload to ensure status is updated
           @request.reload

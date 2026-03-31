@@ -119,7 +119,11 @@ class Pet < ApplicationRecord
     return unless saved_changes.key?('status')
     previous_status, new_status = saved_changes['status']
     begin
-      PetMailer.status_changed(self, previous_status, new_status).deliver_later
+      SendEmailJob.perform_later(
+        nil, # Will send to admin emails
+        "Pet Status Changed: #{name} is now #{new_status.titleize}",
+        "The status of pet #{name} has changed from #{previous_status.titleize} to #{new_status.titleize}. Please check your admin panel for details."
+      )
     rescue StandardError => e
       Rails.logger.error("Failed to enqueue status change mail for Pet #{id}: #{e.message}")
     end
@@ -148,7 +152,13 @@ class Pet < ApplicationRecord
   end
 
   def send_pet_added_notification
- 
-    AdminMailer.new_pet_added_notification(self).deliver_later
+    admin_emails = User.where(role: 'admin').pluck(:email)
+    admin_emails.each do |admin_email|
+      SendEmailJob.perform_later(
+        admin_email,
+        "New Pet Added: #{name}",
+        "A new pet #{name} has been added to the system. Please review and approve the listing in your admin panel."
+      )
+    end
   end
 end
