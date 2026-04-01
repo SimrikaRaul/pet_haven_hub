@@ -930,8 +930,17 @@
                   </div>
                 <% end %>
                 
-                <!-- Availability Badge -->
-                <% if pet.available? %>
+                <!-- Approval Badge (if user is logged in and pet is approved) -->
+                <% if user_signed_in? && pet.approved_for_user?(current_user) %>
+                  <div class="pet-badge" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; right: 1rem; top: 1rem;">
+                    ✅ Approved for You
+                  </div>
+                <% elsif user_signed_in? && pet.pending_for_user?(current_user) %>
+                  <div class="pet-badge" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; right: 1rem; top: 1rem;">
+                    ⏳ Your Request Pending
+                  </div>
+                <% elsif pet.available? %>
+                  <!-- Show AVAILABLE badge only if pet is available AND user doesn't have pending/approved request -->
                   <div class="pet-badge badge-available">
                     <span class="pulse-dot"></span>
                     AVAILABLE
@@ -965,7 +974,20 @@
                   
                   <% if pet.available? %>
                     <% if user_signed_in? %>
-                      <%= button_to '❤️ Adopt', pet_requests_path(pet), method: :post, params: { request: { request_type: 'adopt' } }, style: 'flex: 1; padding: 0.875rem; background: white; color: #F97316; font-weight: 700; border: 2px solid #F97316; border-radius: 12px; cursor: pointer; transition: all 0.3s;' %>
+                      <% if pet.approved_for_user?(current_user) %>
+                        <!-- Pet is approved for current user -->
+                        <button disabled style='flex: 1; padding: 0.875rem; background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; font-weight: 700; border: 2px solid #059669; border-radius: 12px; cursor: not-allowed; opacity: 0.9;'>
+                          ✅ Already Approved
+                        </button>
+                      <% elsif pet.pending_for_user?(current_user) %>
+                        <!-- Adoption request is pending review -->
+                        <button disabled style='flex: 1; padding: 0.875rem; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; font-weight: 700; border: 2px solid #D97706; border-radius: 12px; cursor: not-allowed; opacity: 0.8;'>
+                          ⏳ Pending Review
+                        </button>
+                      <% else %>
+                        <!-- Pet is available and user hasn't requested yet -->
+                        <%= button_to '❤️ Adopt', new_pet_request_path(pet), method: :get, style: 'flex: 1; padding: 0.875rem; background: white; color: #F97316; font-weight: 700; border: 2px solid #F97316; border-radius: 12px; cursor: pointer; transition: all 0.3s;' %>
+                      <% end %>
                     <% else %>
                       <%= link_to 'Sign In', new_user_session_path, style: 'flex: 1; padding: 0.875rem; text-align: center; background: white; color: #F97316; font-weight: 700; border: 2px solid #F97316; border-radius: 12px; text-decoration: none; transition: all 0.3s;' %>
                     <% end %>

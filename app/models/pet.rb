@@ -165,6 +165,24 @@ class Pet < ApplicationRecord
     update(available: true)
   end
 
+  # Adoption approval checking methods
+  def approved_for_user?(user)
+    return false if user.blank?
+    requests.where(user_id: user.id, status: 'approved').exists?
+  end
+
+  def already_requested_or_approved?(user)
+    return false if user.blank?
+    requests.where(user_id: user.id)
+            .where(status: ['pending', 'approved', 'open', 'under_review'])
+            .exists?
+  end
+
+  def pending_for_user?(user)
+    return false if user.blank?
+    requests.where(user_id: user.id, status: ['open', 'pending', 'under_review']).exists?
+  end
+
   private
 
   def image_size

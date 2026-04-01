@@ -372,12 +372,15 @@ class Request < ApplicationRecord
   def not_duplicate_request
     return unless user_id.present? && pet_id.present?
 
-    # Only block if there's an existing request that is still pending decision
-    # Allow re-request if previous request was rejected or completed
+    # Block if there's an existing request that is still pending decision
+    # Also block if the user already has an approved adoption for this pet
     existing_pending = Request.pending_decision.where(user_id: user_id, pet_id: pet_id).exists?
+    existing_approved = Request.approved.for_adoption.where(user_id: user_id, pet_id: pet_id).exists?
 
     if existing_pending
       errors.add(:base, 'You have already submitted a request for this pet.')
+    elsif existing_approved
+      errors.add(:base, 'You already have an approved adoption request for this pet.')
     end
   end
 

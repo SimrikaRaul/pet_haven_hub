@@ -5,6 +5,10 @@ class PetsController < ApplicationController
   def index
     # Start with all available pets
     @pets = Pet.available.recent
+    
+    # Preload requests to avoid N+1 queries when checking approval status
+    @pets = @pets.includes(:requests) if user_signed_in?
+    
     Rails.logger.info "[Pets#index] Starting with #{@pets.count} available pets"
     
     # Apply strict filters (species, breed, size, etc.)
@@ -76,7 +80,12 @@ class PetsController < ApplicationController
   private
 
   def set_pet
-    @pet = Pet.find(params[:id])
+    # Preload requests for show action to avoid N+1 queries when checking approval status
+    if action_name == 'show' && user_signed_in?
+      @pet = Pet.includes(:requests).find(params[:id])
+    else
+      @pet = Pet.find(params[:id])
+    end
   end
 
   def has_preference_params?
