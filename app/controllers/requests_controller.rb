@@ -10,7 +10,11 @@ class RequestsController < ApplicationController
     if current_user&.admin?
       @requests = Request.recent.page(params[:page]).per(20)
     else
-      @requests = current_user.requests.recent.page(params[:page]).per(10)
+      # Fetch active requests (pending/open) - limited to 3
+      @active_requests = current_user.requests.active_for_limit.recent.limit(3)
+      
+      # Fetch past requests (approved, rejected, completed, etc.) - all of them
+      @past_requests = current_user.requests.past_requests.recent.page(params[:history_page]).per(10)
     end
     @open_count = Request.where(status: 'open').count
     @approved_count = Request.where(status: 'approved').count
@@ -90,10 +94,10 @@ class RequestsController < ApplicationController
   end
 
   def check_active_request_limit
-    # Count requests that are still pending decision (open, pending, under_review)
-    pending_count = current_user.requests.pending_decision.count
+    # Count only active requests (open/pending status) that count toward the 3-request limit
+    active_count = current_user.requests.active_for_limit.count
 
-    if pending_count >= Request::MAX_ACTIVE_REQUESTS
+    if active_count >= Request::MAX_ACTIVE_REQUESTS
       redirect_to pet_path(@pet), alert: "You can only request up to #{Request::MAX_ACTIVE_REQUESTS} pets at a time. Please wait until a request is approved or rejected.", status: :see_other
     end
   end

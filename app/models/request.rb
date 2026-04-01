@@ -81,6 +81,13 @@ class Request < ApplicationRecord
   scope :completed, -> { where(status: 'completed') }
   scope :active, -> { where(status: %w[pending under_review]) }
   scope :pending_decision, -> { where(status: %w[open pending under_review]) }
+  
+  # Active requests that count toward the 3-request limit (only open and pending)
+  scope :active_for_limit, -> { where(status: %w[open pending]) }
+  
+  # Past requests (approved, rejected, or completed - no longer count toward limit)
+  scope :past_requests, -> { where(status: %w[approved rejected completed no_show scheduled]) }
+  
   scope :for_adoption, -> { where(request_type: 'adopt') }
   scope :for_donation, -> { where(request_type: 'donate') }
   scope :recent, -> { order(created_at: :desc) }
@@ -369,10 +376,11 @@ class Request < ApplicationRecord
   def within_active_request_limit
     return unless user_id.present?
 
-    # Count requests that are still pending decision (open, pending, under_review)
-    pending_count = Request.pending_decision.where(user_id: user_id).count
+    # Count only unresolved active requests (open or pending status)
+    # Approved, rejected, completed, or no_show requests do not count toward the limit
+    active_count = Request.active_for_limit.where(user_id: user_id).count
 
-    if pending_count >= MAX_ACTIVE_REQUESTS
+    if active_count >= MAX_ACTIVE_REQUESTS
       errors.add(:base, "You can only request up to #{MAX_ACTIVE_REQUESTS} pets at a time. Please wait until a request is approved or rejected.")
     end
   end

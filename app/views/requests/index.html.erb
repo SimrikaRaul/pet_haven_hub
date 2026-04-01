@@ -34,9 +34,9 @@
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 40px 24px;
+    padding: 40px 20px;
   }
 
   .page-header {
@@ -135,7 +135,7 @@
   .requests-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: 28px;
     width: 100%;
     margin: 0;
     padding: 0;
@@ -164,7 +164,7 @@
   .card-image-wrapper {
     position: relative;
     width: 100%;
-    height: 240px;
+    height: 260px;
     overflow: hidden;
     background: linear-gradient(135deg, var(--warm-peach) 0%, var(--warm-cream) 100%);
     flex-shrink: 0;
@@ -193,7 +193,7 @@
 
   /* CONTENT SECTION */
   .card-content {
-    padding: 24px;
+    padding: 28px;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -533,6 +533,18 @@
   }
 
   /* RESPONSIVE */
+  @media (max-width: 1200px) {
+    .requests-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    
+    .content-wrapper {
+      max-width: 100%;
+      padding: 40px 28px;
+    }
+  }
+
   @media (max-width: 1024px) {
     .requests-grid {
       grid-template-columns: repeat(2, 1fr);
@@ -572,11 +584,11 @@
     }
 
     .card-image-wrapper {
-      height: 180px;
+      height: 200px;
     }
 
     .card-content {
-      padding: 18px;
+      padding: 20px;
       gap: 12px;
     }
 
@@ -603,197 +615,146 @@
       <p class="page-subtitle">Track and manage your adoption applications</p>
     </div>
 
-  <% if @requests.any? %>
-    <!-- Filter Tabs -->
-    <div style="text-align: center; margin-bottom: 32px;">
-      <div class="filter-container">
-        <button class="filter-tab active" data-filter="all">
-          <span>All Requests</span>
-        </button>
-        <button class="filter-tab" data-filter="in-progress">
-          <span>In Progress</span>
-        </button>
-        <button class="filter-tab" data-filter="completed">
-          <span>Completed</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Request Cards Grid -->
-    <div class="requests-grid" id="requests-container">
-      <% @requests.slice(0, 3).each do |req| %>
-        <div data-status="<%= req.status %>" style="transition: opacity 0.3s ease;">
-          <div class="request-card">
-
-            <!-- Pet Image -->
-            <div class="card-image-wrapper">
-              <% if req.pet.image.attached? %>
-                <%= image_tag req.pet.image, alt: req.pet.name, class: 'request-card-image' %>
-              <% else %>
-                <div class="request-card-image request-card-image-placeholder">
-                  <%= req.pet.pet_type == 'dog' ? '🐕' : req.pet.pet_type == 'cat' ? '🐈' : '🐾' %>
-                </div>
-              <% end %>
+    <% if current_user&.admin? %>
+      <!-- ADMIN VIEW -->
+      <% if @requests.any? %>
+        <div class="requests-grid" id="requests-container">
+          <% @requests.each do |req| %>
+            <div data-status="<%= req.status %>" style="transition: opacity 0.3s ease;">
+              <%= render 'request_card', req: req %>
             </div>
+          <% end %>
+        </div>
+        <!-- Admin Pagination -->
+        <div style="text-align: center; margin-top: 40px;">
+          <%= paginate @requests %>
+        </div>
+      <% else %>
+        <div class="empty-state">
+          <div class="empty-icon-group">
+            <span class="empty-icon">📋</span>
+            <span class="empty-icon">🔍</span>
+            <span class="empty-icon">✅</span>
+          </div>
+          <h2 class="empty-title">No Requests Yet</h2>
+          <p class="empty-description">
+            There are no adoption requests to review at this time.
+          </p>
+        </div>
+      <% end %>
 
-            <div class="card-content">
-              <!-- Pet Name -->
-              <h3 class="pet-name"><%= req.pet.name %></h3>
+    <% else %>
+      <!-- USER VIEW: Requests with Filters -->
+      <% if @active_requests.any? || @past_requests.any? %>
 
-              <!-- Pet Info Line: Type Badge + Breed + Age -->
-              <div class="pet-info-line">
-                <span class="pet-type-badge"><%= req.pet.pet_type.titleize %></span>
-                <div class="pet-info-text">
-                  <span><%= req.pet.breed %></span>
-                  <span class="separator">•</span>
-                  <span><%= req.pet.age %> <%= req.pet.age == 1 ? 'year' : 'years' %></span>
-                </div>
-              </div>
+        <!-- Filter Tabs -->
+        <div style="text-align: center; margin-bottom: 32px;">
+          <div class="filter-container">
+            <button class="filter-tab active" data-filter="all">
+              <span>All Requests</span>
+            </button>
+            <button class="filter-tab" data-filter="active">
+              <span>Active (<%= @active_requests.count %>/3)</span>
+            </button>
+            <button class="filter-tab" data-filter="completed">
+              <span>Completed</span>
+            </button>
+          </div>
+        </div>
 
-              <!-- Status Badges -->
-              <div class="badge-row">
-                <span class="request-type-badge">
-                  <%= req.request_type == 'adopt' ? '🏠' : '💝' %> <%= req.request_type.upcase %>
-                </span>
-                <span class="status-badge <%= case req.status
-                    when 'open' then 'status-pending'
-                    when 'approved' then 'status-approved'
-                    when 'no_show' then 'status-no-show'
-                    when 'rejected' then 'status-rejected'
-                    when 'scheduled' then 'status-scheduled'
-                    when 'completed' then 'status-completed'
-                    else 'status-pending'
-                    end %>">
-                  <% if req.open? %>
-                    PENDING
-                  <% elsif req.no_show? %>
-                    NO SHOW
-                  <% else %>
-                    <%= req.status.upcase %>
-                  <% end %>
-                </span>
-              </div>
-
-              <!-- Status Text -->
-              <div class="status-text">
-                <% if req.open? %>
-                  <span class="awaiting-text">
-                    ⏳ Awaiting Review
-                  </span>
-                <% elsif req.approved? %>
-                  <span class="awaiting-text approved">
-                    ✓ Approved
-                  </span>
-                  <% if req.adoption_date.present? %>
-                    <div style="margin-top: 8px; font-size: 0.875rem; color: #059669; font-weight: 600;">
-                      📅 <%= req.adoption_date.strftime('%b %d, %Y') %>
-                    </div>
-                  <% end %>
-                <% elsif req.no_show? %>
-                  <span class="awaiting-text" style="background: #FED7AA; color: #92400E;">
-                    ⚠️ No Show - Available for Reschedule
-                  </span>
-                <% elsif req.completed? %>
-                  <span class="awaiting-text completed">
-                    ✓ Successfully Adopted!
-                  </span>
-                  <% if req.completed_at.present? %>
-                    <div style="margin-top: 8px; font-size: 0.875rem; color: #059669; font-weight: 600;">
-                      <% if req.adoption_date.present? %>
-                        Completed on <%= req.adoption_date.strftime('%b %d, %Y') %>
-                      <% else %>
-                        <%= "Completed #{time_ago_in_words(req.completed_at)} ago" %>
-                      <% end %>
-                    </div>
-                  <% end %>
-                <% elsif req.rejected? %>
-                  <span class="awaiting-text rejected">
-                    ✗ Rejected
-                  </span>
-                <% end %>
-              </div>
-
-              <!-- Action Button -->
-              <%= link_to request_path(req), class: 'view-details-btn' do %>
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                </svg>
-                View Details
-              <% end %>
+        <!-- Request Cards Grid -->
+        <div class="requests-grid" id="requests-container">
+          <!-- ACTIVE REQUESTS -->
+          <% @active_requests.each do |req| %>
+            <div data-filter-status="active" data-status="<%= req.status %>" style="transition: opacity 0.3s ease;">
+              <%= render 'request_card', req: req %>
             </div>
+          <% end %>
+
+          <!-- PAST REQUESTS -->
+          <% @past_requests.each do |req| %>
+            <div data-filter-status="<%= req.completed? ? 'completed' : 'past' %>" data-status="<%= req.status %>" style="transition: opacity 0.3s ease;">
+              <%= render 'request_card', req: req %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Pagination for Request History (if applicable) -->
+        <% if @past_requests.total_pages && @past_requests.total_pages > 1 %>
+          <div style="text-align: center; margin-top: 40px;">
+            <%= paginate @past_requests, param_name: :history_page %>
+          </div>
+        <% end %>
+
+        <!-- Filter Script -->
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            const requestCards = document.querySelectorAll('#requests-container > div');
+
+            filterTabs.forEach(tab => {
+              tab.addEventListener('click', function() {
+                const filter = this.getAttribute('data-filter');
+
+                // Update active tab
+                filterTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // Filter cards
+                requestCards.forEach(card => {
+                  const filterStatus = card.getAttribute('data-filter-status');
+                  let shouldShow = false;
+
+                  if (filter === 'all') {
+                    shouldShow = true;
+                  } else if (filter === 'active') {
+                    shouldShow = filterStatus === 'active';
+                  } else if (filter === 'completed') {
+                    shouldShow = filterStatus === 'completed';
+                  }
+
+                  if (shouldShow) {
+                    card.style.display = 'block';
+                    setTimeout(() => card.style.opacity = '1', 10);
+                  } else {
+                    card.style.opacity = '0';
+                    setTimeout(() => card.style.display = 'none', 300);
+                  }
+                });
+              });
+            });
+          });
+        </script>
+
+      <% else %>
+        <!-- No requests at all -->
+        <div class="empty-state">
+          <div class="empty-icon-group">
+            <span class="empty-icon">🐕</span>
+            <span class="empty-icon">🦴</span>
+            <span class="empty-icon">🐈</span>
+          </div>
+
+          <h2 class="empty-title">Your Journey Begins Here</h2>
+          <p class="empty-description">
+            You haven't made any adoption requests yet. Discover your perfect furry companion and start your journey to bringing home a new best friend!
+          </p>
+
+          <div class="empty-actions">
+            <%= link_to pets_path, class: 'browse-pets-btn-primary' do %>
+              <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              <span>Find Your Perfect Pet</span>
+            <% end %>
+
+            <p class="empty-hint">
+              <span>✨</span>
+              <span>Over <%= Pet.available.count %> pets waiting for their forever home</span>
+            </p>
           </div>
         </div>
       <% end %>
-    </div>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const filterTabs = document.querySelectorAll('.filter-tab');
-        const requestCards = document.querySelectorAll('#requests-container > div');
-
-        filterTabs.forEach(tab => {
-          tab.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
-
-            // Update active tab
-            filterTabs.forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
-
-            // Filter cards
-            requestCards.forEach(card => {
-              const cardStatus = card.getAttribute('data-status');
-              let shouldShow = false;
-
-              if (filter === 'all') {
-                shouldShow = true;
-              } else if (filter === 'in-progress') {
-                shouldShow = ['open', 'approved', 'scheduled', 'no_show', 'rejected'].includes(cardStatus);
-              } else if (filter === 'completed') {
-                shouldShow = cardStatus === 'completed';
-              }
-
-              if (shouldShow) {
-                card.style.display = 'block';
-                setTimeout(() => card.style.opacity = '1', 10);
-              } else {
-                card.style.opacity = '0';
-                setTimeout(() => card.style.display = 'none', 300);
-              }
-            });
-          });
-        });
-      });
-    </script>
-
-  <% else %>
-    <!-- Beautiful Empty State Section -->
-    <div class="empty-state">
-      <div class="empty-icon-group">
-        <span class="empty-icon">🐕</span>
-        <span class="empty-icon">🦴</span>
-        <span class="empty-icon">🐈</span>
-      </div>
-
-      <h2 class="empty-title">Your Journey Begins Here</h2>
-      <p class="empty-description">
-        You haven't made any adoption requests yet. Discover your perfect furry companion and start your journey to bringing home a new best friend!
-      </p>
-
-      <div class="empty-actions">
-        <%= link_to pets_path, class: 'browse-pets-btn-primary' do %>
-          <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-          <span>Find Your Perfect Pet</span>
-        <% end %>
-
-        <p class="empty-hint">
-          <span>✨</span>
-          <span>Over <%= Pet.available.count %> pets waiting for their forever home</span>
-        </p>
-      </div>
-    </div>
-  <% end %>
-</div>
+    <% end %>
+  </div>
 </div>

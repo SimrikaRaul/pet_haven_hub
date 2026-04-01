@@ -1,0 +1,99 @@
+<div class="request-card">
+  <!-- Pet Image -->
+  <div class="card-image-wrapper">
+    <% if req.pet.image.attached? %>
+      <%= image_tag req.pet.image, alt: req.pet.name, class: 'request-card-image' %>
+    <% else %>
+      <div class="request-card-image request-card-image-placeholder">
+        <%= req.pet.pet_type == 'dog' ? '🐕' : req.pet.pet_type == 'cat' ? '🐈' : '🐾' %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="card-content">
+    <!-- Pet Name -->
+    <h3 class="pet-name"><%= req.pet.name %></h3>
+
+    <!-- Pet Info Line: Type Badge + Breed + Age -->
+    <div class="pet-info-line">
+      <span class="pet-type-badge"><%= req.pet.pet_type.titleize %></span>
+      <div class="pet-info-text">
+        <span><%= req.pet.breed %></span>
+        <span class="separator">•</span>
+        <span><%= req.pet.age %> <%= req.pet.age == 1 ? 'year' : 'years' %></span>
+      </div>
+    </div>
+
+    <!-- Status Badges -->
+    <div class="badge-row">
+      <span class="request-type-badge">
+        <%= req.request_type == 'adopt' ? '🏠' : '💝' %> <%= req.request_type.upcase %>
+      </span>
+      <span class="status-badge <%= case req.status
+          when 'open' then 'status-pending'
+          when 'approved' then 'status-approved'
+          when 'no_show' then 'status-no-show'
+          when 'rejected' then 'status-rejected'
+          when 'scheduled' then 'status-scheduled'
+          when 'completed' then 'status-completed'
+          else 'status-pending'
+          end %>">
+        <% if req.open? %>
+          PENDING
+        <% elsif req.no_show? %>
+          NO SHOW
+        <% else %>
+          <%= req.status.upcase %>
+        <% end %>
+      </span>
+    </div>
+
+    <!-- Status Text -->
+    <div class="status-text">
+      <% if req.open? %>
+        <span class="awaiting-text">
+          ⏳ Awaiting Review
+        </span>
+      <% elsif req.approved? %>
+        <span class="awaiting-text approved">
+          ✓ Approved
+        </span>
+        <% if req.adoption_date.present? %>
+          <div style="margin-top: 8px; font-size: 0.875rem; color: #059669; font-weight: 600;">
+            📅 <%= req.adoption_date.strftime('%b %d, %Y') %>
+          </div>
+        <% end %>
+      <% elsif req.no_show? %>
+        <span class="awaiting-text" style="background: #FED7AA; color: #92400E;">
+          ⚠️ No Show - Available for Reschedule
+        </span>
+      <% elsif req.completed? %>
+        <span class="awaiting-text completed">
+          ✓ Successfully Adopted!
+        </span>
+        <% if req.completed_at.present? %>
+          <div style="margin-top: 8px; font-size: 0.875rem; color: #059669; font-weight: 600;">
+            <% if req.adoption_date.present? %>
+              Completed on <%= req.adoption_date.strftime('%b %d, %Y') %>
+            <% else %>
+              <%= "Completed #{time_ago_in_words(req.completed_at)} ago" %>
+            <% end %>
+          </div>
+        <% end %>
+      <% elsif req.rejected? %>
+        <span class="awaiting-text rejected">
+          ✗ Rejected
+        </span>
+      <% end %>
+    </div>
+
+    <!-- Action Button -->
+    <%= link_to request_path(req), class: 'view-details-btn' do %>
+      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+      </svg>
+      View Details
+    <% end %>
+  </div>
+</div>
