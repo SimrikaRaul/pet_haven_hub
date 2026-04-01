@@ -15,6 +15,7 @@ class User < ApplicationRecord
   enum :role, { user: 'user', admin: 'admin', shelter_manager: 'shelter_manager' }, suffix: true
 
   after_initialize :set_default_role, if: :new_record?
+  after_create :send_welcome_email
 
   # Validations
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
@@ -91,5 +92,9 @@ class User < ApplicationRecord
 
   def set_default_role
     self.role ||= 'user'
+  end
+
+  def send_welcome_email
+    PetHavenMailer.welcome_email(self)
   end
 end 

@@ -68,7 +68,8 @@ class Request < ApplicationRecord
   validate :citizenship_photo_validation, if: :adopt?
 
   # Callbacks
-  after_create :send_request_confirmation
+  after_create :send_request_confirmation, unless: :adopt?
+  after_create :notify_admin_of_adoption_request, if: :adopt?
   after_update :handle_status_change, if: :saved_change_to_status?
   after_update :record_adoption_interaction, if: :became_completed_adoption?
 
@@ -428,8 +429,11 @@ class Request < ApplicationRecord
     adopt?
   end
 
-
   def record_adoption_interaction
     Interaction.record_adoption(user, pet)
+  end
+
+  def notify_admin_of_adoption_request
+    PetHavenMailer.adoption_request_notification(self)
   end
 end

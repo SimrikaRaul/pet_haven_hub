@@ -6,6 +6,10 @@ Rails.application.configure do
   config.consider_all_requests_local = true
 
   config.server_timing = true
+  # Mail settings
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_deliveries    = true
+  config.active_job.queue_adapter = :inline
 
   if Rails.root.join("tmp/caching-dev.txt").exist?
     config.action_controller.perform_caching = true

@@ -13,6 +13,9 @@ Rails.application.configure do
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
   config.silence_healthcheck_path = "/up"
   config.active_support.report_deprecations = false
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_deliveries    = true
+  config.active_job.queue_adapter            = :sidekiq
   config.after_initialize do
     ActiveStorage::Current.url_options = {
       host:     ENV.fetch("APP_HOST", "pethavenhub.com"),

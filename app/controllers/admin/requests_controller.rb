@@ -78,11 +78,7 @@ module Admin
           @request.reload
           
           # Notify user of approval
-          SendEmailJob.perform_later(
-            @request.user.email,
-            "Your Adoption Request for #{@request.pet.name} has been Approved!",
-            "Congratulations! Your adoption request for #{@request.pet.name} has been approved. Adoption date: #{@request.adoption_date.strftime('%B %d, %Y')}"
-          )
+          PetHavenMailer.adoption_approved_email(@request)
           
           redirect_to admin_requests_path, 
                      notice: "Request approved successfully for #{@request.adoption_date.strftime('%B %-d, %Y')}.",
@@ -100,11 +96,7 @@ module Admin
         @request.reload
         
         # Notify user of approval
-        SendEmailJob.perform_later(
-          @request.user.email,
-          "Your Adoption Request for #{@request.pet.name} has been Approved!",
-          "Your adoption request for #{@request.pet.name} has been approved."
-        )
+        PetHavenMailer.adoption_approved_email(@request)
         
         redirect_to admin_requests_path, 
                    notice: 'Request approved successfully.',
@@ -131,11 +123,7 @@ module Admin
         # Reject the request with the provided details
         if @request.reject!(rejection_reason_enum, admin_message)
           # Send rejection email
-          SendEmailJob.perform_later(
-            @request.user.email,
-            "Update on Your Adoption Request for #{@request.pet.name}",
-            "Unfortunately, your adoption request for #{@request.pet.name} was not approved at this time. Reason: #{rejection_reason_enum}. #{admin_message}"
-          )
+          PetHavenMailer.adoption_rejected_email(@request)
           
           # Reload to ensure status is updated
           @request.reload
