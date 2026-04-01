@@ -393,16 +393,18 @@
         </div>
         
         <!-- Availability Badge -->
-        <% if @pet.respond_to?(:available) %>
-          <% if @pet.available %>
-            <div class="availability-badge-show badge-available-show">
-              ✓ Available for Adoption
-            </div>
-          <% else %>
-            <div class="availability-badge-show badge-adopted-show">
-              Adopted
-            </div>
-          <% end %>
+        <% if @pet.available? %>
+          <div class="availability-badge-show badge-available-show">
+            ✓ Available for Adoption
+          </div>
+        <% elsif @pet.in_process? %>
+          <div class="availability-badge-show badge-in-process-show" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white;">
+            ⏳ In Adoption Process
+          </div>
+        <% elsif @pet.adopted? %>
+          <div class="availability-badge-show badge-adopted-show">
+            ❌ Already Adopted
+          </div>
         <% end %>
         
         <!-- Thumbnails -->
@@ -511,10 +513,20 @@
             </div>
           <% end %>
           
-          <% if user_signed_in? %>
-            <%= link_to "❤️ Request to Adopt #{@pet.name}", new_pet_request_path(@pet), class: 'adopt-button' %>
-          <% else %>
-            <%= link_to '🔑 Sign In to Request Adoption', new_user_session_path, class: 'sign-in-button' %>
+          <% if @pet.available? %>
+            <% if user_signed_in? %>
+              <%= link_to "❤️ Request to Adopt #{@pet.name}", new_pet_request_path(@pet), class: 'adopt-button' %>
+            <% else %>
+              <%= link_to '🔑 Sign In to Request Adoption', new_user_session_path, class: 'sign-in-button' %>
+            <% end %>
+          <% elsif @pet.in_process? %>
+            <div class="adopt-button" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; cursor: not-allowed; opacity: 0.8; text-align: center; padding: 1rem; border-radius: 12px; font-weight: 700; text-decoration: none; display: block;">
+              ⏳ This pet is currently in the adoption process
+            </div>
+          <% elsif @pet.adopted? %>
+            <div class="adopt-button" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color: white; cursor: not-allowed; opacity: 0.8; text-align: center; padding: 1rem; border-radius: 12px; font-weight: 700; text-decoration: none; display: block;">
+              ❌ This pet has already been adopted
+            </div>
           <% end %>
         </div>
       </div>

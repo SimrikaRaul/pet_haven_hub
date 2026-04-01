@@ -121,8 +121,10 @@
           <h3 class="info-label">Status</h3>
           <% if @pet.available? %>
             <span style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 10px; font-size: 0.9375rem; font-weight: 700; background: #D1FAE5; color: #065F46;">✓ Available</span>
-          <% else %>
-            <span style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 10px; font-size: 0.9375rem; font-weight: 700; background: #F3F4F6; color: #6B7280;">Adopted</span>
+          <% elsif @pet.in_process? %>
+            <span style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 10px; font-size: 0.9375rem; font-weight: 700; background: #FEF3C7; color: #92400E;">⏳ In Process</span>
+          <% elsif @pet.adopted? %>
+            <span style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 10px; font-size: 0.9375rem; font-weight: 700; background: #F3F4F6; color: #6B7280;">✗ Adopted</span>
           <% end %>
         </div>
       </div>
@@ -186,9 +188,13 @@
         <div style="position: absolute; top: 1.5rem; right: 1.5rem; background: #10B981; color: white; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); font-size: 1rem;">
           ✓ Available for Adoption
         </div>
-      <% else %>
+      <% elsif @pet.in_process? %>
+        <div style="position: absolute; top: 1.5rem; right: 1.5rem; background: #F59E0B; color: white; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); font-size: 1rem;">
+          ⏳ In Adoption Process
+        </div>
+      <% elsif @pet.adopted? %>
         <div style="position: absolute; top: 1.5rem; right: 1.5rem; background: #6B7280; color: white; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4); font-size: 1rem;">
-          Adopted
+          ✗ Adopted
         </div>
       <% end %>
     </div>

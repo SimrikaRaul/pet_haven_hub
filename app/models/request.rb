@@ -106,6 +106,8 @@ class Request < ApplicationRecord
 
   def approve!
     update(status: 'approved')
+    # Mark pet as in_process when request is approved
+    pet.mark_as_in_process! if pet.available?
   end
 
   def reject!(reason_enum = nil, admin_msg = nil)
@@ -124,6 +126,12 @@ class Request < ApplicationRecord
         adoption_date: nil,  # Clear the adoption date when rejecting
         updated_at: Time.current
       )
+      
+      # If this pet has no other pending/approved requests, mark it available again
+      if pet.requests.where(status: %w[approved pending open]).none?
+        pet.mark_as_available! if pet.in_process?
+      end
+      
       self  # Return self to indicate success
     rescue => e
       Rails.logger.error("Error rejecting request #{id}: #{e.message}")
@@ -145,7 +153,7 @@ class Request < ApplicationRecord
         )
         
         # Update pet status to adopted
-        pet.update(status: :adopted)
+        pet.mark_as_adopted!
         
         # Reject all other pending requests for the same pet
         Request.where(pet_id: pet_id)

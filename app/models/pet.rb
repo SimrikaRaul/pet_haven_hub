@@ -13,7 +13,7 @@ class Pet < ApplicationRecord
   enum :pet_type, { dog: 'dog', cat: 'cat', rabbit: 'rabbit', parrot: 'parrot', other: 'other' }
   enum :size, { small: 'small', medium: 'medium', large: 'large' }
   enum :sex, { male: 'male', female: 'female' }
-  enum :status, { available: 'available', pending: 'pending', adopted: 'adopted', archived: 'archived' }
+  enum :status, { available: 'available', in_process: 'in_process', adopted: 'adopted' }
 
  
   ENERGY_LEVELS = %w[low medium high].freeze
@@ -44,8 +44,11 @@ class Pet < ApplicationRecord
   after_update :notify_status_change
 
   
-  scope :available, -> { where(available: true) }
-  scope :unavailable, -> { where(available: false) }
+  scope :available, -> { where(status: 'available') }
+  scope :in_process, -> { where(status: 'in_process') }
+  scope :adopted, -> { where(status: 'adopted') }
+  scope :unavailable, -> { where.not(status: 'available') }
+  scope :browseable, -> { where(status: 'available') }  # Alias for clarity when filtering for browse page
   scope :by_species, ->(species) { where(pet_type: species&.downcase) if species.present? }
   scope :by_breed, ->(breed) { where('LOWER(breed) = LOWER(?)', breed) if breed.present? }
   scope :by_size, ->(size) { where(size: size&.downcase) if size.present? }
@@ -76,6 +79,31 @@ class Pet < ApplicationRecord
 
   def pending_requests?
     requests.where(status: 'open').any?
+  end
+
+  # Pet status helpers
+  def available?
+    status == 'available'
+  end
+
+  def in_process?
+    status == 'in_process'
+  end
+
+  def adopted?
+    status == 'adopted'
+  end
+
+  def mark_as_in_process!
+    update(status: 'in_process', available: false) unless in_process? || adopted?
+  end
+
+  def mark_as_adopted!
+    update(status: 'adopted', available: false)
+  end
+
+  def mark_as_available!
+    update(status: 'available', available: true)
   end
 
   # Interaction statistics for recommendation visibility

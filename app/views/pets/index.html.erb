@@ -931,17 +931,19 @@
                 <% end %>
                 
                 <!-- Availability Badge -->
-                <% if pet.respond_to?(:available) %>
-                  <% if pet.available %>
-                    <div class="pet-badge badge-available">
-                      <span class="pulse-dot"></span>
-                      AVAILABLE
-                    </div>
-                  <% else %>
-                    <div class="pet-badge badge-adopted">
-                      ADOPTED
-                    </div>
-                  <% end %>
+                <% if pet.available? %>
+                  <div class="pet-badge badge-available">
+                    <span class="pulse-dot"></span>
+                    AVAILABLE
+                  </div>
+                <% elsif pet.in_process? %>
+                  <div class="pet-badge badge-in-process" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; animation: none;">
+                    IN PROCESS
+                  </div>
+                <% elsif pet.adopted? %>
+                  <div class="pet-badge badge-adopted">
+                    ADOPTED
+                  </div>
                 <% end %>
               </div>
 
@@ -961,10 +963,16 @@
                 <div class="pet-actions">
                   <%= link_to 'View Details', pet_path(pet, source: 'browse'), style: 'flex: 1; padding: 0.875rem; text-align: center; background: linear-gradient(135deg, #0D5F5C 0%, #0A4946 100%); color: white; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 95, 92, 0.3); transition: all 0.3s;' %>
                   
-                  <% if user_signed_in? %>
-                    <%= button_to '❤️ Adopt', pet_requests_path(pet), method: :post, params: { request: { request_type: 'adopt' } }, style: 'flex: 1; padding: 0.875rem; background: white; color: #F97316; font-weight: 700; border: 2px solid #F97316; border-radius: 12px; cursor: pointer; transition: all 0.3s;' %>
+                  <% if pet.available? %>
+                    <% if user_signed_in? %>
+                      <%= button_to '❤️ Adopt', pet_requests_path(pet), method: :post, params: { request: { request_type: 'adopt' } }, style: 'flex: 1; padding: 0.875rem; background: white; color: #F97316; font-weight: 700; border: 2px solid #F97316; border-radius: 12px; cursor: pointer; transition: all 0.3s;' %>
+                    <% else %>
+                      <%= link_to 'Sign In', new_user_session_path, style: 'flex: 1; padding: 0.875rem; text-align: center; background: white; color: #F97316; font-weight: 700; border: 2px solid #F97316; border-radius: 12px; text-decoration: none; transition: all 0.3s;' %>
+                    <% end %>
                   <% else %>
-                    <%= link_to 'Sign In', new_user_session_path, style: 'flex: 1; padding: 0.875rem; text-align: center; background: white; color: #F97316; font-weight: 700; border: 2px solid #F97316; border-radius: 12px; text-decoration: none; transition: all 0.3s;' %>
+                    <button disabled style='flex: 1; padding: 0.875rem; background: #E5E7EB; color: #9CA3AF; font-weight: 700; border: 2px solid #D1D5DB; border-radius: 12px; cursor: not-allowed; opacity: 0.6;'>
+                      <%= pet.in_process? ? '⏳ In Process' : '❌ Adopted' %>
+                    </button>
                   <% end %>
                 </div>
               </div>

@@ -190,12 +190,12 @@
                 <td style="color: #6B7280;"><%= pet.pet_type&.titleize || 'Unknown' %></td>
                 <td style="color: #6B7280;"><%= pet.age %> year<%= pet.age == 1 ? '' : 's' %></td>
                 <td>
-                  <% if pet.available %>
+                  <% if pet.available? %>
                     <span class="status-badge status-available">Available</span>
-                  <% elsif pet.respond_to?(:status) && pet.status == 'adopted' %>
+                  <% elsif pet.in_process? %>
+                    <span class="status-badge" style="background: #FEF3C7; color: #92400E;">In Process</span>
+                  <% elsif pet.adopted? %>
                     <span class="status-badge status-adopted">Adopted</span>
-                  <% else %>
-                    <span class="status-badge status-adopted">Unavailable</span>
                   <% end %>
                 </td>
                 <td>
@@ -203,11 +203,11 @@
                     <%= link_to 'View', admin_pet_path(pet), class: 'action-btn btn-view' %>
                     <%= link_to 'Edit', edit_admin_pet_path(pet), class: 'action-btn btn-edit' %>
                     
-                    <% if pet.available %>
+                    <% if pet.available? %>
                       <% if respond_to?(:mark_as_adopted_admin_pet_path) %>
                         <%= link_to 'Mark Adopted', mark_as_adopted_admin_pet_path(pet), method: :patch, data: { confirm: 'Mark this pet as adopted?' }, class: 'action-btn btn-edit', style: 'border-color: #10B981; color: #10B981;' %>
                       <% end %>
-                    <% else %>
+                    <% elsif pet.in_process? || pet.adopted? %>
                       <% if respond_to?(:mark_as_available_admin_pet_path) %>
                         <%= link_to 'Make Available', mark_as_available_admin_pet_path(pet), method: :patch, data: { confirm: 'Make this pet available again?' }, class: 'action-btn btn-edit', style: 'border-color: #10B981; color: #10B981;' %>
                       <% end %>

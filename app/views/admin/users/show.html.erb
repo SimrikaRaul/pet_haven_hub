@@ -317,10 +317,12 @@
                 <td><span style="background: #E0E7FF; color: #3730A3; padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.875rem; font-weight: 600;"><%= pet.pet_type&.titleize || 'Unknown' %></span></td>
                 <td style="color: #6B7280;"><%= pet.age %> year<%= pet.age == 1 ? '' : 's' %></td>
                 <td>
-                  <% if pet.available %>
+                  <% if pet.available? %>
                     <span style="background: #D1FAE5; color: #065F46; padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.875rem; font-weight: 600;">Available</span>
-                  <% else %>
-                    <span style="background: #F3F4F6; color: #6B7280; padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.875rem; font-weight: 600;">Unavailable</span>
+                  <% elsif pet.in_process? %>
+                    <span style="background: #FEF3C7; color: #92400E; padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.875rem; font-weight: 600;">In Process</span>
+                  <% elsif pet.adopted? %>
+                    <span style="background: #F3F4F6; color: #6B7280; padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.875rem; font-weight: 600;">Adopted</span>
                   <% end %>
                 </td>
                 <td style="color: #6B7280; font-size: 0.875rem;"><%= pet.created_at.strftime('%b %d, %Y') %></td>

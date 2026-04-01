@@ -58,6 +58,14 @@ class PetsController < ApplicationController
 
   def show
     authorize @pet, :show?
+    
+    # If pet is unavailable, show a message
+    if @pet.in_process?
+      flash.now[:notice] = "This pet is currently in the adoption process with another user."
+    elsif @pet.adopted?
+      flash.now[:notice] = "This pet has already been adopted. Check out our other available pets!"
+    end
+    
     @request = Request.new
     @similar_pets = Recommendations::ContentBasedService.call(user: current_user, pet: @pet, limit: 4) if user_signed_in?
     
