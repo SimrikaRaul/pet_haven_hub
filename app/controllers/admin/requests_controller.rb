@@ -77,8 +77,8 @@ module Admin
           # Reload to ensure status is fresh
           @request.reload
           
-          # Notify user of approval
-          PetHavenMailer.adoption_approved_email(@request)
+          # Notify user of approval with pickup date
+          PetHavenMailer.adoption_approved_email(@request, @request.adoption_date)
           
           redirect_to admin_requests_path, 
                      notice: "Request approved successfully for #{@request.adoption_date.strftime('%B %-d, %Y')}.",
@@ -96,7 +96,7 @@ module Admin
         @request.reload
         
         # Notify user of approval
-        PetHavenMailer.adoption_approved_email(@request)
+        PetHavenMailer.adoption_approved_email(@request, nil)
         
         redirect_to admin_requests_path, 
                    notice: 'Request approved successfully.',
