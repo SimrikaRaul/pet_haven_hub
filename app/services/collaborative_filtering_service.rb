@@ -76,9 +76,9 @@ class CollaborativeFilteringService
     score_lookup = ranked.to_h
 
     excluded_ids = @user.pets.pluck(:id) # exclude user's own donated pets
-    pets_by_id = Pet.where(id: top_pet_ids, available: true)
+    pets_by_id = Pet.available
+                    .where(id: top_pet_ids)
                     .where.not(id: excluded_ids)
-                    .where.not(status: :adopted)
                     .index_by(&:id)
 
     top_pet_ids.filter_map do |id|
@@ -97,8 +97,7 @@ class CollaborativeFilteringService
     excluded_ids = @user.pets.pluck(:id)
     interacted_ids = @user.interactions.pluck(:pet_id).uniq
 
-    pets = Pet.where(available: true)
-              .where.not(status: :adopted)
+    pets = Pet.available
               .where.not(id: excluded_ids + interacted_ids)
               .left_joins(:interactions)
               .group("pets.id")

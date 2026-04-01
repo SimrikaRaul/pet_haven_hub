@@ -40,7 +40,7 @@ class HybridRecommendationService
     return fallback_recommendations if @user.nil?
     
   
-    available_pets = Pet.where(available: true).where.not(status: 'adopted')
+    available_pets = Pet.available
     log_debug "📊 Total available pets: #{available_pets.count}"
     
   
@@ -258,7 +258,7 @@ class HybridRecommendationService
 
   def fallback_recommendations
     log_debug "⚠️  Using fallback recommendations (random available pets)"
-    Pet.where(available: true).order('RANDOM()').limit(@limit).to_a
+    Pet.available.order('RANDOM()').limit(@limit).to_a
   end
 
 

@@ -20,7 +20,7 @@ class CollaborativeRecommendationService
     scores.reject! { |pid, _| excluded_pet_ids.include?(pid) }
     return [] if scores.empty?
     top_pet_ids = scores.sort_by { |_, s| -s }.first(@limit).map(&:first)
-    pets_by_id = Pet.where(id: top_pet_ids, available: true).index_by(&:id)
+    pets_by_id = Pet.available.where(id: top_pet_ids).index_by(&:id)
     top_pet_ids.filter_map { |pid| pets_by_id[pid] }
   end
 

@@ -36,7 +36,7 @@ class PetRecommendationService
     return [] unless @preferences
 
     # Get all available pets
-    eligible_pets = Pet.where(available: true)
+    eligible_pets = Pet.available
 
     # Calculate score for each pet
     scored_pets = eligible_pets.map do |pet|

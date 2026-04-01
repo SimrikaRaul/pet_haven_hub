@@ -204,11 +204,11 @@
 
   <div class="stats-section">
     <div class="stat-card">
-      <div class="stat-number"><%= Pet.where(available: false).count %></div>
+      <div class="stat-number"><%= Pet.adopted.count %></div>
       <div class="stat-label">Successful Adoptions</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number"><%= Pet.where(available: true).count %></div>
+      <div class="stat-number"><%= Pet.available.count %></div>
       <div class="stat-label">Pets Waiting for Homes</div>
     </div>
     <div class="stat-card">

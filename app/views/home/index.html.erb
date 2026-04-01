@@ -308,6 +308,12 @@
             <div class="stat-number"><%= @total_adopted %></div>
             <div class="stat-label">Happy Adoptions</div>
           </div>
+          <% if @total_in_process.present? && @total_in_process > 0 %>
+            <div class="stat-item">
+              <div class="stat-number"><%= @total_in_process %></div>
+              <div class="stat-label">In Process</div>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
@@ -341,7 +347,15 @@
                 <p class="pet-meta">
                   <%= pet.pet_type&.titleize %> • <%= pet.breed %> • <%= pet.age %> <%= pet.age == 1 ? 'year' : 'years' %>
                 </p>
-                <span class="pet-status-badge">✓ Available for Adoption</span>
+                
+                <!-- Pet Status Badge -->
+                <% if pet.available? %>
+                  <span class="pet-status-badge">✓ Available for Adoption</span>
+                <% elsif pet.in_process? %>
+                  <span class="pet-status-badge" style="background: #FEF3C7; color: #92400E;">⏳ In Process</span>
+                <% elsif pet.adopted? %>
+                  <span class="pet-status-badge" style="background: #FEE2E2; color: #991B1B;">✗ Adopted</span>
+                <% end %>
               </div>
             </div>
           <% end %>
@@ -411,7 +425,14 @@
                     </ul>
                   <% end %>
                 <% else %>
-                  <span class="pet-status-badge">✓ Available for Adoption</span>
+                  <!-- Pet Status Badge -->
+                  <% if pet.available? %>
+                    <span class="pet-status-badge">✓ Available for Adoption</span>
+                  <% elsif pet.in_process? %>
+                    <span class="pet-status-badge" style="background: #FEF3C7; color: #92400E;">⏳ In Process</span>
+                  <% elsif pet.adopted? %>
+                    <span class="pet-status-badge" style="background: #FEE2E2; color: #991B1B;">✗ Adopted</span>
+                  <% end %>
                 <% end %>
               </div>
             </div>
