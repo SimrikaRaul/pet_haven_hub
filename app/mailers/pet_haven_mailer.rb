@@ -323,9 +323,20 @@ class PetHavenMailer
     SendEmailJob.perform_later(to, subject, nil, html_body, from)
   end
 
-  # ===== ADMIN NOTIFICATION FOR NEW ADOPTION REQUEST =====
+
   def self.adoption_request_notification(adoption_request)
-    to = ENV['ADMIN_EMAIL'] || 'admin@sijalneupane.tech'
+    admin_emails = User.where(role: 'admin').pluck(:email)
+    return if admin_emails.blank?
+    
+    admin_emails.each do |admin_email|
+      send_adoption_request_email(adoption_request, admin_email)
+    end
+  end
+
+  private
+
+  def self.send_adoption_request_email(adoption_request, admin_email)
+    to = admin_email
     subject = "🐾 New Adoption Request Received!"
     user = adoption_request.user
     pet = adoption_request.pet

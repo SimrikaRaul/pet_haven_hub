@@ -32,7 +32,7 @@ class User < ApplicationRecord
   scope :with_adoption_history, -> { joins(:requests).distinct }
 
   def admin?
-    role == 'admin' || email == ENV['ADMIN_EMAIL']
+    role == 'admin'
   end
 
   def shelter_manager?
