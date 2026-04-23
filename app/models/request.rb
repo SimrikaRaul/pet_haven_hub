@@ -261,11 +261,11 @@ class Request < ApplicationRecord
   end
   
   def can_be_completed?
-    approved? && adoption_date.present? && adoption_date <= Date.today && adopt?
+    approved? && adoption_date.present? && adopt?
   end
   
   def can_be_marked_no_show?
-    approved? && adoption_date.present? && adoption_date <= Date.today && adopt?
+    approved? && adoption_date.present? && adopt?
   end
   
   def can_be_rescheduled?

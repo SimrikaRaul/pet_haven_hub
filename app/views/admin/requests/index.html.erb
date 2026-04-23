@@ -387,19 +387,19 @@
   <div class="stats-grid">
     <div class="stat-card open">
       <div class="stat-label">⏳ Open</div>
-      <div class="stat-number"><%= Request.where(status: ['open', 'pending']).count %></div>
+      <div class="stat-number"><%= @stats[:open] %></div>
     </div>
     <div class="stat-card approved">
       <div class="stat-label">✓ Approved</div>
-      <div class="stat-number"><%= Request.where(status: 'approved').count %></div>
+      <div class="stat-number"><%= @stats[:approved] %></div>
     </div>
     <div class="stat-card rejected">
       <div class="stat-label">✗ Rejected</div>
-      <div class="stat-number"><%= Request.where(status: 'rejected').count %></div>
+      <div class="stat-number"><%= @stats[:rejected] %></div>
     </div>
     <div class="stat-card completed">
       <div class="stat-label">★ Completed</div>
-      <div class="stat-number"><%= Request.where(status: 'completed').count %></div>
+      <div class="stat-number"><%= @stats[:completed] %></div>
     </div>
   </div>
 
