@@ -1,6 +1,4 @@
 class PetHavenMailer
-  # ===== ADOPTION APPROVAL EMAIL =====
-  # Sends HTML-only email with pickup date and adoption charge
   def self.adoption_approved_email(adoption_request, pickup_date = nil)
     to = adoption_request.user.email
     user = adoption_request.user
